@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="790" viewBox="0 0 1500 790" font-family="Arial, Helvetica, sans-serif">
+  <!-- fondo -->
+  <rect width="1500" height="790" fill="#ffffff"/>
+
+  <!-- titulo -->
+  <text x="750" y="40" text-anchor="middle" font-size="20" font-weight="bold" fill="#16213d">Diagrama de distribución (despliegue) — Control Store · Autoservicio Ayuelal</text>
+  <text x="750" y="62" text-anchor="middle" font-size="13" fill="#5a6377">UML 2.5 · Arquitectura web: Django 5 (MVC) + Bootstrap 5 + MySQL 8</text>
+
+  <!-- ============ NODO 1: EQUIPO DEL CLIENTE ============ -->
+  <polygon points="60,150 74,136 424,136 410,150" fill="#dfe5f0" stroke="#16213d" stroke-width="1.4"/>
+  <polygon points="410,150 424,136 424,456 410,470" fill="#cbd4e6" stroke="#16213d" stroke-width="1.4"/>
+  <rect x="60" y="150" width="350" height="320" fill="#f4f6fa" stroke="#16213d" stroke-width="1.4"/>
+  <text x="235" y="175" text-anchor="middle" font-size="12" font-style="italic" fill="#16213d">&#171;device&#187;</text>
+  <text x="235" y="195" text-anchor="middle" font-size="14" font-weight="bold" fill="#16213d">Equipo del cliente (PC · celular)</text>
+
+  <!-- entorno de ejecucion: navegador -->
+  <rect x="85" y="215" width="300" height="230" fill="#ffffff" stroke="#16213d" stroke-width="1.2"/>
+  <text x="235" y="237" text-anchor="middle" font-size="11" font-style="italic" fill="#16213d">&#171;executionEnvironment&#187;</text>
+  <text x="235" y="255" text-anchor="middle" font-size="13" font-weight="bold" fill="#16213d">Navegador web (Chrome / Edge)</text>
+
+  <!-- artefactos del cliente -->
+  <g stroke="#16213d" stroke-width="1.1" fill="#eef2f9">
+    <rect x="110" y="270" width="250" height="46"/>
+    <rect x="110" y="322" width="250" height="46"/>
+    <rect x="110" y="374" width="250" height="46"/>
+  </g>
+  <g fill="#ffffff" stroke="#16213d" stroke-width="1">
+    <path d="M336 276 h10 l4 4 v10 h-14 z"/><path d="M346 276 v4 h4" fill="none"/>
+    <path d="M336 328 h10 l4 4 v10 h-14 z"/><path d="M346 328 v4 h4" fill="none"/>
+    <path d="M336 380 h10 l4 4 v10 h-14 z"/><path d="M346 380 v4 h4" fill="none"/>
+  </g>
+  <text x="122" y="287" font-size="10" font-style="italic" fill="#5a6377">&#171;artifact&#187;</text>
+  <text x="122" y="304" font-size="12.5" font-weight="bold" fill="#16213d">plantillas_html (vistas)</text>
+  <text x="122" y="339" font-size="10" font-style="italic" fill="#5a6377">&#171;artifact&#187;</text>
+  <text x="122" y="356" font-size="12.5" font-weight="bold" fill="#16213d">bootstrap5.css + estilos.css</text>
+  <text x="122" y="391" font-size="10" font-style="italic" fill="#5a6377">&#171;artifact&#187;</text>
+  <text x="122" y="408" font-size="12.5" font-weight="bold" fill="#16213d">app.js (lógica de interfaz)</text>
+
+  <!-- ============ NODO 2: SERVIDOR DE APLICACIONES ============ -->
+  <polygon points="560,110 574,96 974,96 960,110" fill="#dfe5f0" stroke="#16213d" stroke-width="1.4"/>
+  <polygon points="960,110 974,96 974,536 960,550" fill="#cbd4e6" stroke="#16213d" stroke-width="1.4"/>
+  <rect x="560" y="110" width="400" height="440" fill="#f4f6fa" stroke="#16213d" stroke-width="1.4"/>
+  <text x="760" y="135" text-anchor="middle" font-size="12" font-style="italic" fill="#16213d">&#171;device&#187;</text>
+  <text x="760" y="155" text-anchor="middle" font-size="14" font-weight="bold" fill="#16213d">Servidor de aplicaciones — Ubuntu Server 22.04</text>
+
+  <!-- entorno: python + gunicorn -->
+  <rect x="585" y="175" width="350" height="350" fill="#ffffff" stroke="#16213d" stroke-width="1.2"/>
+  <text x="760" y="197" text-anchor="middle" font-size="11" font-style="italic" fill="#16213d">&#171;executionEnvironment&#187;</text>
+  <text x="760" y="215" text-anchor="middle" font-size="13" font-weight="bold" fill="#16213d">Python 3.12 · Gunicorn (servidor WSGI)</text>
+
+  <!-- entorno anidado: django -->
+  <rect x="610" y="235" width="300" height="270" fill="#f8fafd" stroke="#16213d" stroke-width="1.2"/>
+  <text x="760" y="257" text-anchor="middle" font-size="11" font-style="italic" fill="#16213d">&#171;executionEnvironment&#187;</text>
+  <text x="760" y="275" text-anchor="middle" font-size="13" font-weight="bold" fill="#16213d">Django 5 (patrón MVC)</text>
+
+  <!-- artefactos del servidor -->
+  <g stroke="#16213d" stroke-width="1.1" fill="#eef2f9">
+    <rect x="635" y="290" width="250" height="46"/>
+    <rect x="635" y="342" width="250" height="46"/>
+    <rect x="635" y="394" width="250" height="46"/>
+  </g>
+  <g fill="#ffffff" stroke="#16213d" stroke-width="1">
+    <path d="M861 296 h10 l4 4 v10 h-14 z"/><path d="M871 296 v4 h4" fill="none"/>
+    <path d="M861 348 h10 l4 4 v10 h-14 z"/><path d="M871 348 v4 h4" fill="none"/>
+    <path d="M861 400 h10 l4 4 v10 h-14 z"/><path d="M871 400 v4 h4" fill="none"/>
+  </g>
+  <text x="647" y="307" font-size="10" font-style="italic" fill="#5a6377">&#171;artifact&#187;</text>
+  <text x="647" y="324" font-size="12.5" font-weight="bold" fill="#16213d">controlstore.wsgi (aplicación)</text>
+  <text x="647" y="359" font-size="10" font-style="italic" fill="#5a6377">&#171;artifact&#187;</text>
+  <text x="647" y="376" font-size="12.5" font-weight="bold" fill="#16213d">views.py — controladores (5 módulos)</text>
+  <text x="647" y="411" font-size="10" font-style="italic" fill="#5a6377">&#171;artifact&#187;</text>
+  <text x="647" y="428" font-size="12.5" font-weight="bold" fill="#16213d">models.py — ORM (entidades)</text>
+  <text x="760" y="470" text-anchor="middle" font-size="11" fill="#5a6377">módulos: inventario · ventas · domicilios · usuarios · reportes</text>
+
+  <!-- ============ NODO 3: SERVIDOR DE BASE DE DATOS ============ -->
+  <polygon points="1120,150 1134,136 1464,136 1450,150" fill="#dfe5f0" stroke="#16213d" stroke-width="1.4"/>
+  <polygon points="1450,150 1464,136 1464,446 1450,460" fill="#cbd4e6" stroke="#16213d" stroke-width="1.4"/>
+  <rect x="1120" y="150" width="330" height="310" fill="#f4f6fa" stroke="#16213d" stroke-width="1.4"/>
+  <text x="1285" y="175" text-anchor="middle" font-size="12" font-style="italic" fill="#16213d">&#171;device&#187;</text>
+  <text x="1285" y="195" text-anchor="middle" font-size="14" font-weight="bold" fill="#16213d">Servidor de base de datos</text>
+
+  <rect x="1145" y="215" width="280" height="220" fill="#ffffff" stroke="#16213d" stroke-width="1.2"/>
+  <text x="1285" y="237" text-anchor="middle" font-size="11" font-style="italic" fill="#16213d">&#171;executionEnvironment&#187;</text>
+  <text x="1285" y="255" text-anchor="middle" font-size="13" font-weight="bold" fill="#16213d">MySQL Server 8.0</text>
+
+  <rect x="1170" y="275" width="230" height="46" fill="#eef2f9" stroke="#16213d" stroke-width="1.1"/>
+  <path d="M1376 281 h10 l4 4 v10 h-14 z" fill="#ffffff" stroke="#16213d" stroke-width="1"/><path d="M1386 281 v4 h4" fill="none" stroke="#16213d" stroke-width="1"/>
+  <text x="1182" y="292" font-size="10" font-style="italic" fill="#5a6377">&#171;artifact&#187;</text>
+  <text x="1182" y="309" font-size="12.5" font-weight="bold" fill="#16213d">controlstore_db (esquema)</text>
+  <text x="1285" y="352" text-anchor="middle" font-size="11" fill="#5a6377">tablas: usuarios · productos · categorias · ventas</text>
+  <text x="1285" y="369" text-anchor="middle" font-size="11" fill="#5a6377">detalle_venta · domicilios · clientes</text>
+  <text x="1285" y="386" text-anchor="middle" font-size="11" fill="#5a6377">arqueo_caja · metodo_pago · log_auditoria</text>
+
+  <!-- ============ NODO 4: SERVICIO EXTERNO (CHATBOT) ============ -->
+  <polygon points="610,640 622,628 932,628 920,640" fill="#dfe5f0" stroke="#16213d" stroke-width="1.4"/>
+  <polygon points="920,640 932,628 932,738 920,750" fill="#cbd4e6" stroke="#16213d" stroke-width="1.4"/>
+  <rect x="610" y="640" width="310" height="110" fill="#f4f6fa" stroke="#16213d" stroke-width="1.4"/>
+  <text x="765" y="668" text-anchor="middle" font-size="12" font-style="italic" fill="#16213d">&#171;device&#187;</text>
+  <text x="765" y="690" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#16213d">Servicio externo — API WhatsApp Business</text>
+  <text x="765" y="710" text-anchor="middle" font-size="11.5" fill="#5a6377">(ChatBot de pedidos a domicilio)</text>
+
+  <!-- ============ RUTAS DE COMUNICACION ============ -->
+  <!-- cliente <-> servidor app -->
+  <line x1="410" y1="300" x2="560" y2="300" stroke="#16213d" stroke-width="1.6"/>
+  <text x="485" y="278" text-anchor="middle" font-size="12" font-style="italic" font-weight="bold" fill="#16213d">&#171;protocol&#187; HTTPS (443)</text>
+  <text x="485" y="320" text-anchor="middle" font-size="11" fill="#5a6377">petición HTTP · API REST (JSON)</text>
+
+  <!-- servidor app <-> bd -->
+  <line x1="960" y1="300" x2="1120" y2="300" stroke="#16213d" stroke-width="1.6"/>
+  <text x="1040" y="278" text-anchor="middle" font-size="12" font-style="italic" font-weight="bold" fill="#16213d">&#171;protocol&#187; TCP 3306</text>
+  <text x="1040" y="320" text-anchor="middle" font-size="11" fill="#5a6377">MySQL Connector/Python (rol de JDBC)</text>
+
+  <!-- servidor app <-> whatsapp -->
+  <line x1="765" y1="550" x2="765" y2="640" stroke="#16213d" stroke-width="1.6"/>
+  <text x="780" y="586" font-size="12" font-style="italic" font-weight="bold" fill="#16213d">&#171;protocol&#187; HTTPS</text>
+  <text x="780" y="604" font-size="11" fill="#5a6377">API REST · webhook (JSON)</text>
+
+  <!-- ============ LEYENDA ============ -->
+  <rect x="60" y="560" width="420" height="190" fill="#ffffff" stroke="#16213d" stroke-width="1.2"/>
+  <text x="76" y="584" font-size="13" font-weight="bold" fill="#16213d">Leyenda (UML 2.5 — diagrama de despliegue)</text>
+
+  <polygon points="76,606 82,600 106,600 100,606" fill="#dfe5f0" stroke="#16213d" stroke-width="1"/>
+  <polygon points="100,606 106,600 106,618 100,624" fill="#cbd4e6" stroke="#16213d" stroke-width="1"/>
+  <rect x="76" y="606" width="24" height="18" fill="#f4f6fa" stroke="#16213d" stroke-width="1"/>
+  <text x="118" y="619" font-size="12" fill="#16213d">&#171;device&#187; — nodo físico (hardware)</text>
+
+  <rect x="76" y="636" width="30" height="18" fill="#ffffff" stroke="#16213d" stroke-width="1"/>
+  <text x="118" y="649" font-size="12" fill="#16213d">&#171;executionEnvironment&#187; — software donde se ejecuta</text>
+
+  <rect x="76" y="666" width="30" height="18" fill="#eef2f9" stroke="#16213d" stroke-width="1"/>
+  <path d="M98 669 h6 l3 3 v7 h-9 z" fill="#ffffff" stroke="#16213d" stroke-width="0.9"/>
+  <text x="118" y="679" font-size="12" fill="#16213d">&#171;artifact&#187; — archivo desplegado dentro del nodo</text>
+
+  <line x1="76" y1="705" x2="106" y2="705" stroke="#16213d" stroke-width="1.6"/>
+  <text x="118" y="709" font-size="12" fill="#16213d">communication path — conexión con su protocolo</text>
+
+  <text x="76" y="738" font-size="11" fill="#5a6377">Los artefactos anidados dentro de un nodo indican que están desplegados en él.</text>
+</svg>
