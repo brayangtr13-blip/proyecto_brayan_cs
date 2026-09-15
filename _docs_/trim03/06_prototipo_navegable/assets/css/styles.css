@@ -1,0 +1,71 @@
+/* Variables de marca */
+:root {
+    --cs-primary: #2f6fd0;
+    --cs-dark: #1f4e8f;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    padding-top: 56px;
+    /* deja espacio para el navbar fijo */
+}
+
+.btn-primary {
+    background-color: var(--cs-primary);
+    border-color: var(--cs-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--cs-dark);
+    border-color: var(--cs-dark);
+}
+
+.text-primary {
+    color: var(--cs-primary) !important;
+}
+
+/* Encabezado / Hero */
+.hero {
+    padding: 100px 0 70px;
+    background: linear-gradient(180deg, #eaf1fb 0%, #ffffff 100%);
+}
+
+.hero h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+}
+
+.hero-icon {
+    font-size: 12rem;
+    color: var(--cs-primary);
+    opacity: .85;
+}
+
+/* Funciones */
+.feature-icon {
+    font-size: 2.5rem;
+    color: var(--cs-primary);
+}
+
+/* --------- TABLET ------------- */
+@media (max-width: 992px) {
+    .hero {
+        padding: 80px 0 50px;
+        text-align: center;
+    }
+
+    .hero-icon {
+        font-size: 8rem;
+    }
+}
+
+/* --------- CELULAR ------------- */
+@media (max-width: 576px) {
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-icon {
+        font-size: 6rem;
+    }
+}
