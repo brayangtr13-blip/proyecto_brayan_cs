@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión - Control Store</title>
+    <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+
+<body>
+        <div class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+        <div class="card shadow-sm login-card">
+            <div class="card-body p-4">
+
+                <div class="text-center mb-4">
+                    <i class="bi bi-shop text-primary login-icon"></i>
+                    <h1 class="h4 mt-2">Control Store</h1>
+                    <p class="text-muted mb-0">Ingresa con tu usuario y contraseña</p>
+                </div>
+
+                <!-- Aquí el backend mostrará "Usuario o contraseña incorrectos" o "Usuario inactivo" -->
+                <div id="loginAlerta" class="alert alert-danger d-none" role="alert"></div>
+
+                <form id="formLogin" novalidate>
+                    <div class="mb-3">
+                        <label for="usuario" class="form-label">Usuario o correo</label>
+                        <input type="text" class="form-control" id="usuario" name="usuario" required>
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="contrasena" class="form-label">Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="contrasena" name="contrasena" required>
+                            <button class="btn btn-outline-secondary" type="button" id="botonMostrarContrasena">
+                                <i class="bi bi-eye" id="iconoOjo"></i>
+                            </button>
+                            <div class="invalid-feedback">Este campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="recuperar_contrasena.html" class="small">¿Olvidaste tu contraseña?</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../../assets/js/login.js"></script>
+</body>
+
+</html>
