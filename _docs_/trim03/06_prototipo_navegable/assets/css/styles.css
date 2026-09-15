@@ -69,3 +69,12 @@ body {
         font-size: 6rem;
     }
 }
+/* Tarjeta de login */
+.login-card {
+    max-width: 420px;
+    width: 100%;
+}
+
+.login-icon {
+    font-size: 2.5rem;
+}
