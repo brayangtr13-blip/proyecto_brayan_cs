@@ -16,3 +16,15 @@ botonMostrarContrasena.addEventListener('click', function () {
     iconoOjo.classList.add('bi-eye');
 }
 });
+
+// Formulario de login: no enviar si hay campos vacíos
+const formLogin = document.getElementById('formLogin');
+
+formLogin.addEventListener('submit', function (evento) {
+    evento.preventDefault();
+    
+   if (formLogin.checkValidity() === false) {
+    formLogin.classList.add('was-validated');
+    return;
+  }
+});
