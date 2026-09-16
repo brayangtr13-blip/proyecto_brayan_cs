@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+
+<body class="content-body">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h4 mb-0"><i class="bi bi-people"></i> Usuarios</h1>
+            <p class="text-muted mb-0">Módulo Usuarios</p>
+        </div>
+        <a href="registrar_usuario.html" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> Registrar usuario
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1020304050</td>
+                    <td>Laura</td>
+                    <td>Gomez</td>
+                    <td>laura@controlstore.com</td>
+                    <td>3001234567</td>
+                    <td>Vendedor</td>
+                    <td><span class="badge text-bg-success">Activo</span></td>
+                    <td>
+                        <a href="editar_usuario.html?documento=1020304050" class="btn btn-sm btn-outline-primary" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>1122334455</td>
+                    <td>Carlos</td>
+                    <td>Ruiz</td>
+                    <td>carlos@controlstore.com</td>
+                    <td>3009876543</td>
+                    <td>Domiciliario</td>
+                    <td><span class="badge text-bg-success">Activo</span></td>
+                    <td>
+                        <a href="editar_usuario.html?documento=1122334455" class="btn btn-sm btn-outline-primary" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>
