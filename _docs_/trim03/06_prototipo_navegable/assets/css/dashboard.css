@@ -1,0 +1,170 @@
+/* Esqueleto del panel: barra lateral + encabezado + contenido */
+
+body {
+    margin: 0;
+}
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Caja 1: barra lateral oscura, ancho fijo */
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background-color: #0f1b3d;
+}
+
+/* Caja 2: todo lo que no es la barra lateral (encabezado + contenido) */
+.dashboard-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f6fa;
+}
+
+/* Caja 2a: encabezado, altura fija */
+.topbar {
+    height: 64px;
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Caja 2b: contenido, ocupa el resto del espacio */
+.content {
+    flex: 1;
+}
+
+/* El iframe llena por completo la caja de contenido, sin bordes */
+.content-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Estilo base para las páginas que se cargan DENTRO del iframe */
+.content-body {
+    margin: 0;
+    padding: 24px;
+    font-family: system-ui, sans-serif;
+}
+
+/* ---------- Marca (logo) ---------- */
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 16px;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-brand i {
+    font-size: 1.6rem;
+    background-color: #2f6fd0;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.sidebar-brand-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.sidebar-brand-sub {
+    font-size: 0.7rem;
+    color: #9aa7c4;
+}
+
+/* ---------- Menú de navegación ---------- */
+.sidebar-nav {
+    padding: 16px 12px;
+}
+
+.sidebar-label {
+    color: #6b7794;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    padding: 12px 8px 6px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 6px;
+    color: #c3cbe0;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+}
+
+.sidebar-link.active {
+    background-color: #2f6fd0;
+    color: #ffffff;
+}
+
+/* ---------- Encabezado ---------- */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+}
+
+.topbar-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f5f6fa;
+    border-radius: 8px;
+    padding: 8px 14px;
+    width: 280px;
+    color: #6b7794;
+}
+
+.topbar-search input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+}
+
+.topbar-icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    background-color: #ffffff;
+    color: #495057;
+}
+
+.topbar-icon-btn:hover {
+    background-color: #f5f6fa;
+}
+
+/* --------- TABLET Y CELULAR ------------- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 72px;
+    }
+
+    .sidebar-brand-name,
+    .sidebar-brand-sub,
+    .sidebar-label,
+    .sidebar-link span {
+        display: none;
+    }
+
+    .topbar-search {
+        width: 160px;
+    }
+}
