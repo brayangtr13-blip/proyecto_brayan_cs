@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de administración - Control Store</title>
+    <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="bi bi-shop"></i>
+                <div>
+                    <div class="sidebar-brand-name">Control Store</div>
+                    <div class="sidebar-brand-sub">Autoservicio Ayuelal</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="sidebar-label">General</div>
+                <a href="../modules/_mains_/dashboard_inicio.html" target="area_trabajo" class="sidebar-link active">
+                    <i class="bi bi-grid"></i> Dashboard
+                </a>
+
+                <div class="sidebar-label">Módulos</div>
+                <a href="#" target="area_trabajo" class="sidebar-link">
+                    <i class="bi bi-box-seam"></i> Inventario
+                </a>
+                <a href="#" target="area_trabajo" class="sidebar-link">
+                    <i class="bi bi-cart"></i> Ventas
+                </a>
+                <a href="#" target="area_trabajo" class="sidebar-link">
+                    <i class="bi bi-truck"></i> Domicilios
+                </a>
+                <a href="../modules/users/registrar_usuario.html" target="area_trabajo" class="sidebar-link">
+                    <i class="bi bi-people"></i> Usuarios
+                </a>
+                <a href="#" target="area_trabajo" class="sidebar-link">
+                    <i class="bi bi-bar-chart-line"></i> Reportes gráficos
+                </a>
+
+                <div class="sidebar-label">Seguridad</div>
+                <a href="#" target="area_trabajo" class="sidebar-link">
+                    <i class="bi bi-shield-check"></i> Log de auditoría
+                </a>
+            </nav>
+        </aside>
+
+        <div class="dashboard-main">
+            <header class="topbar">
+                <div class="topbar-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+
+                <div class="topbar-actions">
+                    <button class="topbar-icon-btn" id="botonCerrarSesion" title="Cerrar sesión">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main class="content">
+                <iframe name="area_trabajo" src="../modules/_mains_/dashboard_inicio.html" class="content-frame"></iframe>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para cerrar sesión (CS-71) -->
+    <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cerrar sesión</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Desea cerrar la sesión?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmarCerrarSesion">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/dashboard.js"></script>
+</body>
+
+</html>
