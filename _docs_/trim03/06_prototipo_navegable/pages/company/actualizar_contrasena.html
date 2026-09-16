@@ -3,9 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actualizar Contraseña</title>
+    <title>Actualizar Contraseña - Control Store</title>
+     <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css">
 </head>
 <body>
-    
+    <div class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+        <div class="card shadow-sm login-card">
+            <div class="card-body p-4">
+
+                <div class="text-center mb-4">
+                    <i class="bi bi-shop text-primary login-icon"></i>
+                    <h1 class="h4 mt-2">Actualizar contraseña</h1>
+                    <p class="text-muted mb-0">Crea una nueva contraseña para tu cuenta</p>
+                </div>
+
+                <div id="actualizarAlerta" class="alert alert-success d-none" role="alert">
+                    Contraseña actualizada correctamente
+                </div>
+
+                <form id="formActualizar" novalidate>
+                    <div class="mb-3">
+                        <label for="nuevaContrasena" class="form-label">Nueva contraseña</label>
+                        <input type="password" class="form-control" id="nuevaContrasena" name="nuevaContrasena"
+                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" required>
+                        <div class="invalid-feedback">
+                            Mínimo 8 caracteres, con una mayúscula, una minúscula y un número
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmarContrasena" class="form-label">Confirmar contraseña</label>
+                        <input type="password" class="form-control" id="confirmarContrasena" name="confirmarContrasena" required>
+                        <div class="invalid-feedback">Este campo es obligatorio y debe coincidir con la contraseña</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Actualizar contraseña</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/actualizar_contrasena.js"></script>
 </body>
 </html>
