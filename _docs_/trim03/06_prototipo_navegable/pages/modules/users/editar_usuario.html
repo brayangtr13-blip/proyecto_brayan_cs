@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar usuario - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+
+<body class="content-body">
+    <div class="mb-4">
+    <h1 class="h4"><i class="bi bi-pencil-square text-primary"></i> Editar usuario</h1>
+    <p class="text-muted mb-0">Módulo Usuarios</p>
+</div>
+
+<div id="edicionExito" class="alert alert-success d-none" role="alert">
+    Usuario actualizado correctamente
+</div>
+
+<form id="formEditarUsuario" novalidate>
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <label for="documento" class="form-label">Documento</label>
+            <input type="text" class="form-control" id="documento" name="documento" disabled>
+        </div>
+
+        <div class="col-md-6">
+            <label for="nombres" class="form-label">Nombres</label>
+            <input type="text" class="form-control" id="nombres" name="nombres" required>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="apellidos" class="form-label">Apellidos</label>
+            <input type="text" class="form-control" id="apellidos" name="apellidos" required>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="correo" class="form-label">Correo</label>
+            <input type="email" class="form-control" id="correo" name="correo" required>
+            <div class="invalid-feedback">Este campo es obligatorio y debe ser un correo válido</div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="telefono" class="form-label">Teléfono</label>
+            <input type="tel" class="form-control" id="telefono" name="telefono" required>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="rol" class="form-label">Rol</label>
+            <select class="form-select" id="rol" name="rol" required>
+                <option value="administrador">Administrador</option>
+                <option value="vendedor">Vendedor</option>
+                <option value="domiciliario">Domiciliario</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> Guardar cambios
+        </button>
+        <a href="listar_usuarios.html" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+<script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../../../assets/js/editar_usuario.js"></script>
+</body>
+
+</html>     
