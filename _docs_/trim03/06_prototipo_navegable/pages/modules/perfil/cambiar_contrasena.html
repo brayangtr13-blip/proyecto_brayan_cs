@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambiar contraseña - Control Store</title>
+    <link rel="stylesheet"
+href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+<body class="content-body">
+
+    <div class="mb-4">
+        <h1 class="h4"><i class="bi bi-key text-primary"></i> Cambiar contraseña</h1>
+        <p class="text-muted mb-0">Actualiza la contraseña de tu cuenta</p>
+    </div>
+
+    <div id="cambioExito" class="alert alert-success d-none" role="alert">
+        Contraseña actualizada correctamente
+    </div>
+    <div id="cambioError" class="alert alert-danger d-none" role="alert">
+        La contraseña actual no es correcta
+    </div>
+
+    <form id="formCambiarContrasena" class="form-compacta" novalidate>
+        <div class="mb-3">
+            <label for="contrasenaActual" class="form-label">Contraseña actual</label>
+            <input type="password" class="form-control" id="contrasenaActual" name="contrasenaActual" required>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="nuevaContrasena" class="form-label">Nueva contraseña</label>
+            <input type="password" class="form-control" id="nuevaContrasena" name="nuevaContrasena"
+                pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" required>
+            <div class="invalid-feedback">Mínimo 8 caracteres (mayúscula, minúscula y número), y diferente a la actual</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="confirmarNuevaContrasena" class="form-label">Confirmar nueva contraseña</label>
+            <input type="password" class="form-control" id="confirmarNuevaContrasena" name="confirmarNuevaContrasena" required>
+            <div class="invalid-feedback">Este campo es obligatorio y debe coincidir con la nueva contraseña</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> Actualizar contraseña
+        </button>
+    </form>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/cambiar_contrasena.js"></script>
+</body>
+</html>
