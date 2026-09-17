@@ -23,4 +23,7 @@ formActualizar.addEventListener('submit', function (evento) {
     }
 
     actualizarAlerta.classList.remove('d-none');
+    setTimeout(function () {
+        window.location.href = 'login.html';
+    }, 2000);
 });
