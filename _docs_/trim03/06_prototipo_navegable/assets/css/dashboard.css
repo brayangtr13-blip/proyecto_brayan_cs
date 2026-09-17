@@ -151,6 +151,11 @@ body {
     background-color: #f5f6fa;
 }
 
+/* Limita el ancho de formularios angostos dentro del contenido (ej. cambiar contraseña) */
+.form-compacta {
+    max-width: 420px;
+}
+
 /* --------- TABLET Y CELULAR ------------- */
 @media (max-width: 768px) {
     .sidebar {

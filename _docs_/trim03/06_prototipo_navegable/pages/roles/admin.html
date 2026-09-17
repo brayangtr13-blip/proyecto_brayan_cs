@@ -60,9 +60,24 @@
                 </div>
 
                 <div class="topbar-actions">
-                    <button class="topbar-icon-btn" id="botonCerrarSesion" title="Cerrar sesión">
-                        <i class="bi bi-box-arrow-right"></i>
-                    </button>
+                    <div class="dropdown">
+                        <button class="topbar-icon-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Perfil">
+                            <i class="bi bi-person-circle"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="../modules/perfil/cambiar_contrasena.html" target="area_trabajo">
+                                    <i class="bi bi-key"></i> Cambiar contraseña
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+                                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </header>
 
