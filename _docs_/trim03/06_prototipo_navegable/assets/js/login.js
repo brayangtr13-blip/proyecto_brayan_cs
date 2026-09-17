@@ -27,4 +27,7 @@ formLogin.addEventListener('submit', function (evento) {
     formLogin.classList.add('was-validated');
     return;
   }
+
+    // Sin backend todavía: simula el login exitoso y entra al panel
+    window.location.href = '../roles/admin.html';
 });
