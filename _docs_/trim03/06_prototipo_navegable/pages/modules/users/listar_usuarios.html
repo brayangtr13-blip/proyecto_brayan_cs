@@ -22,6 +22,10 @@
         </a>
     </div>
 
+    <div id="estadoExito" class="alert alert-success d-none" role="alert">
+        Estado actualizado correctamente
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead>
@@ -44,11 +48,16 @@
                     <td>laura@controlstore.com</td>
                     <td>3001234567</td>
                     <td>Vendedor</td>
-                    <td><span class="badge text-bg-success">Activo</span></td>
+                    <td><span class="badge text-bg-success" id="estado-1020304050">Activo</span></td>
                     <td>
                         <a href="editar_usuario.html?documento=1020304050" class="btn btn-sm btn-outline-primary" title="Editar">
                             <i class="bi bi-pencil"></i>
                         </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" title="Cambiar estado"
+                            data-bs-toggle="modal" data-bs-target="#modalCambiarEstado"
+                            data-documento="1020304050" data-nombre="Laura Gomez" data-estado-actual="activo">
+                            <i class="bi bi-toggle-on"></i>
+                        </button>
                     </td>
                 </tr>
                 <tr>
@@ -58,17 +67,43 @@
                     <td>carlos@controlstore.com</td>
                     <td>3009876543</td>
                     <td>Domiciliario</td>
-                    <td><span class="badge text-bg-success">Activo</span></td>
+                    <td><span class="badge text-bg-success" id="estado-1122334455">Activo</span></td>
                     <td>
                         <a href="editar_usuario.html?documento=1122334455" class="btn btn-sm btn-outline-primary" title="Editar">
                             <i class="bi bi-pencil"></i>
                         </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" title="Cambiar estado"
+                            data-bs-toggle="modal" data-bs-target="#modalCambiarEstado"
+                            data-documento="1122334455" data-nombre="Carlos Ruiz" data-estado-actual="activo">
+                            <i class="bi bi-toggle-on"></i>
+                        </button>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
+    <!-- Modal de confirmación para activar/inactivar (CS-83) -->
+    <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cambiar estado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="modalCambiarEstadoTexto">
+                    ¿Desea cambiar el estado de este usuario?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmarCambiarEstado">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/listar_usuarios.js"></script>
 </body>
 
 </html>
