@@ -1,89 +1,83 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Diagrama de despliegue" id="controlstore-despliegue">
-    <mxGraphModel dx="1400" dy="900" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1182" math="0" shadow="0" background="#FFFFFF">
+    <mxGraphModel dx="1400" dy="900" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1770" pageHeight="1166" math="0" shadow="0" background="#FFFFFF">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
         <mxCell id="c101" value="CLIENTE PC" style="verticalAlign=top;align=left;spacingTop=6;spacingLeft=4;spacingRight=12;shape=cube;size=12;direction=south;fontStyle=5;fontSize=14;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="40" y="88" width="400" height="202" as="geometry"/>
+          <mxGeometry x="40" y="96" width="470" height="202" as="geometry"/>
         </mxCell>
         <mxCell id="c102" value="&lt;b&gt;Software - Navegador web&lt;/b&gt;&lt;br&gt;Google Chrome 120+ (o Edge equivalente)" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="56" y="144" width="358" height="50" as="geometry"/>
+          <mxGeometry x="56" y="152" width="428" height="50" as="geometry"/>
         </mxCell>
-        <mxCell id="c103" value="&lt;b&gt;Hardware - CPU / RAM / DD&lt;/b&gt;&lt;br&gt;Minimo: Intel Pentium G5400 3.7 GHz - 2 GB RAM - 200 GB HDD&lt;br&gt;Ideal: Intel Core i3-10100 3.6 GHz - 4 GB RAM - 256 GB SSD" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="56" y="208" width="358" height="66" as="geometry"/>
+        <mxCell id="c103" value="&lt;b&gt;Hardware - CPU / RAM / DD&lt;/b&gt;&lt;br&gt;Minimo: Intel Pentium G5400 (2 nucleos) 3.7 GHz - 2 GB RAM - 200 GB HDD&lt;br&gt;Ideal: Intel Core i3-10100 (4 nucleos) 3.6 GHz - 4 GB RAM - 256 GB SSD" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="56" y="216" width="428" height="66" as="geometry"/>
         </mxCell>
         <mxCell id="c104" value="«fase futura»&lt;br&gt;CLIENTE MOVIL" style="verticalAlign=top;align=left;spacingTop=6;spacingLeft=4;spacingRight=12;shape=cube;size=12;direction=south;fontStyle=5;fontSize=14;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="40" y="436" width="400" height="282" as="geometry"/>
+          <mxGeometry x="40" y="444" width="470" height="282" as="geometry"/>
         </mxCell>
         <mxCell id="c105" value="&lt;b&gt;Software - Aplicacion movil&lt;/b&gt;&lt;br&gt;React Native 0.76 (JavaScript)&lt;br&gt;Android 10+ / iOS 14+" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="56" y="492" width="358" height="66" as="geometry"/>
+          <mxGeometry x="56" y="500" width="428" height="66" as="geometry"/>
         </mxCell>
         <mxCell id="c106" value="&lt;b&gt;Artefactos&lt;/b&gt;&lt;br&gt;control_store.apk (instalado en el dispositivo)" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="56" y="572" width="358" height="50" as="geometry"/>
+          <mxGeometry x="56" y="580" width="428" height="50" as="geometry"/>
         </mxCell>
-        <mxCell id="c107" value="&lt;b&gt;Hardware - CPU / RAM / DD&lt;/b&gt;&lt;br&gt;Minimo: Quad-Core 1.5 GHz - 2 GB RAM - 100 MB libres&lt;br&gt;Ideal: Octa-Core 2.0 GHz - 4 GB RAM - 500 MB libres" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="56" y="636" width="358" height="66" as="geometry"/>
+        <mxCell id="c107" value="&lt;b&gt;Hardware - CPU / RAM / DD&lt;/b&gt;&lt;br&gt;Minimo: Procesador Quad-Core 1.5 GHz - 2 GB RAM - 100 MB libres&lt;br&gt;Ideal: Procesador Octa-Core 2.0 GHz - 4 GB RAM - 500 MB libres" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="56" y="644" width="428" height="66" as="geometry"/>
         </mxCell>
         <mxCell id="c108" value="APP SERVICE FRONTEND" style="verticalAlign=top;align=left;spacingTop=6;spacingLeft=4;spacingRight=12;shape=cube;size=12;direction=south;fontStyle=5;fontSize=14;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="640" y="40" width="460" height="298" as="geometry"/>
+          <mxGeometry x="710" y="40" width="460" height="314" as="geometry"/>
         </mxCell>
         <mxCell id="c109" value="&lt;b&gt;Software - Interfaz web&lt;/b&gt;&lt;br&gt;HTML5 + CSS3 + JavaScript ES6&lt;br&gt;Bootstrap 5.3.3 + Bootstrap Icons 1.11.3&lt;br&gt;Servidor web: Nginx 1.24 (archivos estaticos)" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="656" y="96" width="418" height="82" as="geometry"/>
+          <mxGeometry x="726" y="96" width="418" height="82" as="geometry"/>
         </mxCell>
         <mxCell id="c110" value="&lt;b&gt;Artefactos&lt;/b&gt;&lt;br&gt;index.html - /pages - /assets (css, js, img, fonts)" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="656" y="192" width="418" height="50" as="geometry"/>
+          <mxGeometry x="726" y="192" width="418" height="50" as="geometry"/>
         </mxCell>
-        <mxCell id="c111" value="&lt;b&gt;Hardware - CPU / RAM / DD&lt;/b&gt;&lt;br&gt;1 vCPU - 1 GB RAM - 10 GB SSD&lt;br&gt;Instancia AWS: EC2 t3.micro" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="656" y="256" width="418" height="66" as="geometry"/>
+        <mxCell id="c111" value="&lt;b&gt;Hardware - CPU / RAM / DD&lt;/b&gt;&lt;br&gt;Procesador: Intel Xeon Platinum 8259CL 2.5 GHz (Turbo 3.1 GHz)&lt;br&gt;Minimo: 2 vCPU - 1 GB RAM - 10 GB SSD (AWS EC2 t3.micro)&lt;br&gt;Ideal: 2 vCPU - 2 GB RAM - 20 GB SSD (AWS EC2 t3.small)" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="726" y="256" width="418" height="82" as="geometry"/>
         </mxCell>
         <mxCell id="c112" value="APP SERVICE BACKEND" style="verticalAlign=top;align=left;spacingTop=6;spacingLeft=4;spacingRight=12;shape=cube;size=12;direction=south;fontStyle=5;fontSize=14;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="640" y="428" width="460" height="298" as="geometry"/>
+          <mxGeometry x="710" y="444" width="460" height="282" as="geometry"/>
         </mxCell>
-        <mxCell id="c113" value="&lt;b&gt;Software - API y logica de negocio&lt;/b&gt;&lt;br&gt;Python 3.13 - Django 5.2.16&lt;br&gt;mysqlclient 2.2.8 - requests 2.34.2 - twilio 9.10.9" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="656" y="484" width="418" height="66" as="geometry"/>
+        <mxCell id="c113" value="&lt;b&gt;Software - API y logica de negocio&lt;/b&gt;&lt;br&gt;Python 3.13 - Django 5.2.16&lt;br&gt;mysqlclient 2.2.8 - requests 2.34.2 - twilio 9.10.9&lt;br&gt;API REST: atiende al frontend web y a la app movil (JSON)&lt;br&gt;Logica del ChatBot: recibe el webhook de WhatsApp&lt;br&gt;Unico autorizado a conectarse a la base de datos" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="726" y="500" width="418" height="114" as="geometry"/>
         </mxCell>
-        <mxCell id="c114" value="&lt;b&gt;Componentes&lt;/b&gt;&lt;br&gt;API REST (respuestas en JSON)&lt;br&gt;Logica del ChatBot (webhook de WhatsApp)" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="656" y="564" width="418" height="66" as="geometry"/>
+        <mxCell id="c114" value="&lt;b&gt;Hardware - CPU / RAM / DD&lt;/b&gt;&lt;br&gt;Procesador: Intel Xeon Platinum 8259CL 2.5 GHz (Turbo 3.1 GHz)&lt;br&gt;Minimo: 2 vCPU - 2 GB RAM - 20 GB SSD (AWS EC2 t3.small)&lt;br&gt;Ideal: 2 vCPU - 4 GB RAM - 40 GB SSD (AWS EC2 t3.medium)" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="726" y="628" width="418" height="82" as="geometry"/>
         </mxCell>
-        <mxCell id="c115" value="&lt;b&gt;Hardware - CPU / RAM / DD&lt;/b&gt;&lt;br&gt;2 vCPU - 2 GB RAM - 20 GB SSD&lt;br&gt;Instancia AWS: EC2 t3.small" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="656" y="644" width="418" height="66" as="geometry"/>
+        <mxCell id="c115" value="SGBD - BASE DE DATOS" style="verticalAlign=top;align=left;spacingTop=6;spacingLeft=4;spacingRight=12;shape=cube;size=12;direction=south;fontStyle=5;fontSize=14;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="710" y="816" width="460" height="250" as="geometry"/>
         </mxCell>
-        <mxCell id="c116" value="SGBD - BASE DE DATOS" style="verticalAlign=top;align=left;spacingTop=6;spacingLeft=4;spacingRight=12;shape=cube;size=12;direction=south;fontStyle=5;fontSize=14;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="640" y="816" width="460" height="266" as="geometry"/>
+        <mxCell id="c116" value="&lt;b&gt;Software - Motor de base de datos&lt;/b&gt;&lt;br&gt;MySQL Server 8.4 LTS&lt;br&gt;Motor InnoDB - Cotejamiento utf8mb4_spanish_ci&lt;br&gt;Respaldo diario automatizado (mysqldump)" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="726" y="872" width="418" height="82" as="geometry"/>
         </mxCell>
-        <mxCell id="c117" value="&lt;b&gt;Software - Motor de base de datos&lt;/b&gt;&lt;br&gt;MySQL Server 8.4 LTS" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="656" y="872" width="418" height="50" as="geometry"/>
+        <mxCell id="c117" value="&lt;b&gt;Hardware - CPU / RAM / DD&lt;/b&gt;&lt;br&gt;Procesador: Intel Xeon Platinum 8259CL 2.5 GHz (Turbo 3.1 GHz)&lt;br&gt;Minimo: 2 vCPU - 2 GB RAM - 20 GB SSD (AWS RDS db.t3.small)&lt;br&gt;Ideal: 2 vCPU - 4 GB RAM - 50 GB SSD (AWS RDS db.t3.medium)" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="726" y="968" width="418" height="82" as="geometry"/>
         </mxCell>
-        <mxCell id="c118" value="&lt;b&gt;Artefactos&lt;/b&gt;&lt;br&gt;controlstore_sena.sql (script de creacion)" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="656" y="936" width="418" height="50" as="geometry"/>
+        <mxCell id="c118" value="«externo»&lt;br&gt;SERVICIO EXTERNO - TWILIO" style="verticalAlign=top;align=left;spacingTop=6;spacingLeft=4;spacingRight=12;shape=cube;size=12;direction=south;fontStyle=5;fontSize=14;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="516" width="360" height="138" as="geometry"/>
         </mxCell>
-        <mxCell id="c119" value="&lt;b&gt;Hardware - CPU / RAM / DD&lt;/b&gt;&lt;br&gt;2 vCPU - 2 GB RAM - 20 GB SSD&lt;br&gt;Instancia AWS: RDS MySQL t3.micro / t3.small" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="656" y="1000" width="418" height="66" as="geometry"/>
+        <mxCell id="c119" value="&lt;b&gt;Software - Mensajeria&lt;/b&gt;&lt;br&gt;Twilio API for WhatsApp&lt;br&gt;Envia y recibe los mensajes del ChatBot" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1386" y="572" width="318" height="66" as="geometry"/>
         </mxCell>
-        <mxCell id="c120" value="«externo»&lt;br&gt;SERVICIO EXTERNO - TWILIO" style="verticalAlign=top;align=left;spacingTop=6;spacingLeft=4;spacingRight=12;shape=cube;size=12;direction=south;fontStyle=5;fontSize=14;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="1300" y="508" width="360" height="138" as="geometry"/>
-        </mxCell>
-        <mxCell id="c121" value="&lt;b&gt;Software - Mensajeria&lt;/b&gt;&lt;br&gt;Twilio API for WhatsApp&lt;br&gt;Envia y recibe los mensajes del ChatBot" style="shape=module;align=left;spacingLeft=26;verticalAlign=top;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="1316" y="564" width="318" height="66" as="geometry"/>
-        </mxCell>
-        <mxCell id="c122" value="HTTPS / TLS 1.3&lt;br&gt;Puerto 443" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.5;fontSize=11;fontColor=#000000;labelBackgroundColor=#FFFFFF;verticalAlign=middle;align=center;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="c101" target="c108">
+        <mxCell id="c120" value="HTTPS / TLS 1.3&lt;br&gt;Puerto 443" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.5;fontSize=11;fontColor=#000000;labelBackgroundColor=#FFFFFF;verticalAlign=middle;align=center;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="c101" target="c108">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="c123" value="HTTPS - REST / JSON&lt;br&gt;Puerto 443" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.5;fontSize=11;fontColor=#000000;labelBackgroundColor=#FFFFFF;verticalAlign=middle;align=center;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c108" target="c112">
+        <mxCell id="c121" value="HTTPS - REST / JSON&lt;br&gt;Puerto 443" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.5;fontSize=11;fontColor=#000000;labelBackgroundColor=#FFFFFF;verticalAlign=middle;align=center;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c108" target="c112">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="c124" value="HTTPS - REST / JSON&lt;br&gt;Puerto 443&lt;br&gt;«fase futura»" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.5;fontSize=11;fontColor=#000000;labelBackgroundColor=#FFFFFF;verticalAlign=middle;align=center;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="c104" target="c112">
+        <mxCell id="c122" value="HTTPS - REST / JSON&lt;br&gt;Puerto 443&lt;br&gt;«fase futura»" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.5;fontSize=11;fontColor=#000000;labelBackgroundColor=#FFFFFF;verticalAlign=middle;align=center;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="c104" target="c112">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="c125" value="TCP/IP - protocolo MySQL&lt;br&gt;Puerto 3306" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.5;fontSize=11;fontColor=#000000;labelBackgroundColor=#FFFFFF;verticalAlign=middle;align=center;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c112" target="c116">
+        <mxCell id="c123" value="TCP/IP - protocolo MySQL&lt;br&gt;Puerto 3306" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.5;fontSize=11;fontColor=#000000;labelBackgroundColor=#FFFFFF;verticalAlign=middle;align=center;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c112" target="c115">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="c126" value="HTTPS - Webhook&lt;br&gt;Puerto 443" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.5;fontSize=11;fontColor=#000000;labelBackgroundColor=#FFFFFF;verticalAlign=middle;align=center;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="c120" target="c112">
+        <mxCell id="c124" value="HTTPS - Webhook&lt;br&gt;Puerto 443" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.5;fontSize=11;fontColor=#000000;labelBackgroundColor=#FFFFFF;verticalAlign=middle;align=center;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="c118" target="c112">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
         <mxCell id="titulo" value="&lt;b&gt;Diagrama de despliegue - Control Store | Autoservicio Ayuelal&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=15;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1132" width="1620" height="30" as="geometry"/>
+          <mxGeometry x="40" y="1116" width="1690" height="30" as="geometry"/>
         </mxCell>
       </root>
     </mxGraphModel>
