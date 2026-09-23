@@ -6,103 +6,98 @@
     <title>Registrar Usuario - Control Store</title>
     <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="../../../assets/css/styles.css">
+    <!-- Fuente Inter descargada (no CDN): ver assets/vendor/fonts/inter/ -->
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
 </head>
-<body>
-        <div class="container py-5">
-        <div class="col-lg-8 mx-auto">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
-
-                    <div class="mb-4">
-                        <h1 class="h4"><i class="bi bi-person-plus text-primary"></i> Registrar usuario</h1>
-                        <p class="text-muted mb-0">Módulo Usuarios</p>
-                    </div>
-
-                    <div id="registroExito" class="alert alert-success d-none" role="alert">
-                        Usuario registrado exitosamente
-                    </div>
-                    <div id="registroDuplicado" class="alert alert-danger d-none" role="alert">
-                        El usuario ya se encuentra registrado
-                    </div>
-
-                    <form id="formRegistrarUsuario" novalidate>
-                        <div class="row g-3">
-
-                            <div class="col-md-6">
-                                <label for="documento" class="form-label">Documento</label>
-                                <input type="text" class="form-control" id="documento" name="documento"
-                                    pattern="[0-9]+" required>
-                                <div class="invalid-feedback">Este campo es obligatorio y solo acepta números</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="nombres" class="form-label">Nombres</label>
-                                <input type="text" class="form-control" id="nombres" name="nombres" required>
-                                <div class="invalid-feedback">Este campo es obligatorio</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="apellidos" class="form-label">Apellidos</label>
-                                <input type="text" class="form-control" id="apellidos" name="apellidos" required>
-                                <div class="invalid-feedback">Este campo es obligatorio</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="correo" class="form-label">Correo</label>
-                                <input type="email" class="form-control" id="correo" name="correo" required>
-                                <div class="invalid-feedback">Este campo es obligatorio y debe ser un correo válido</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="telefono" name="telefono" required>
-                                <div class="invalid-feedback">Este campo es obligatorio</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="usuario" class="form-label">Usuario</label>
-                                <input type="text" class="form-control" id="usuario" name="usuario" required>
-                                <div class="invalid-feedback">Este campo es obligatorio</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="contrasena" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="contrasena" name="contrasena"
-                                    minlength="8" required>
-                                <div class="invalid-feedback">Debe tener mínimo 8 caracteres</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="rol" class="form-label">Rol</label>
-                                <select class="form-select" id="rol" name="rol" required>
-                                    <option value="" selected disabled>Selecciona un rol</option>
-                                    <option value="administrador">Administrador</option>
-                                    <option value="vendedor">Vendedor</option>
-                                    <option value="domiciliario">Domiciliario</option>
-                                </select>
-                                <div class="invalid-feedback">Selecciona un rol</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="estado" class="form-label">Estado</label>
-                                <select class="form-select" id="estado" name="estado" required>
-                                    <option value="activo" selected>Activo</option>
-                                    <option value="inactivo">Inactivo</option>
-                                </select>
-                            </div>
-
-                        </div>
-
-                        <button type="submit" class="btn btn-primary mt-4">
-                            <i class="bi bi-check-circle"></i> Registrar usuario
-                        </button>
-                    </form>
-
-                </div>
-            </div>
-        </div>
+<body class="content-body">
+    <div class="mb-4">
+        <h1 class="h4"><i class="bi bi-person-plus text-primary"></i> Registrar usuario</h1>
+        <p class="text-muted mb-0">Módulo Usuarios</p>
     </div>
+
+    <div id="registroExito" class="alert alert-success d-none" role="alert">
+        Usuario registrado exitosamente
+    </div>
+    <div id="registroDuplicado" class="alert alert-danger d-none" role="alert">
+        El usuario ya se encuentra registrado
+    </div>
+
+    <form id="formRegistrarUsuario" novalidate>
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label for="documento" class="form-label">Documento</label>
+                <input type="text" class="form-control" id="documento" name="documento"
+                    pattern="[0-9]+" required>
+                <div class="invalid-feedback">Este campo es obligatorio y solo acepta números</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="nombres" class="form-label">Nombres</label>
+                <input type="text" class="form-control" id="nombres" name="nombres" required>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="apellidos" class="form-label">Apellidos</label>
+                <input type="text" class="form-control" id="apellidos" name="apellidos" required>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="correo" class="form-label">Correo</label>
+                <input type="email" class="form-control" id="correo" name="correo" required>
+                <div class="invalid-feedback">Este campo es obligatorio y debe ser un correo válido</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="usuario" class="form-label">Usuario</label>
+                <input type="text" class="form-control" id="usuario" name="usuario" required>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="contrasena" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="contrasena" name="contrasena"
+                    minlength="8" required>
+                <div class="invalid-feedback">Debe tener mínimo 8 caracteres</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="rol" class="form-label">Rol</label>
+                <select class="form-select" id="rol" name="rol" required>
+                    <option value="" selected disabled>Selecciona un rol</option>
+                    <option value="administrador">Administrador</option>
+                    <option value="vendedor">Vendedor</option>
+                    <option value="domiciliario">Domiciliario</option>
+                </select>
+                <div class="invalid-feedback">Selecciona un rol</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="estado" class="form-label">Estado</label>
+                <select class="form-select" id="estado" name="estado" required>
+                    <option value="activo" selected>Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Registrar usuario
+            </button>
+            <a href="listar_usuarios.html" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
 
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../../../assets/js/registrar_usuario.js"></script>

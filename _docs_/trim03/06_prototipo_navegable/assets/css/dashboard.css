@@ -29,6 +29,7 @@
     --color-auditoria: #495057;
     --color-auditoria-tenue: #eceef0;
     --color-alerta: #d64545;
+    --color-alerta-tenue: #fbe9e9;
 
     /* Color neutro para los módulos que todavía no están desarrollados
        (tarjeta "Próximamente"). Se usa en vez del color real del módulo

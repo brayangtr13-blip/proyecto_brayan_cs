@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Producto - Control Store</title>
+    <!-- Bootstrap y Bootstrap Icons vendorizados localmente (sin CDN), igual que el resto del proyecto -->
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <!-- dashboard.css trae la clase content-body: el padding compartido de las paginas que cargan dentro del iframe -->
+    <!-- Fuente Inter descargada (no CDN): ver assets/vendor/fonts/inter/ -->
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+<!-- content-body en vez de un .card: es el patron que ya usan las demas paginas de modulo (editar_usuario, listar_usuarios) -->
+<body class="content-body">
+    <div class="mb-4">
+        <h1 class="h4"><i class="bi bi-box-seam text-primary"></i> Registrar producto</h1>
+        <p class="text-muted mb-0">Módulo Inventario</p>
+    </div>
+
+    <!-- Alertas ocultas por defecto (d-none). El JS les quita esa clase segun el resultado del envio -->
+    <div id="registroExito" class="alert alert-success d-none" role="alert">
+        Producto registrado exitosamente
+    </div>
+    <div id="registroDuplicado" class="alert alert-danger d-none" role="alert">
+        Ya existe un producto con ese código de barras
+    </div>
+
+    <!-- novalidate: apaga la validacion nativa del navegador para que sea nuestro JS
+         quien decida cuando mostrar los mensajes de error (asi Bootstrap puede pintarlos a su estilo) -->
+    <form id="formRegistrarProducto" novalidate>
+        <!-- row g-3: grilla de Bootstrap con espacio (gap) de 3 unidades entre columnas -->
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label for="codigoProducto" class="form-label">Código de barras</label>
+                <!-- pattern="[0-9]+": el codigo de barras que lee la pistola es siempre numerico -->
+                <input type="text" class="form-control" id="codigoProducto" name="codigoProducto"
+                    pattern="[0-9]+" required>
+                <div class="invalid-feedback">Este campo es obligatorio y solo acepta números</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+            </div>
+
+            <div class="col-md-6">
+                <!-- Las opciones son las 5 categorias que ya existen en la tabla `categorias` de la base de datos -->
+                <label for="categoria" class="form-label">Categoría</label>
+                <select class="form-select" id="categoria" name="categoria" required>
+                    <option value="" selected disabled>Selecciona una categoría</option>
+                    <option value="lacteos">Lácteos</option>
+                    <option value="abarrotes">Abarrotes</option>
+                    <option value="bebidas">Bebidas</option>
+                    <option value="panaderia">Panadería</option>
+                    <option value="aseo">Aseo</option>
+                </select>
+                <div class="invalid-feedback">Selecciona una categoría</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="unidadMedida" class="form-label">Unidad de medida</label>
+                <select class="form-select" id="unidadMedida" name="unidadMedida" required>
+                    <option value="" selected disabled>Selecciona una unidad</option>
+                    <option value="unidad">Unidad</option>
+                    <option value="kilogramo">Kilogramo</option>
+                    <option value="litro">Litro</option>
+                    <option value="paquete">Paquete</option>
+                </select>
+                <div class="invalid-feedback">Selecciona una unidad</div>
+            </div>
+
+            <div class="col-md-4">
+                <!-- step="50": el peso colombiano no maneja centavos, se redondea a multiplos de 50 -->
+                <label for="precioUnitario" class="form-label">Precio de venta (COP)</label>
+                <input type="number" class="form-control" id="precioUnitario" name="precioUnitario"
+                    min="0" step="50" required>
+                <div class="invalid-feedback">Ingresa un precio válido</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="stockActual" class="form-label">Stock inicial</label>
+                <input type="number" class="form-control" id="stockActual" name="stockActual"
+                    min="0" required>
+                <div class="invalid-feedback">Ingresa una cantidad válida</div>
+            </div>
+
+            <div class="col-md-4">
+                <!-- value="5": mismo valor por defecto que tiene la columna stock_minimo en la base de datos -->
+                <label for="stockMinimo" class="form-label">Stock mínimo</label>
+                <input type="number" class="form-control" id="stockMinimo" name="stockMinimo"
+                    min="0" value="5" required>
+                <div class="invalid-feedback">Ingresa una cantidad válida</div>
+            </div>
+
+            <div class="col-12">
+                <!-- Sin "required": la descripcion es opcional en la base de datos (columna DEFAULT NULL) -->
+                <label for="descripcion" class="form-label">Descripción <span class="text-muted">(opcional)</span></label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="2"></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label for="estado" class="form-label">Estado</label>
+                <select class="form-select" id="estado" name="estado" required>
+                    <option value="activo" selected>Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Registrar producto
+            </button>
+            <a href="listar_productos.html" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/registrar_producto.js"></script>
+</body>
+</html>
