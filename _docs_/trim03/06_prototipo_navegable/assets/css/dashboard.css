@@ -1,7 +1,45 @@
 /* Esqueleto del panel: barra lateral + encabezado + contenido */
 
+/* Colores del panel en un solo lugar: si el equipo quiere cambiar el azul
+   de marca o el color de una categoría, se edita aquí y se actualiza
+   en todo el sitio (sidebar, botones activos, tarjetas del dashboard). */
+:root {
+    --color-marca: #2f6fd0;
+    --color-marca-oscuro: #0f1b3d;
+    --color-texto: #1f2937;
+    --color-texto-suave: #6b7794;
+    --color-fondo: #f5f6fa;
+    --color-borde: #e5e8f0;
+    --color-marca-tenue: #e9f0fb;
+
+    /* Un color de acento por módulo, cada uno con su versión "tenue"
+       (el mismo color pero muy claro, para el fondo del círculo del
+       ícono). Para cambiar el color de un módulo en TODO el dashboard
+       basta con editar el par de líneas de ese módulo aquí. */
+    --color-inventario: #2f6fd0;
+    --color-inventario-tenue: #e7f0fc;
+    --color-ventas: #1aa179;
+    --color-ventas-tenue: #e3f6ef;
+    --color-domicilios: #e08a2b;
+    --color-domicilios-tenue: #fdf0e2;
+    --color-usuarios: #7a5cd6;
+    --color-usuarios-tenue: #f0ecfb;
+    --color-reportes: #2596be;
+    --color-reportes-tenue: #e4f3f9;
+    --color-auditoria: #495057;
+    --color-auditoria-tenue: #eceef0;
+    --color-alerta: #d64545;
+
+    /* Color neutro para los módulos que todavía no están desarrollados
+       (tarjeta "Próximamente"). Se usa en vez del color real del módulo
+       para que a simple vista se note que aún no se puede entrar. */
+    --color-pendiente: #9aa7c4;
+    --color-pendiente-tenue: #eef0f5;
+}
+
 body {
     margin: 0;
+    font-family: "Inter", system-ui, sans-serif;
 }
 
 .dashboard {
@@ -44,11 +82,13 @@ body {
     border: none;
 }
 
-/* Estilo base para las páginas que se cargan DENTRO del iframe */
+/* Estilo base para las páginas que se cargan DENTRO del iframe.
+   "system-ui" queda como respaldo por si el .woff2 no cargara. */
 .content-body {
     margin: 0;
     padding: 24px;
-    font-family: system-ui, sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
+    color: var(--color-texto);
 }
 
 /* ---------- Marca (logo) ---------- */
@@ -154,6 +194,87 @@ body {
 /* Limita el ancho de formularios angostos dentro del contenido (ej. cambiar contraseña) */
 .form-compacta {
     max-width: 420px;
+}
+
+/* ==========================================================
+   Dashboard de inicio (pantalla de bienvenida + accesos rápidos)
+   ========================================================== */
+
+/* Franja de bienvenida: ícono grande de la marca + saludo.
+   Usa un fondo "tenue" (azul clarito) en vez de blanco para que se
+   distinga del resto de la página sin necesitar un borde ni sombra. */
+.dashboard-bienvenida {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 26px;
+    background-color: var(--color-marca-tenue);
+    border-radius: 14px;
+}
+
+.dashboard-bienvenida-icono {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--color-marca);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    flex-shrink: 0;
+}
+
+/* Título de cada sección del dashboard (ej. "Accesos rápidos").
+   Una línea debajo en vez de un tamaño de letra enorme: mantiene
+   la jerarquía visual sin competir con el saludo de arriba. */
+.dashboard-seccion-titulo {
+    font-weight: 600;
+    font-size: 1rem;
+    padding-bottom: 8px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+/* Tarjeta de acceso a un módulo. Hereda la sombra suave de .card de
+   Bootstrap; solo ajustamos el borde y el efecto al pasar el mouse
+   para que se sienta "clickeable". */
+.modulo-card {
+    border: 1px solid var(--color-borde);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.modulo-card:has(.stretched-link):hover {
+    box-shadow: 0 0.5rem 1rem rgba(15, 27, 61, 0.08);
+    transform: translateY(-2px);
+}
+
+/* Círculo de color detrás del ícono de cada módulo. El color se pasa
+   por variable CSS desde el HTML (style="--icono-color: ...; --icono-fondo: ...;")
+   así una misma clase sirve para los 6 módulos sin repetir CSS. */
+.modulo-icono {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--icono-fondo, var(--color-fondo));
+    color: var(--icono-color, var(--color-marca));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+/* Tarjeta de un módulo que todavía no está construido: se ve "apagada"
+   (menos opaca, sin sombra al pasar el mouse) para que no parezca un
+   enlace roto sino algo pendiente a propósito. */
+.modulo-card-pendiente {
+    background-color: var(--color-fondo);
+}
+
+.modulo-card-pendiente .card-title,
+.modulo-card-pendiente p {
+    opacity: 0.85;
 }
 
 /* --------- TABLET Y CELULAR ------------- */

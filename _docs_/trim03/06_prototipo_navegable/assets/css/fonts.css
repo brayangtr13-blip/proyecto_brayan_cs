@@ -1,0 +1,17 @@
+/*
+   Fuente Inter descargada de Google Fonts (NO por CDN, el archivo vive en
+   assets/vendor/fonts/inter/). La bajamos como "variable font": un solo
+   archivo .woff2 que cubre todos los pesos (100 a 900), por eso "font-weight"
+   se declara como un RANGO y no como un número fijo. Así podemos usar
+   font-weight: 400, 600, 800, etc. en cualquier parte del sitio y el
+   navegador dibuja el peso exacto desde ese mismo archivo, sin pedir nada
+   por internet ni depender de que el instructor tenga esta fuente instalada.
+*/
+@font-face {
+    font-family: "Inter";
+    src: url("../vendor/fonts/inter/Inter-Variable.woff2") format("woff2-variations"),
+         url("../vendor/fonts/inter/Inter-Variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
