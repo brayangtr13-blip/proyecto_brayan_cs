@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Producto - Control Store</title>
+    <!-- Bootstrap y Bootstrap Icons vendorizados localmente, igual que el resto del proyecto -->
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+<body class="content-body">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../_mains_/dashboard_inicio.html" target="_self">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="listar_productos.html" target="_self">Inventario</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Consultar producto</li>
+        </ol>
+    </nav>
+
+    <!-- Sin boton de accion en el encabezado: CS-14 es de solo lectura, no hay nada que "crear" aqui -->
+    <div class="mb-4">
+        <h1 class="h4"><i class="bi bi-search text-primary"></i> Consultar producto</h1>
+        <p class="text-muted mb-0">Módulo Inventario</p>
+    </div>
+
+    <!-- Un solo campo de busqueda: CS-14 pide que busque por codigo, nombre O categoria a la vez,
+         no tres filtros separados como en Listar Productos -->
+    <div class="input-group mb-4">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="text" class="form-control" id="buscarConsulta"
+            placeholder="Buscar por código, nombre o categoría...">
+        <button class="btn btn-primary" type="button" id="botonBuscarConsulta">Buscar</button>
+    </div>
+
+    <!-- Tabla de resultados: solo Codigo, Nombre y Precio (lo minimo que pide la tarjeta).
+         Las filas las dibuja JS, igual que en Listar Productos. -->
+    <div class="table-responsive mb-4">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoResultados"></tbody>
+        </table>
+    </div>
+
+    <!-- Mensaje de "no encontrado": CS-14 lo pide con este texto exacto -->
+    <div id="productoNoEncontrado" class="alert alert-secondary text-center d-none">
+        Producto no encontrado
+    </div>
+
+    <!-- Detalle del producto seleccionado. Oculto hasta que se elija una fila de la tabla. -->
+    <div class="card d-none" id="detalleProducto">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-box-seam"></i> Detalle del producto</span>
+            <!-- AGOTADO manda sobre STOCK BAJO: nunca se muestran las dos al tiempo.
+                 Si el producto no tiene ninguna alerta, este badge queda oculto. -->
+            <span class="badge d-none" id="detalleBadgeStock"></span>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="text-muted small">Código</div>
+                    <div id="detalleCodigo"></div>
+                </div>
+                <div class="col-md-5">
+                    <div class="text-muted small">Nombre</div>
+                    <div id="detalleNombre"></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-muted small">Categoría</div>
+                    <div id="detalleCategoria"></div>
+                </div>
+
+                <div class="col-12">
+                    <div class="text-muted small">Descripción</div>
+                    <div id="detalleDescripcion"></div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="text-muted small">Precio de venta</div>
+                    <div id="detallePrecio"></div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted small">Stock actual</div>
+                    <div id="detalleStock"></div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted small">Stock mínimo</div>
+                    <div id="detalleStockMinimo"></div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted small">Unidad de medida</div>
+                    <div id="detalleUnidad"></div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="text-muted small">Estado</div>
+                    <div id="detalleEstado"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/consultar_producto.js"></script>
+</body>
+</html>

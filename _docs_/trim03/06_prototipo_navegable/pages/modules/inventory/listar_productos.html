@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Control Store</title>
+    <!-- Bootstrap y Bootstrap Icons vendorizados localmente, igual que el resto del proyecto -->
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+<body class="content-body">
+
+    <!-- Breadcrumb: ayuda a ubicarse dentro del iframe, sin recargar la pagina -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../_mains_/dashboard_inicio.html" target="_self">Inicio</a></li>
+            <li class="breadcrumb-item">Inventario</li>
+            <li class="breadcrumb-item active" aria-current="page">Listar productos</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h4"><i class="bi bi-box-seam"></i> Productos</h1>
+            <p class="text-muted mb-0">Módulo Inventario</p>
+        </div>
+        <div>
+            <!-- Antes, la unica forma de llegar a Consultar Producto (CS-14) era el icono
+                 "Ver" de una fila especifica. CS-14 es su propia pantalla con buscador
+                 general, asi que necesita una entrada directa como las demas. -->
+            <a href="consultar_producto.html" class="btn btn-outline-secondary">
+                <i class="bi bi-search"></i> Consultar producto
+            </a>
+            <a href="alertas_stock.html" class="btn btn-outline-warning">
+                <i class="bi bi-exclamation-triangle"></i> Alerta de stock
+            </a>
+            <a href="registrar_producto.html" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Registrar producto
+            </a>
+        </div>
+    </div>
+
+    <!-- Aviso de una sola accion (eliminar/reactivar); el JS lo muestra y lo oculta solo -->
+    <div id="accionExito" class="alert alert-success d-none" role="alert"></div>
+
+    <!-- Busqueda en vivo + filtro por categoria: CS-13 pide que ambos funcionen de verdad -->
+    <div class="row g-2 mb-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" id="buscarProducto"
+                placeholder="Buscar por nombre o código...">
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="filtroCategoria">
+                <option value="">Todas las categorías</option>
+                <option value="lacteos">Lácteos</option>
+                <option value="abarrotes">Abarrotes</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="panaderia">Panadería</option>
+                <option value="aseo">Aseo</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Nombre, Precio y Stock son ordenables (CS-13): data-sort marca la clave del producto
+         que usa esa columna para ordenar, y el icono cambia entre neutral/asc/desc por JS -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th class="sortable" data-sort="nombre">Nombre <i class="bi bi-arrow-down-up"></i></th>
+                    <th>Categoría</th>
+                    <th class="sortable" data-sort="precio">Precio <i class="bi bi-arrow-down-up"></i></th>
+                    <th class="sortable" data-sort="stock">Stock <i class="bi bi-arrow-down-up"></i></th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <!-- Las filas las dibuja JS desde el arreglo de productos, no van escritas a mano -->
+            <tbody id="cuerpoProductos"></tbody>
+        </table>
+    </div>
+
+    <!-- Se muestra solo cuando la busqueda/filtro no deja ningun producto -->
+    <div id="sinProductos" class="alert alert-secondary text-center d-none">
+        No hay productos registrados en el inventario
+    </div>
+
+    <!-- Paginacion visual: con 4 productos de ejemplo no hay nada que paginar todavia,
+         queda lista para cuando existan datos reales -->
+    <nav aria-label="Paginación de productos">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">Siguiente</a></li>
+        </ul>
+    </nav>
+
+    <!-- Modal de confirmacion para eliminar (CS-13 pide el boton Eliminar en cada fila) -->
+    <div class="modal fade" id="modalEliminarProducto" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="modalEliminarProductoTexto">
+                    ¿Desea eliminar este producto?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmarEliminarProducto">Sí, eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/listar_productos.js"></script>
+</body>
+</html>
