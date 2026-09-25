@@ -20,8 +20,9 @@
     --color-inventario-tenue: #e7f0fc;
     --color-ventas: #1aa179;
     --color-ventas-tenue: #e3f6ef;
-    --color-domicilios: #e08a2b;
-    --color-domicilios-tenue: #fdf0e2;
+    /* Acento de la paleta propia del Módulo 4 (ver domicilios.css) */
+    --color-domicilios: #3B6979;
+    --color-domicilios-tenue: #e5eef0;
     --color-usuarios: #7a5cd6;
     --color-usuarios-tenue: #f0ecfb;
     --color-reportes: #2596be;
@@ -273,6 +274,11 @@ body {
 .modulo-icono-inventario {
     --icono-color: var(--color-inventario);
     --icono-fondo: var(--color-inventario-tenue);
+}
+
+.modulo-icono-domicilios {
+    --icono-color: var(--color-domicilios);
+    --icono-fondo: var(--color-domicilios-tenue);
 }
 
 .modulo-icono-usuarios {
