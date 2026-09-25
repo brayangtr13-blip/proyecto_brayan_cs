@@ -122,9 +122,9 @@ function mostrarExito(mensaje) {
 buscarProducto.addEventListener('input', aplicarFiltros);
 filtroCategoria.addEventListener('change', aplicarFiltros);
 
-// Clic en un encabezado ordenable: si ya se estaba ordenando por esa columna, invierte la direccion
+// Clic en un encabezado ordenable: si ya se estaba ordenando por esa columna, invierte la direccion.
+// El cursor de mano no se pone aqui: lo da la clase .sortable en dashboard.css (el JS no escribe estilos).
 document.querySelectorAll('th.sortable').forEach(function (encabezado) {
-    encabezado.style.cursor = 'pointer';
     encabezado.addEventListener('click', function () {
         const clave = encabezado.dataset.sort;
         if (ordenActual.clave === clave) {
