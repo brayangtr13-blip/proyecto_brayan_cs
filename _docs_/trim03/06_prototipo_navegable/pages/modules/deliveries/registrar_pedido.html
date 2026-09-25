@@ -54,7 +54,7 @@
                         <label for="buscarTelefono" class="form-label">Buscar cliente por teléfono</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
-                            <input type="tel" class="form-control" id="buscarTelefono" inputmode="numeric"
+                            <input type="tel" class="form-control sin-validacion" id="buscarTelefono" inputmode="numeric"
                                 placeholder="Ej: 3011234567" aria-describedby="ayudaBuscarTelefono">
                             <button class="btn btn-outline-secondary" type="button" id="botonBuscarCliente">Buscar</button>
                         </div>
@@ -116,23 +116,20 @@
                             <!-- list="catalogoProductos": conecta el campo con el <datalist> de abajo; el navegador
                                  sugiere los productos mientras se escribe, sin JavaScript.
                                  Docs: https://getbootstrap.com/docs/5.3/forms/form-control/#datalists -->
-                            <input class="form-control w-50" list="catalogoProductos" id="buscarProducto"
+                            <input class="form-control w-50 sin-validacion" list="catalogoProductos" id="buscarProducto"
                                 placeholder="Ej: 7702001001 o Leche" aria-describedby="ayudaProducto">
-                            <input type="number" class="form-control" id="cantidadProducto" value="1" min="1"
+                            <input type="number" class="form-control sin-validacion" id="cantidadProducto" value="1" min="1"
                                 aria-label="Cantidad">
                             <button class="btn btn-outline-primary" type="button" id="botonAgregarProducto">
                                 <i class="fa-solid fa-plus"></i> Agregar
                             </button>
                         </div>
                         <div id="ayudaProducto" class="form-text">Solo se pueden agregar productos con stock disponible (HU04).</div>
-                        <!-- Los mismos 5 productos de ejemplo del Módulo de Inventario (tabla productos) -->
-                        <datalist id="catalogoProductos">
-                            <option value="7702001001 · Leche Entera 1L"></option>
-                            <option value="7702001002 · Arroz Blanco 5kg"></option>
-                            <option value="7702001003 · Café Molido 250g"></option>
-                            <option value="7702001004 · Azúcar Blanca 2kg"></option>
-                            <option value="7702001005 · Pan Tajado"></option>
-                        </datalist>
+                        <!-- Error de stock o de producto inexistente al pulsar "Agregar" -->
+                        <div id="errorProducto" class="small text-danger mt-1 d-none"></div>
+                        <!-- Las opciones las genera el JS desde el Repository, así la lista de productos
+                             no queda escrita en dos lugares (HTML y datos). -->
+                        <datalist id="catalogoProductos"></datalist>
 
                         <!-- Tabla del pedido. align-middle centra verticalmente los botones de cantidad.
                              Docs: https://getbootstrap.com/docs/5.3/content/tables/ -->
@@ -148,25 +145,8 @@
                                     </tr>
                                 </thead>
                                 <tbody id="cuerpoProductosPedido">
-                                    <!-- Fila de ejemplo para la fase HTML; en la fase JS las filas salen del carrito -->
-                                    <tr>
-                                        <td>Leche Entera 1L <small class="d-block text-body-secondary">7702001001</small></td>
-                                        <td class="text-end">$2.850</td>
-                                        <td class="text-center">
-                                            <!-- Input group pequeño con − y +: el patrón de cantidad del wireframe CU22.
-                                                 Docs: https://getbootstrap.com/docs/5.3/forms/input-group/#sizing -->
-                                            <div class="input-group input-group-sm cantidad-control mx-auto">
-                                                <button class="btn btn-outline-secondary" type="button" aria-label="Restar uno">−</button>
-                                                <input type="text" class="form-control text-center" value="2" aria-label="Cantidad" readonly>
-                                                <button class="btn btn-outline-secondary" type="button" aria-label="Sumar uno">+</button>
-                                            </div>
-                                        </td>
-                                        <td class="text-end">$5.700</td>
-                                        <td class="text-end">
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Quitar producto">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
-                                        </td>
+                                    <tr id="filaSinProductos">
+                                        <td colspan="5" class="text-center text-body-secondary py-3">Aún no has agregado productos.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -247,10 +227,10 @@
                              Docs: https://getbootstrap.com/docs/5.3/components/list-group/#flush -->
                         <ul class="list-group list-group-flush mb-3">
                             <li class="list-group-item d-flex justify-content-between px-0">
-                                <span>Productos</span><span id="resumenCantidad">2 unidades</span>
+                                <span>Productos</span><span id="resumenCantidad">0 unidades</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between px-0 fs-5 fw-bold">
-                                <span>Total</span><span id="resumenTotal">$5.700</span>
+                                <span>Total</span><span id="resumenTotal">$0</span>
                             </li>
                         </ul>
 
@@ -275,7 +255,34 @@
         </div>
     </form>
 
+    <!-- Renglón de producto: el JS copia esta plantilla por cada producto del pedido -->
+    <template id="plantillaRenglon">
+        <tr>
+            <td><span data-campo="nombre"></span> <small class="d-block text-body-secondary" data-campo="codigo"></small></td>
+            <td class="text-end" data-campo="precio"></td>
+            <td class="text-center">
+                <!-- Input group pequeño con − y +: el patrón de cantidad del wireframe CU22.
+                     Docs: https://getbootstrap.com/docs/5.3/forms/input-group/#sizing -->
+                <div class="input-group input-group-sm cantidad-control mx-auto">
+                    <button class="btn btn-outline-secondary" type="button" data-accion="restar" aria-label="Restar uno">−</button>
+                    <input type="text" class="form-control text-center" data-campo="cantidad" aria-label="Cantidad" readonly>
+                    <button class="btn btn-outline-secondary" type="button" data-accion="sumar" aria-label="Sumar uno">+</button>
+                </div>
+            </td>
+            <td class="text-end" data-campo="subtotal"></td>
+            <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-danger" data-accion="quitar" title="Quitar producto">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Orden: Repository -> Service -> script de la pantalla -->
+    <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_servicio.js"></script>
+    <script src="../../../assets/js/domicilios/registrar_pedido.js"></script>
 </body>
 
 </html>
