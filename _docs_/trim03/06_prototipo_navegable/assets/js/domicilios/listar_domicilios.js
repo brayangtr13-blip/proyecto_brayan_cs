@@ -53,6 +53,9 @@ function crearTarjeta(pedido) {
 
     // CS-36: "Asignar" si todavía no tiene domiciliario, "Reasignar" mientras no haya terminado
     // (HU05: se puede reasignar mientras no esté Entregado). Un pedido terminado no muestra el botón.
+    // CS-37: el detalle (y el cambio de estado) se abre con el id del pedido en la URL
+    tarjeta.querySelector('[data-accion="ver"]').href = 'consultar_pedido.html?id=' + pedido.id;
+
     const botonAsignar = tarjeta.querySelector('[data-accion="asignar"]');
     botonAsignar.dataset.id = pedido.id;
     if (ServicioDomicilios.estaTerminado(pedido)) {

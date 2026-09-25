@@ -94,10 +94,7 @@
                                 <thead>
                                     <tr><th>Producto</th><th class="text-end">Precio</th><th class="text-center">Cant.</th><th class="text-end">Subtotal</th></tr>
                                 </thead>
-                                <tbody id="cuerpoProductos">
-                                    <tr><td>Leche Entera 1L</td><td class="text-end">$2.850</td><td class="text-center">3</td><td class="text-end">$8.550</td></tr>
-                                    <tr><td>Arroz Blanco 5kg</td><td class="text-end">$12.500</td><td class="text-center">1</td><td class="text-end">$12.500</td></tr>
-                                </tbody>
+                                <tbody id="cuerpoProductos"></tbody>
                                 <tfoot>
                                     <tr class="fw-bold"><td colspan="3">Total</td><td class="text-end" data-campo="total">$21.050</td></tr>
                                 </tfoot>
@@ -117,10 +114,7 @@
                                 <thead>
                                     <tr><th>Fecha y hora</th><th>Estado anterior</th><th>Nuevo estado</th><th>Usuario</th><th>Observaciones</th></tr>
                                 </thead>
-                                <tbody id="cuerpoHistorial">
-                                    <tr><td>23/09/2026 11:20</td><td>Pendiente</td><td>Asignado</td><td>Administrador</td><td>Asignado a Luis Pérez</td></tr>
-                                    <tr><td>23/09/2026 11:35</td><td>Asignado</td><td>En camino</td><td>Luis Pérez</td><td>Salió a entregar</td></tr>
-                                </tbody>
+                                <tbody id="cuerpoHistorial"></tbody>
                             </table>
                         </div>
                     </div>
@@ -144,8 +138,7 @@
                                 <label for="nuevoEstado" class="form-label">Nuevo estado</label>
                                 <select class="form-select" id="nuevoEstado" required>
                                     <option value="" selected disabled>Selecciona un estado</option>
-                                    <option value="entregado">Entregado</option>
-                                    <option value="cancelado">Cancelado</option>
+                                    <!-- Las demás opciones las agrega el JS: solo las que permite la máquina de estados -->
                                 </select>
                                 <div class="invalid-feedback">Selecciona el nuevo estado</div>
                             </div>
@@ -175,7 +168,24 @@
         </div>
     </div>
 
+    <!-- Renglones que el JS copia con cloneNode y llena con textContent -->
+    <template id="plantillaProducto">
+        <tr><td data-campo="nombre"></td><td class="text-end" data-campo="precio"></td>
+            <td class="text-center" data-campo="cantidad"></td><td class="text-end" data-campo="subtotal"></td></tr>
+    </template>
+    <template id="plantillaHistorial">
+        <tr><td data-campo="fecha"></td><td data-campo="anterior"></td><td data-campo="nuevo"></td>
+            <td data-campo="usuario"></td><td data-campo="detalle"></td></tr>
+    </template>
+
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Orden importante: datos (Repository) -> máquina de estados (State) -> eventos (Observer)
+         -> reglas (Service, que usa a los tres) -> script de esta pantalla. -->
+    <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_estados.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_eventos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_servicio.js"></script>
+    <script src="../../../assets/js/domicilios/consultar_pedido.js"></script>
 </body>
 
 </html>

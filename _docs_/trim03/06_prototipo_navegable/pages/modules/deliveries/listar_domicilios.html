@@ -261,9 +261,11 @@
     </template>
 
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!-- Orden importante: primero los datos (Repository), luego las reglas (Service)
-         y al final el script de esta pantalla, que usa a los dos. -->
+    <!-- Orden importante: datos (Repository) -> máquina de estados (State) -> eventos (Observer)
+         -> reglas (Service, que usa a los tres) -> script de esta pantalla. -->
     <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_estados.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_eventos.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_servicio.js"></script>
     <script src="../../../assets/js/domicilios/listar_domicilios.js"></script>
 </body>

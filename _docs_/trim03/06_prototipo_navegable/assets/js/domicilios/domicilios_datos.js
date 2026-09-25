@@ -13,7 +13,9 @@
 // ==========================================================
 
 const RepositorioDomicilios = (function () {
-    const CLAVE = 'controlstore_domicilios_v1';
+    // v2: los pedidos ahora traen historial y stockDescontado (CS-37). Cambiar la versión hace que
+    // los navegadores con datos guardados en el formato viejo arranquen de nuevo con los de ejemplo.
+    const CLAVE = 'controlstore_domicilios_v2';
 
     // Datos de ejemplo basados en controlstore_sena (MySQL 8.4):
     //  - productos: los mismos 5 de Inventario (tabla productos)
@@ -45,7 +47,8 @@ const RepositorioDomicilios = (function () {
                 { id: 4, nombre: 'Diana Morales', activo: true },
                 { id: 5, nombre: 'Jorge Rincón', activo: false }
             ],
-            // Un pedido = una venta (ventas + detalle_venta) + su domicilio (domicilios)
+            // Un pedido = una venta (ventas + detalle_venta) + su domicilio (domicilios).
+            // historial = los registros de log_auditoria del módulo domicilios para ese pedido.
             pedidos: [
                 {
                     id: 1, idVenta: 3, idCliente: 1, idMetodoPago: 2, fechaVenta: '2026-09-23T10:10:30',
@@ -53,28 +56,48 @@ const RepositorioDomicilios = (function () {
                     total: 32300, direccionEntrega: 'Calle 12 # 4-30', barrio: 'Centro', telefonoContacto: '3011234567',
                     estado: 'entregado', idDomiciliario: 3,
                     fechaAsignacion: '2026-09-23T10:20:30', fechaEntrega: '2026-09-23T11:00:30',
-                    observacion: 'Entregado en porteria'
+                    observacion: 'Entregado en porteria',
+                    // La venta #3 ya se entregó: su stock ya salió del inventario
+                    stockDescontado: true,
+                    historial: [
+                        { fecha: '2026-09-23T10:10:30', estadoAnterior: null, estadoNuevo: 'pendiente', usuario: 'Administrador', detalle: 'Pedido registrado por teléfono' },
+                        { fecha: '2026-09-23T10:20:30', estadoAnterior: 'pendiente', estadoNuevo: 'asignado', usuario: 'Administrador', detalle: 'Asignado a Luis Pérez' },
+                        { fecha: '2026-09-23T10:32:00', estadoAnterior: 'asignado', estadoNuevo: 'en_camino', usuario: 'Luis Pérez', detalle: '' },
+                        { fecha: '2026-09-23T11:00:30', estadoAnterior: 'en_camino', estadoNuevo: 'entregado', usuario: 'Luis Pérez', detalle: 'Entregado en porteria' }
+                    ]
                 },
                 {
                     id: 2, idVenta: 4, idCliente: 2, idMetodoPago: 1, fechaVenta: '2026-09-23T11:10:30',
                     items: [{ codigo: '7702001001', cantidad: 3, precio: 2850 }, { codigo: '7702001002', cantidad: 1, precio: 12500 }],
                     total: 21050, direccionEntrega: 'Carrera 7 # 15-02', barrio: 'La Playa', telefonoContacto: '3109876543',
                     estado: 'en_camino', idDomiciliario: 3,
-                    fechaAsignacion: '2026-09-23T11:20:00', fechaEntrega: null, observacion: ''
+                    fechaAsignacion: '2026-09-23T11:20:00', fechaEntrega: null, observacion: '',
+                    historial: [
+                        { fecha: '2026-09-23T11:10:30', estadoAnterior: null, estadoNuevo: 'pendiente', usuario: 'Administrador', detalle: 'Pedido registrado por teléfono' },
+                        { fecha: '2026-09-23T11:20:00', estadoAnterior: 'pendiente', estadoNuevo: 'asignado', usuario: 'Administrador', detalle: 'Asignado a Luis Pérez' },
+                        { fecha: '2026-09-23T11:35:00', estadoAnterior: 'asignado', estadoNuevo: 'en_camino', usuario: 'Luis Pérez', detalle: '' }
+                    ]
                 },
                 {
                     id: 3, idVenta: 5, idCliente: 1, idMetodoPago: 2, fechaVenta: '2026-09-24T16:50:00',
                     items: [{ codigo: '7702001003', cantidad: 1, precio: 9900 }, { codigo: '7702001005', cantidad: 1, precio: 3000 }],
                     total: 12900, direccionEntrega: 'Calle 12 # 4-30', barrio: 'Centro', telefonoContacto: '3011234567',
                     estado: 'asignado', idDomiciliario: 4,
-                    fechaAsignacion: '2026-09-24T17:05:00', fechaEntrega: null, observacion: ''
+                    fechaAsignacion: '2026-09-24T17:05:00', fechaEntrega: null, observacion: '',
+                    historial: [
+                        { fecha: '2026-09-24T16:50:00', estadoAnterior: null, estadoNuevo: 'pendiente', usuario: 'Administrador', detalle: 'Pedido registrado por teléfono' },
+                        { fecha: '2026-09-24T17:05:00', estadoAnterior: 'pendiente', estadoNuevo: 'asignado', usuario: 'Administrador', detalle: 'Asignado a Diana Morales' }
+                    ]
                 },
                 {
                     id: 4, idVenta: 6, idCliente: 3, idMetodoPago: 3, fechaVenta: '2026-09-24T17:15:00',
                     items: [{ codigo: '7702001005', cantidad: 2, precio: 3000 }, { codigo: '7702001001', cantidad: 1, precio: 2850 }],
                     total: 8850, direccionEntrega: 'Calle 45 # 12-30', barrio: 'El Prado', telefonoContacto: '3124567890',
                     estado: 'pendiente', idDomiciliario: null,
-                    fechaAsignacion: null, fechaEntrega: null, observacion: 'Llamar antes de llegar'
+                    fechaAsignacion: null, fechaEntrega: null, observacion: 'Llamar antes de llegar',
+                    historial: [
+                        { fecha: '2026-09-24T17:15:00', estadoAnterior: null, estadoNuevo: 'pendiente', usuario: 'Administrador', detalle: 'Pedido registrado por teléfono' }
+                    ]
                 }
             ]
         };
@@ -154,6 +177,17 @@ const RepositorioDomicilios = (function () {
         // UPDATE domicilios: las pantallas modifican el pedido y luego piden guardarlo
         actualizarPedido: function () {
             guardar();
+        },
+        // INSERT INTO movimientos_inventario (tipo "salida" al entregar, "entrada" si se devuelve).
+        // El stock del producto ya viene modificado por el Service; aquí se deja constancia y se guarda.
+        registrarMovimientoInventario: function (movimiento) {
+            const datos = leer();
+            datos.movimientos = datos.movimientos || [];
+            datos.movimientos.push(movimiento);
+            guardar();
+        },
+        obtenerMovimientosInventario: function () {
+            return leer().movimientos || [];
         },
         // Vuelve a los datos de ejemplo (útil para repetir la demostración ante el instructor)
         restablecer: function () {
