@@ -38,8 +38,11 @@
     <!-- Saludo del diseño de referencia: resume cuántas entregas tiene el domiciliario.
          d-flex + gap-2 pone el ícono y el texto en fila sin CSS nuevo.
          Docs: https://getbootstrap.com/docs/5.3/components/alerts/ -->
-    <div class="alert alert-success d-flex align-items-center gap-2" role="alert" id="saludo">
-        <i class="fa-solid fa-user-check"></i>
+    <div class="alert alert-success d-flex align-items-center gap-3" role="alert" id="saludo">
+        <!-- En lugar de una foto de Pixabay se reutiliza el ícono de Flaticon que ya tiene el proyecto
+             (repartidor.png, con su crédito al pie de esta página). alt="" porque es decorativo:
+             el texto del saludo ya dice lo importante. -->
+        <img src="../../../assets/img/domicilios/repartidor.png" alt="" width="40" height="40">
         <div>Hola <strong data-campo="nombreDomiciliario">Luis Pérez</strong>, tienes <strong data-campo="totalActivos">1 entrega activa</strong>.</div>
     </div>
 
