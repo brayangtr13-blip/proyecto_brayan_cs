@@ -250,9 +250,11 @@ body {
     transform: translateY(-2px);
 }
 
-/* Círculo de color detrás del ícono de cada módulo. El color se pasa
-   por variable CSS desde el HTML (style="--icono-color: ...; --icono-fondo: ...;")
-   así una misma clase sirve para los 6 módulos sin repetir CSS. */
+/* Círculo de color detrás del ícono de cada módulo. La forma (tamaño,
+   círculo, centrado) vive aquí; el color lo pone una clase modificadora
+   (.modulo-icono-inventario, .modulo-icono-pendiente...). Así el HTML solo
+   dice "class=" y no lleva CSS escrito dentro (style=""): separación de
+   responsabilidades entre HTML (estructura) y CSS (presentación). */
 .modulo-icono {
     width: 48px;
     height: 48px;
@@ -264,6 +266,37 @@ body {
     justify-content: center;
     font-size: 1.3rem;
     flex-shrink: 0;
+}
+
+/* Un modificador por color. Cada uno solo cambia las dos variables que
+   lee .modulo-icono; los colores reales siguen definidos una sola vez en :root. */
+.modulo-icono-inventario {
+    --icono-color: var(--color-inventario);
+    --icono-fondo: var(--color-inventario-tenue);
+}
+
+.modulo-icono-usuarios {
+    --icono-color: var(--color-usuarios);
+    --icono-fondo: var(--color-usuarios-tenue);
+}
+
+.modulo-icono-alerta {
+    --icono-color: var(--color-alerta);
+    --icono-fondo: var(--color-alerta-tenue);
+}
+
+/* Gris para los módulos que todavía no están construidos */
+.modulo-icono-pendiente {
+    --icono-color: var(--color-pendiente);
+    --icono-fondo: var(--color-pendiente-tenue);
+}
+
+/* Cursor de "mano" para lo que se puede clicar pero no es un enlace ni un botón
+   (encabezados que ordenan la tabla, filas que abren un detalle). Antes esto se
+   ponía desde el JS con elemento.style.cursor, que es CSS escrito dentro del JS. */
+.sortable,
+.fila-clickeable {
+    cursor: pointer;
 }
 
 /* Tarjeta de un módulo que todavía no está construido: se ve "apagada"

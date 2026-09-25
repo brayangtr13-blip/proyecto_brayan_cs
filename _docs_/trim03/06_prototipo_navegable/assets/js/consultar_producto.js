@@ -55,7 +55,9 @@ function renderizarResultados(lista) {
 
     lista.forEach(function (producto) {
         const fila = document.createElement('tr');
-        fila.style.cursor = 'pointer';
+        // Clase en vez de fila.style.cursor: el aspecto (cursor de mano) se define en
+        // dashboard.css (.fila-clickeable); el JS solo marca que la fila es clicable.
+        fila.classList.add('fila-clickeable');
         fila.dataset.codigo = producto.codigo;
         fila.innerHTML =
             '<td>' + producto.codigo + '</td>' +
