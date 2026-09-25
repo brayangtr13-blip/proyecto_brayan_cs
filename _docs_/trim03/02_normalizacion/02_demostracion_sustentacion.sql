@@ -2,14 +2,16 @@
 -- Control Store - Autoservicio Ayuelal
 -- GUION DE DEMOSTRACION PARA LA SUSTENTACION
 -- Actualizado al modelo del 23/09/2026 (14 tablas, MySQL 8.4.9)
+-- Datos: volcado del 23/09 + 03_datos_diez_por_tabla.sql (25/09/2026)
 --
 -- No se trata de afirmar que la base esta normalizada: se trata de
 -- DEMOSTRARLO corriendo consultas delante del jurado.
 --
--- La base YA TIENE datos reales: un turno de caja completo del cajero
--- Juan Carlos Perez con 3 ventas (2 en efectivo y 1 por Nequi), un
--- domicilio entregado y una conversacion activa del ChatBot. Por eso
--- este guion ya no inserta ninguna venta de prueba.
+-- La base YA TIENE datos: minimo 10 registros por tabla (10 turnos de
+-- caja, 12 ventas con una anulada, 10 domicilios, 10 conversaciones del
+-- ChatBot...). El turno #2 del cajero Juan Carlos Perez (3 ventas, 2 en
+-- efectivo y 1 por Nequi) sigue siendo el ejemplo principal. Este guion
+-- no inserta ninguna venta de prueba permanente.
 --
 -- Cada parte es un bloque independiente. Copiar y pegar en la pestaña
 -- SQL de phpMyAdmin, de una parte a la vez, y explicar el resultado.
@@ -47,7 +49,7 @@ SELECT (SELECT COUNT(*) FROM ventas)          AS ventas,
        (SELECT COUNT(*) FROM detalle_venta)   AS renglones,
        (SELECT COUNT(*) FROM arqueo_caja)     AS arqueos,
        (SELECT COUNT(*) FROM carrito_chatbot) AS items_carrito;
--- Esperado: 3 ventas, 6 renglones, 1 arqueo, 2 items en el carrito
+-- Esperado: 12 ventas, 20 renglones, 10 arqueos, 10 items en el carrito
 
 
 -- #####################################################################
@@ -67,8 +69,9 @@ SELECT u.documento,
   FROM usuarios u
   JOIN roles r ON r.id_rol = u.id_rol
  ORDER BY u.apellido, u.nombre;
--- Esperado: Gomez Andres (administrador), Perez Juan Carlos (cajero),
---           Perez Luis (domiciliario)
+-- Esperado: 10 usuarios ordenados por apellido: Cardenas, Castro,
+--           Gomez, Lopez, Mora, Ortiz, Perez Juan Carlos, Perez Luis,
+--           Rojas y Vargas (los dos Perez se ordenan por nombre)
 
 -- Y esta es la otra mitad de 1FN: una venta con N productos no se
 -- resuelve con columnas producto1, producto2, producto3, sino con
@@ -81,7 +84,7 @@ SELECT d.id_venta,
   FROM detalle_venta d
   JOIN productos p ON p.codigo_producto = d.codigo_producto
  ORDER BY d.id_venta, d.id_detalle;
--- Esperado: 6 renglones repartidos en las ventas 2, 3 y 4
+-- Esperado: 20 renglones repartidos en las ventas 2 a 13
 
 
 -- #####################################################################
@@ -106,9 +109,8 @@ SELECT p.nombre                  AS 'Producto (escrito 1 sola vez)',
   LEFT JOIN detalle_venta d ON d.codigo_producto = p.codigo_producto
  GROUP BY p.codigo_producto, p.nombre
  ORDER BY 3 DESC;
--- Esperado: Leche Entera 1L vendida 2 veces (5 unidades), Arroz 2 veces
--- (2), Cafe 1 vez (2), Pan 1 vez (1), Azucar 0.
--- La leche aparece en dos ventas distintas y su nombre sigue escrito
+-- Esperado: Leche Entera 1L vendida 3 veces (7 unidades) y Azucar 0.
+-- La leche aparece en tres ventas distintas y su nombre sigue escrito
 -- una sola vez.
 
 
@@ -129,7 +131,8 @@ SELECT c.nombre           AS categoria,
   FROM categorias c
   LEFT JOIN productos p ON p.id_categoria = c.id_categoria
  GROUP BY c.id_categoria, c.nombre, c.descripcion;
--- Esperado: Abarrotes la usan 2 productos (arroz y azucar)
+-- Esperado: 10 categorias; Abarrotes la usan 3 productos (arroz, azucar
+-- y aceite) y Frutas, Snacks y Mascotas todavia no tienen productos
 
 -- Prueba 2: LA ANOMALIA DE ACTUALIZACION, EVITADA.
 -- Se corrige el nombre de la categoria tocando UNA fila...
@@ -158,7 +161,7 @@ SELECT v.id_venta, c.nombre AS cliente, c.barrio, v.total
 SELECT 'roles' AS catalogo, COUNT(*) AS filas FROM roles
 UNION ALL SELECT 'categorias', COUNT(*) FROM categorias
 UNION ALL SELECT 'metodos_pago', COUNT(*) FROM metodos_pago;
--- Esperado: 3, 5 y 4
+-- Esperado: 10, 10 y 10
 
 
 -- #####################################################################
@@ -273,7 +276,11 @@ SELECT id_arqueo,
        diferencia                                   AS 'Formula corregida (la del motor)',
        monto_final - monto_inicial - total_ventas   AS 'Formula anterior (erronea)'
   FROM arqueo_caja;
--- Esperado: diferencia = 0.00  |  formula anterior = -32300.00
+-- Esperado (turno 2): diferencia = 0.00  |  formula anterior = -32300.00
+-- Los demas turnos lo confirman: la formula vieja da un faltante falso
+-- en todo turno con pagos digitales (turnos 4, 6, 7, 9 y 10), y la
+-- corregida solo marca los descuadres reales: +500 en el 4 y -700 en
+-- el 8. El turno 11 esta abierto (sin cierre, todo NULL).
 
 -- De donde sale el -32.300: la unica venta que no fue en efectivo
 SELECT v.id_venta, m.nombre AS metodo_pago, v.total
@@ -304,7 +311,8 @@ SELECT s.telefono,
   FROM carrito_chatbot c
   JOIN sesiones_chatbot s ON s.id_sesion       = c.id_sesion
   JOIN productos        p ON p.codigo_producto = c.codigo_producto;
--- Esperado: 3204445566, 1 Cafe Molido ($9.900) y 2 Pan Tajado ($6.000)
+-- Esperado: 10 filas en 6 conversaciones. La de 3204445566 tiene
+-- 1 Cafe Molido ($9.900) y 2 Pan Tajado ($6.000)
 
 -- (b) La llave foranea en accion: un producto que NO existe.
 --     ESTA CONSULTA DEBE FALLAR. El error ES la demostracion:

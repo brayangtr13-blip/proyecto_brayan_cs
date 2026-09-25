@@ -1,6 +1,9 @@
 -- =====================================================================
 -- Control Store - Datos de demostracion para la sustentacion
 --
+-- YA CARGADO en el volcado del 23/09/2026. Para llegar a 10 registros
+-- por tabla se ejecuta DESPUES 03_datos_diez_por_tabla.sql (25/09/2026).
+--
 -- Simula UN turno de caja completo y real: apertura, tres ventas con
 -- distintos metodos de pago, un domicilio, reposicion de inventario,
 -- auditoria del sistema y una conversacion activa del ChatBot con el

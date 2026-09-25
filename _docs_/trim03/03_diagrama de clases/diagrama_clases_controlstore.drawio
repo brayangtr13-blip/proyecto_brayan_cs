@@ -5,16 +5,16 @@
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
         <mxCell id="c101" value="arqueo_caja" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="960" y="435" width="350" height="254" as="geometry"/>
+          <mxGeometry x="960" y="435" width="350" height="271" as="geometry"/>
         </mxCell>
-        <mxCell id="c102" value="- id_arqueo: ENTERO &lt;&lt;PK&gt;&gt;&lt;br&gt;- id_usuario: ENTERO &lt;&lt;FK&gt;&gt;&lt;br&gt;- fecha_apertura: FECHA_HORA&lt;br&gt;- fecha_cierre: FECHA_HORA&lt;br&gt;- monto_inicial: DECIMAL(12,2)&lt;br&gt;- monto_final: DECIMAL(12,2)&lt;br&gt;- total_ventas: DECIMAL(12,2)&lt;br&gt;- diferencia: DECIMAL(12,2)&lt;br&gt;- observacion: TEXTO(255)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[];whiteSpace=wrap;html=1;fontSize=11;fontColor=#000000;" vertex="1" parent="c101">
-          <mxGeometry y="30" width="350" height="163" as="geometry"/>
+        <mxCell id="c102" value="- id_arqueo: ENTERO &lt;&lt;PK&gt;&gt;&lt;br&gt;- id_usuario: ENTERO &lt;&lt;FK&gt;&gt;&lt;br&gt;- fecha_apertura: FECHA_HORA&lt;br&gt;- fecha_cierre: FECHA_HORA&lt;br&gt;- monto_inicial: DECIMAL(12,2)&lt;br&gt;- monto_final: DECIMAL(12,2)&lt;br&gt;- total_ventas: DECIMAL(12,2)&lt;br&gt;- total_efectivo: DECIMAL(12,2)&lt;br&gt;- diferencia: DECIMAL(12,2)&lt;br&gt;- observacion: TEXTO(255)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[];whiteSpace=wrap;html=1;fontSize=11;fontColor=#000000;" vertex="1" parent="c101">
+          <mxGeometry y="30" width="350" height="180" as="geometry"/>
         </mxCell>
         <mxCell id="c103" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;rotatable=0;labelPosition=right;points=[];strokeColor=#000000;" vertex="1" parent="c101">
-          <mxGeometry y="193" width="350" height="1" as="geometry"/>
+          <mxGeometry y="210" width="350" height="1" as="geometry"/>
         </mxCell>
         <mxCell id="c104" value="+ abrir(base): void&lt;br&gt;+ cerrar(contado): void&lt;br&gt;+ calcularDiferencia(): decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[];whiteSpace=wrap;html=1;fontSize=11;fontColor=#000000;" vertex="1" parent="c101">
-          <mxGeometry y="194" width="350" height="60" as="geometry"/>
+          <mxGeometry y="211" width="350" height="60" as="geometry"/>
         </mxCell>
         <mxCell id="c105" value="categorias" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=14;" vertex="1" parent="1">
           <mxGeometry x="40" y="40" width="350" height="135" as="geometry"/>
@@ -125,16 +125,16 @@
           <mxGeometry y="75" width="350" height="94" as="geometry"/>
         </mxCell>
         <mxCell id="c141" value="sesiones_chatbot" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="1880" y="40" width="350" height="237" as="geometry"/>
+          <mxGeometry x="1880" y="40" width="350" height="219" as="geometry"/>
         </mxCell>
-        <mxCell id="c142" value="- id_sesion: ENTERO &lt;&lt;PK&gt;&gt;&lt;br&gt;- telefono: TEXTO(20) &lt;&lt;UQ&gt;&gt;&lt;br&gt;- id_cliente: ENTERO &lt;&lt;FK&gt;&gt;&lt;br&gt;- paso: TEXTO(30)&lt;br&gt;- carrito: JSON&lt;br&gt;- direccion_temp: TEXTO(150)&lt;br&gt;- barrio_temp: TEXTO(50)&lt;br&gt;- fecha_actualizacion: FECHA_HORA" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[];whiteSpace=wrap;html=1;fontSize=11;fontColor=#000000;" vertex="1" parent="c141">
-          <mxGeometry y="30" width="350" height="146" as="geometry"/>
+        <mxCell id="c142" value="- id_sesion: ENTERO &lt;&lt;PK&gt;&gt;&lt;br&gt;- telefono: TEXTO(20) &lt;&lt;UQ&gt;&gt;&lt;br&gt;- id_cliente: ENTERO &lt;&lt;FK&gt;&gt;&lt;br&gt;- paso: TEXTO(30)&lt;br&gt;- direccion_temp: TEXTO(150)&lt;br&gt;- barrio_temp: TEXTO(50)&lt;br&gt;- fecha_actualizacion: FECHA_HORA" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[];whiteSpace=wrap;html=1;fontSize=11;fontColor=#000000;" vertex="1" parent="c141">
+          <mxGeometry y="30" width="350" height="129" as="geometry"/>
         </mxCell>
         <mxCell id="c143" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;rotatable=0;labelPosition=right;points=[];strokeColor=#000000;" vertex="1" parent="c141">
-          <mxGeometry y="176" width="350" height="1" as="geometry"/>
+          <mxGeometry y="159" width="350" height="1" as="geometry"/>
         </mxCell>
         <mxCell id="c144" value="+ iniciar(telefono): void&lt;br&gt;+ actualizarPaso(paso): void&lt;br&gt;+ cerrar(): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[];whiteSpace=wrap;html=1;fontSize=11;fontColor=#000000;" vertex="1" parent="c141">
-          <mxGeometry y="177" width="350" height="60" as="geometry"/>
+          <mxGeometry y="160" width="350" height="60" as="geometry"/>
         </mxCell>
         <mxCell id="c145" value="usuarios" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=14;" vertex="1" parent="1">
           <mxGeometry x="960" y="796" width="350" height="390" as="geometry"/>
@@ -382,7 +382,47 @@
             <mxPoint as="offset"/>
           </mxGeometry>
         </mxCell>
-        <mxCell id="leyenda" value="&lt;b&gt;Diagrama de clases - Control Store (13 clases, 15 relaciones)&lt;/b&gt;&lt;br&gt;Visibilidad: - privado | + publico &amp;nbsp; &amp;nbsp; Cardinalidad: 1 = uno obligatorio | 0..1 = cero o uno | 0..* = cero o muchos" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontColor=#000000;" vertex="1" parent="1">
+        <mxCell id="c198" value="carrito_chatbot" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="435" width="350" height="169" as="geometry"/>
+        </mxCell>
+        <mxCell id="c199" value="- id_sesion: ENTERO &lt;&lt;PK&gt;&gt; &lt;&lt;FK&gt;&gt;&lt;br&gt;- codigo_producto: TEXTO(20) &lt;&lt;PK&gt;&gt; &lt;&lt;FK&gt;&gt;&lt;br&gt;- cantidad: ENTERO" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[];whiteSpace=wrap;html=1;fontSize=11;fontColor=#000000;" vertex="1" parent="c198">
+          <mxGeometry y="30" width="350" height="61" as="geometry"/>
+        </mxCell>
+        <mxCell id="c200" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;rotatable=0;labelPosition=right;points=[];strokeColor=#000000;" vertex="1" parent="c198">
+          <mxGeometry y="91" width="350" height="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c201" value="+ agregar(cod, cant): void&lt;br&gt;+ listarPorSesion(id): Carrito[]&lt;br&gt;+ actualizarCantidad(cod, cant): void&lt;br&gt;+ vaciar(id): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[];whiteSpace=wrap;html=1;fontSize=11;fontColor=#000000;" vertex="1" parent="c198">
+          <mxGeometry y="92" width="350" height="77" as="geometry"/>
+        </mxCell>
+        <mxCell id="c202" value="" style="html=1;rounded=0;endArrow=none;startArrow=none;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;exitX=1.000;exitY=0;exitDx=0;exitDy=0;entryX=0.000;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="c198" target="c133">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c203" value="0..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#000000;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="c202">
+          <mxGeometry x="-0.88" y="-12" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c204" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#000000;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="c202">
+          <mxGeometry x="0.88" y="-12" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c205" value="" style="html=1;rounded=0;endArrow=none;startArrow=none;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;exitX=1.000;exitY=0;exitDx=0;exitDy=0;entryX=0.000;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="c198" target="c141">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c206" value="0..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#000000;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="c205">
+          <mxGeometry x="-0.88" y="-12" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c207" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#000000;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="c205">
+          <mxGeometry x="0.88" y="-12" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leyenda" value="&lt;b&gt;Diagrama de clases - Control Store (14 clases, 17 relaciones)&lt;/b&gt;&lt;br&gt;Visibilidad: - privado | + publico &amp;nbsp; &amp;nbsp; Cardinalidad: 1 = uno obligatorio | 0..1 = cero o uno | 0..* = cero o muchos" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontColor=#000000;" vertex="1" parent="1">
           <mxGeometry x="40" y="1495" width="2190" height="30" as="geometry"/>
         </mxCell>
       </root>
