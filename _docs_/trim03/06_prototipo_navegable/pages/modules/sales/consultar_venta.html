@@ -65,10 +65,7 @@
                             <thead>
                                 <tr><th>Código</th><th>Nombre</th><th class="text-center">Cantidad</th><th class="text-end">Precio unit.</th><th class="text-end">Subtotal</th></tr>
                             </thead>
-                            <tbody id="cuerpoDetalle">
-                                <tr><td>7702001001</td><td>Leche Entera 1L</td><td class="text-center">3</td><td class="text-end">$2.850</td><td class="text-end">$8.550</td></tr>
-                                <tr><td>7702001002</td><td>Arroz Blanco 5kg</td><td class="text-center">1</td><td class="text-end">$12.500</td><td class="text-end">$12.500</td></tr>
-                            </tbody>
+                            <tbody id="cuerpoDetalle"></tbody>
                         </table>
                     </div>
                 </section>
@@ -109,7 +106,17 @@
         <p class="small text-center mt-2 mb-0">Precios con IVA incluido. ¡Gracias por tu compra!</p>
     </section>
 
+    <template id="plantillaDetalle">
+        <tr><td data-campo="codigo"></td><td data-campo="nombre"></td><td class="text-center" data-campo="cantidad"></td>
+            <td class="text-end" data-campo="precio"></td><td class="text-end" data-campo="subtotal"></td></tr>
+    </template>
+
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/sesion.js"></script>
+    <script src="../../../assets/js/ventas/ventas_datos.js"></script>
+    <script src="../../../assets/js/ventas/ventas_servicio.js"></script>
+    <script src="../../../assets/js/ventas/comprobante_venta.js"></script>
+    <script src="../../../assets/js/ventas/consultar_venta.js"></script>
 </body>
 
 </html>

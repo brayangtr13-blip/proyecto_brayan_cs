@@ -128,7 +128,25 @@ const ServicioVentas = (function () {
         return ventas.reduce(function (suma, v) { return v.estado === 'anulada' ? suma : suma + v.total; }, 0);
     }
 
+    // HU03: una venta por número. El cajero solo consulta las suyas (misma regla que HU02).
+    function consultarVenta(usuario, id) {
+        const venta = RepositorioVentas.obtenerVenta(id);
+        if (!venta || (usuario.rol !== 'administrador' && venta.idUsuario !== usuario.idUsuario)) {
+            return { ok: false, error: 'Venta no encontrada' };
+        }
+        return { ok: true, venta: venta };
+    }
+
+    // HU03: fecha, usuario y motivo de la anulación, guardados en log_auditoria (CS-21 los registra)
+    function datosAnulacion(idVenta) {
+        return RepositorioVentas.obtenerAuditoria().filter(function (e) {
+            return e.accion === 'anular' && e.idVenta === idVenta;
+        }).pop();
+    }
+
     return {
+        consultarVenta: consultarVenta,
+        datosAnulacion: datosAnulacion,
         fechaLocal: fechaLocal,
         filtrarVentas: filtrarVentas,
         totalSinAnuladas: totalSinAnuladas,
