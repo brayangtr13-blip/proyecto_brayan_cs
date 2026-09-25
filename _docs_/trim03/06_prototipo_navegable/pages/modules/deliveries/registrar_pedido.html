@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar pedido - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <!-- Font Awesome Free 7 descargado (sin CDN): íconos del dominio de domicilios -->
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/solid.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../../../assets/css/domicilios.css">
+</head>
+
+<body class="content-body modulo-domicilios">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../_mains_/dashboard_inicio.html">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="listar_domicilios.html">Domicilios</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Registrar pedido</li>
+        </ol>
+    </nav>
+
+    <div class="mb-4">
+        <h1 class="h4 mb-0"><i class="fa-solid fa-receipt"></i> Registrar pedido</h1>
+        <p class="text-muted mb-0">Pedido telefónico ingresado por el administrador (CU037 – Registrar pedido en sistema)</p>
+    </div>
+
+    <!-- Avisos ocultos (d-none): el JS muestra el que corresponda después de "Registrar pedido".
+         Docs: https://getbootstrap.com/docs/5.3/components/alerts/ -->
+    <div id="registroExito" class="alert alert-success d-none" role="alert"></div>
+    <div id="registroError" class="alert alert-danger d-none" role="alert"></div>
+
+    <!-- novalidate: la validación la maneja el JS con el patrón de Bootstrap (was-validated),
+         igual que en Registrar producto y Registrar usuario.
+         Docs: https://getbootstrap.com/docs/5.3/forms/validation/ -->
+    <form id="formRegistrarPedido" novalidate>
+        <!-- Dos columnas como el wireframe CU22: datos a la izquierda (col-lg-8)
+             y el resumen a la derecha (col-lg-4). En celular se apilan.
+             Docs: https://getbootstrap.com/docs/5.3/layout/grid/ -->
+        <div class="row g-4">
+            <div class="col-lg-8 d-flex flex-column gap-4">
+
+                <!-- ============ 1. Cliente (tabla clientes) ============ -->
+                <section class="card">
+                    <div class="card-header fw-semibold"><i class="fa-solid fa-user"></i> Cliente</div>
+                    <div class="card-body">
+                        <!-- Input group: el botón "Buscar" queda pegado al campo, así se entiende que actúan juntos.
+                             Docs: https://getbootstrap.com/docs/5.3/forms/input-group/ -->
+                        <label for="buscarTelefono" class="form-label">Buscar cliente por teléfono</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                            <input type="tel" class="form-control" id="buscarTelefono" inputmode="numeric"
+                                placeholder="Ej: 3011234567" aria-describedby="ayudaBuscarTelefono">
+                            <button class="btn btn-outline-secondary" type="button" id="botonBuscarCliente">Buscar</button>
+                        </div>
+                        <!-- form-text: ayuda gris debajo del campo, enlazada con aria-describedby
+                             para que un lector de pantalla también la lea.
+                             Docs: https://getbootstrap.com/docs/5.3/forms/form-control/#form-text -->
+                        <div id="ayudaBuscarTelefono" class="form-text mb-3">
+                            Si el cliente ya compró antes, se cargan sus datos; si no, llénalos para registrarlo.
+                        </div>
+
+                        <!-- Floating labels: la etiqueta vive dentro del campo y sube al escribir;
+                             ahorra espacio y se ve como el diseño de referencia.
+                             El placeholder es obligatorio para que la etiqueta flote (lo pide la documentación).
+                             Docs: https://getbootstrap.com/docs/5.3/forms/floating-labels/ -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <!-- maxlength 100 = clientes.nombre varchar(100) -->
+                                    <input type="text" class="form-control" id="clienteNombre" placeholder="Nombre" maxlength="100" required>
+                                    <label for="clienteNombre">Nombre completo</label>
+                                    <div class="invalid-feedback">Escribe el nombre del cliente</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <!-- pattern [0-9]{10}: celular colombiano de 10 dígitos (HU04 / HU01) -->
+                                    <input type="tel" class="form-control" id="clienteTelefono" placeholder="Teléfono"
+                                        pattern="[0-9]{10}" inputmode="numeric" maxlength="10" required>
+                                    <label for="clienteTelefono">Teléfono</label>
+                                    <div class="invalid-feedback">Debe tener 10 dígitos</div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <!-- maxlength 150 = clientes.direccion varchar(150) -->
+                                    <input type="text" class="form-control" id="clienteDireccion" placeholder="Dirección" maxlength="150" required>
+                                    <label for="clienteDireccion">Dirección</label>
+                                    <div class="invalid-feedback">Escribe la dirección</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <!-- maxlength 50 = clientes.barrio varchar(50) -->
+                                    <input type="text" class="form-control" id="clienteBarrio" placeholder="Barrio" maxlength="50" required>
+                                    <label for="clienteBarrio">Barrio</label>
+                                    <div class="invalid-feedback">Escribe el barrio</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ 2. Productos (tabla detalle_venta) ============ -->
+                <section class="card">
+                    <div class="card-header fw-semibold"><i class="fa-solid fa-box-open"></i> Productos</div>
+                    <div class="card-body">
+                        <label for="buscarProducto" class="form-label">Agregar producto por código o nombre</label>
+                        <div class="input-group">
+                            <!-- list="catalogoProductos": conecta el campo con el <datalist> de abajo; el navegador
+                                 sugiere los productos mientras se escribe, sin JavaScript.
+                                 Docs: https://getbootstrap.com/docs/5.3/forms/form-control/#datalists -->
+                            <input class="form-control w-50" list="catalogoProductos" id="buscarProducto"
+                                placeholder="Ej: 7702001001 o Leche" aria-describedby="ayudaProducto">
+                            <input type="number" class="form-control" id="cantidadProducto" value="1" min="1"
+                                aria-label="Cantidad">
+                            <button class="btn btn-outline-primary" type="button" id="botonAgregarProducto">
+                                <i class="fa-solid fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                        <div id="ayudaProducto" class="form-text">Solo se pueden agregar productos con stock disponible (HU04).</div>
+                        <!-- Los mismos 5 productos de ejemplo del Módulo de Inventario (tabla productos) -->
+                        <datalist id="catalogoProductos">
+                            <option value="7702001001 · Leche Entera 1L"></option>
+                            <option value="7702001002 · Arroz Blanco 5kg"></option>
+                            <option value="7702001003 · Café Molido 250g"></option>
+                            <option value="7702001004 · Azúcar Blanca 2kg"></option>
+                            <option value="7702001005 · Pan Tajado"></option>
+                        </datalist>
+
+                        <!-- Tabla del pedido. align-middle centra verticalmente los botones de cantidad.
+                             Docs: https://getbootstrap.com/docs/5.3/content/tables/ -->
+                        <div class="table-responsive mt-3">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th class="text-end">Precio</th>
+                                        <th class="text-center">Cantidad</th>
+                                        <th class="text-end">Subtotal</th>
+                                        <th><span class="visually-hidden">Quitar</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cuerpoProductosPedido">
+                                    <!-- Fila de ejemplo para la fase HTML; en la fase JS las filas salen del carrito -->
+                                    <tr>
+                                        <td>Leche Entera 1L <small class="d-block text-body-secondary">7702001001</small></td>
+                                        <td class="text-end">$2.850</td>
+                                        <td class="text-center">
+                                            <!-- Input group pequeño con − y +: el patrón de cantidad del wireframe CU22.
+                                                 Docs: https://getbootstrap.com/docs/5.3/forms/input-group/#sizing -->
+                                            <div class="input-group input-group-sm cantidad-control mx-auto">
+                                                <button class="btn btn-outline-secondary" type="button" aria-label="Restar uno">−</button>
+                                                <input type="text" class="form-control text-center" value="2" aria-label="Cantidad" readonly>
+                                                <button class="btn btn-outline-secondary" type="button" aria-label="Sumar uno">+</button>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">$5.700</td>
+                                        <td class="text-end">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Quitar producto">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ 3. Entrega (tabla domicilios) ============ -->
+                <section class="card">
+                    <div class="card-header fw-semibold"><i class="fa-solid fa-location-dot"></i> Entrega</div>
+                    <div class="card-body">
+                        <!-- Switch: casi siempre se entrega en la dirección del cliente; activado copia esos
+                             datos y evita escribirlos dos veces.
+                             Docs: https://getbootstrap.com/docs/5.3/forms/checks-radios/#switches -->
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" role="switch" id="usarDireccionCliente" checked>
+                            <label class="form-check-label" for="usarDireccionCliente">Entregar en la dirección del cliente</label>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <!-- maxlength 150 = domicilios.direccion_entrega varchar(150) -->
+                                    <input type="text" class="form-control" id="direccionEntrega" placeholder="Dirección de entrega" maxlength="150" required>
+                                    <label for="direccionEntrega">Dirección de entrega</label>
+                                    <div class="invalid-feedback">Escribe la dirección de entrega</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="barrioEntrega" placeholder="Barrio" maxlength="50" required>
+                                    <label for="barrioEntrega">Barrio</label>
+                                    <div class="invalid-feedback">Escribe el barrio</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <!-- domicilios.telefono_contacto: quién recibe (puede no ser el cliente) -->
+                                    <input type="tel" class="form-control" id="telefonoContacto" placeholder="Teléfono de quien recibe"
+                                        pattern="[0-9]{10}" inputmode="numeric" maxlength="10" required>
+                                    <label for="telefonoContacto">Teléfono de quien recibe</label>
+                                    <div class="invalid-feedback">Debe tener 10 dígitos</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="observacion" class="form-label">Observaciones <span class="text-body-secondary">(opcional)</span></label>
+                                <!-- maxlength 255 = domicilios.observacion varchar(255). El contador de caracteres
+                                     (form-text) se actualiza en la fase de JS. -->
+                                <textarea class="form-control" id="observacion" rows="2" maxlength="255"
+                                    placeholder="Ej: llamar antes de llegar, dejar en portería..." aria-describedby="contadorObservacion"></textarea>
+                                <div id="contadorObservacion" class="form-text text-end">0 / 255</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============ Columna derecha: resumen ============ -->
+            <div class="col-lg-4">
+                <!-- sticky-top: el resumen acompaña al usuario mientras baja por el formulario,
+                     así siempre ve el total. Docs: https://getbootstrap.com/docs/5.3/helpers/position/#sticky-top -->
+                <aside class="card sticky-top resumen-pedido">
+                    <div class="card-header fw-semibold"><i class="fa-solid fa-receipt"></i> Resumen del pedido</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <!-- Los 4 métodos de la tabla metodos_pago (Jira nombra solo 2; se respeta la BD) -->
+                            <label for="metodoPago" class="form-label">Método de pago</label>
+                            <select class="form-select" id="metodoPago" required>
+                                <option value="" selected disabled>Selecciona un método</option>
+                                <option value="1">Efectivo</option>
+                                <option value="2">Nequi</option>
+                                <option value="3">Transferencia</option>
+                                <option value="4">Tarjeta</option>
+                            </select>
+                            <div class="invalid-feedback">Selecciona cómo paga el cliente</div>
+                        </div>
+
+                        <!-- list-group-flush: filas de "concepto — valor" sin bordes externos dentro de la card.
+                             Docs: https://getbootstrap.com/docs/5.3/components/list-group/#flush -->
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item d-flex justify-content-between px-0">
+                                <span>Productos</span><span id="resumenCantidad">2 unidades</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between px-0 fs-5 fw-bold">
+                                <span>Total</span><span id="resumenTotal">$5.700</span>
+                            </li>
+                        </ul>
+
+                        <!-- Estado inicial del pedido (wireframe 22.2 / CU041 del diagrama anterior).
+                             Es "pendiente" porque así arranca domicilios.estado en la base de datos. -->
+                        <div class="estado-inicial d-flex align-items-center gap-3 p-3 rounded-3 mb-3">
+                            <i class="fa-solid fa-hourglass-half fs-4"></i>
+                            <div class="small">Al registrarlo, el pedido quedará en estado
+                                <span class="badge rounded-pill estado-pendiente">Pendiente</span>
+                                y disponible para asignar un domiciliario.</div>
+                        </div>
+
+                        <!-- d-grid + gap-2: botones de ancho completo, uno debajo del otro.
+                             Docs: https://getbootstrap.com/docs/5.3/components/buttons/#block-buttons -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Registrar pedido</button>
+                            <a href="listar_domicilios.html" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </form>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

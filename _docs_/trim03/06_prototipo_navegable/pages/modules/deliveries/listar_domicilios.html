@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domicilios - Control Store</title>
+    <!-- Bootstrap, Bootstrap Icons y la fuente Inter: vendorizados localmente (sin CDN), igual que el resto del proyecto -->
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <!-- Font Awesome Free 7 (descargado de fontawesome.com, sin CDN). Se usa en el Módulo 4 porque trae
+         íconos del dominio de domicilios que Bootstrap Icons no tiene (moto, ruta, recibo...).
+         Solo se cargan los estilos "solid" y "brands": all.min.css traería estilos que no usamos. -->
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/solid.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <!-- Paleta y estilos propios del Módulo 4 (se cargan después de Bootstrap para poder personalizarlo) -->
+    <link rel="stylesheet" href="../../../assets/css/domicilios.css">
+</head>
+
+<!-- modulo-domicilios: activa la paleta del módulo (definida en domicilios.css) solo en estas páginas -->
+<body class="content-body modulo-domicilios">
+
+    <!-- Breadcrumb: ubica al usuario dentro del iframe, como en los wireframes del Módulo 4.
+         Docs: https://getbootstrap.com/docs/5.3/components/breadcrumb/ -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../_mains_/dashboard_inicio.html">Inicio</a></li>
+            <li class="breadcrumb-item">Domicilios</li>
+            <li class="breadcrumb-item active" aria-current="page">Panel de pedidos</li>
+        </ol>
+    </nav>
+
+    <!-- Encabezado: título + acción principal, mismo patrón que Productos y Usuarios.
+         flex-wrap + gap-3: en pantallas angostas el botón baja debajo del título en vez de apretarse.
+         Docs: https://getbootstrap.com/docs/5.3/utilities/flex/ -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h4 mb-0"><i class="fa-solid fa-motorcycle"></i> Domicilios</h1>
+            <p class="text-muted mb-0">Pedidos a domicilio del autoservicio (CU037 – Registrar pedido en sistema)</p>
+        </div>
+        <a href="registrar_pedido.html" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Registrar pedido
+        </a>
+    </div>
+
+    <!-- ===================================================
+         Indicadores (diseño de referencia: 4 tarjetas arriba)
+         row-cols-* reparte las tarjetas: 1 por fila en celular, 2 en tablet, 4 en escritorio.
+         Docs: https://getbootstrap.com/docs/5.3/layout/grid/#row-columns
+         Los números se calcularán con JS a partir de los pedidos; por ahora son los de los datos de ejemplo.
+         =================================================== -->
+    <section aria-label="Resumen de pedidos" class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
+        <div class="col">
+            <!-- Docs: https://getbootstrap.com/docs/5.3/components/card/ -->
+            <div class="card h-100 indicador">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <span class="indicador-icono estado-pendiente"><i class="fa-solid fa-hourglass-half"></i></span>
+                    <div>
+                        <div class="small text-body-secondary">Pendientes de asignar</div>
+                        <div class="fs-4 fw-bold" id="kpiPendientes">1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 indicador">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <span class="indicador-icono estado-en_camino"><i class="fa-solid fa-route"></i></span>
+                    <div>
+                        <div class="small text-body-secondary">En camino</div>
+                        <div class="fs-4 fw-bold" id="kpiEnCamino">1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 indicador">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <span class="indicador-icono estado-entregado"><i class="fa-solid fa-circle-check"></i></span>
+                    <div>
+                        <div class="small text-body-secondary">Entregados</div>
+                        <div class="fs-4 fw-bold" id="kpiEntregados">1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 indicador">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <span class="indicador-icono estado-asignado"><i class="fa-solid fa-clock"></i></span>
+                    <div>
+                        <!-- Promedio entre fecha_asignacion y fecha_entrega (columnas de la tabla domicilios) -->
+                        <div class="small text-body-secondary">Tiempo promedio de entrega</div>
+                        <div class="fs-4 fw-bold" id="kpiTiempo">40 min</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================
+         Filtros por estado
+         Nav pills en vez de un <select>: todos los estados quedan a la vista con su cantidad
+         y se cambia de filtro con un solo clic.
+         Docs: https://getbootstrap.com/docs/5.3/components/navs-tabs/#pills
+         Los estados son los del ENUM de la columna domicilios.estado en la base de datos.
+         =================================================== -->
+    <ul class="nav nav-pills flex-wrap gap-1 mb-3" id="filtrosEstado" aria-label="Filtrar pedidos por estado">
+        <li class="nav-item"><button type="button" class="nav-link active" data-estado="">Todos <span class="badge text-bg-light">4</span></button></li>
+        <li class="nav-item"><button type="button" class="nav-link" data-estado="pendiente">Pendientes <span class="badge text-bg-light">1</span></button></li>
+        <li class="nav-item"><button type="button" class="nav-link" data-estado="asignado">Asignados <span class="badge text-bg-light">1</span></button></li>
+        <li class="nav-item"><button type="button" class="nav-link" data-estado="en_camino">En camino <span class="badge text-bg-light">1</span></button></li>
+        <li class="nav-item"><button type="button" class="nav-link" data-estado="entregado">Entregados <span class="badge text-bg-light">1</span></button></li>
+        <li class="nav-item"><button type="button" class="nav-link" data-estado="cancelado">Cancelados <span class="badge text-bg-light">0</span></button></li>
+    </ul>
+
+    <!-- ===================================================
+         Tarjetas de pedidos (diseño de referencia: una card por pedido)
+         Una card en vez de una fila de tabla porque cada pedido tiene muchos datos
+         (cliente, dirección, pago, avance) y en tabla quedaría ilegible en celular.
+         =================================================== -->
+    <div class="row row-cols-1 row-cols-lg-2 g-3" id="listaPedidos">
+
+        <!-- Pedido 4: recién registrado, todavía sin domiciliario (estado inicial "pendiente", CU041) -->
+        <div class="col">
+            <article class="card h-100 pedido-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h2 class="h6 mb-0">Pedido #4</h2>
+                            <small class="text-body-secondary">Venta #6 · 24/09/2026 17:15</small>
+                        </div>
+                        <!-- Docs: https://getbootstrap.com/docs/5.3/components/badge/#pill-badges -->
+                        <span class="badge rounded-pill estado-pendiente">Pendiente</span>
+                    </div>
+
+                    <!-- <dl> (lista de descripción): la forma semántica de mostrar pares "dato: valor".
+                         row + col-*: la grilla de Bootstrap la acomoda en columnas.
+                         Docs: https://getbootstrap.com/docs/5.3/content/typography/#description-list-alignment -->
+                    <dl class="row small mb-3">
+                        <dt class="col-sm-4 dato-etiqueta">Cliente</dt>
+                        <dd class="col-sm-8 mb-1">Paola Díaz · 3124567890</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Entregar en</dt>
+                        <dd class="col-sm-8 mb-1"><i class="fa-solid fa-location-dot"></i> Calle 45 # 12-30 · El Prado</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Pago</dt>
+                        <dd class="col-sm-8 mb-1">Transferencia · <strong>$8.850</strong></dd>
+                        <dt class="col-sm-4 dato-etiqueta">Domiciliario</dt>
+                        <dd class="col-sm-8 mb-0 text-body-secondary">Sin asignar</dd>
+                    </dl>
+
+                    <!-- Barra de avance: Bootstrap no trae un "stepper", así que se arma con Progress
+                         + utilidades de flex. El ancho usa w-25/w-50/w-75/w-100 (4 pasos = 4 anchos)
+                         en vez de style="width:..", para no escribir CSS dentro del HTML.
+                         Docs: https://getbootstrap.com/docs/5.3/components/progress/ -->
+                    <div class="progress progress-pedido" role="progressbar" aria-label="Avance del pedido"
+                        aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar w-25"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small text-body-secondary mt-1 mb-3">
+                        <span class="fw-semibold">Pendiente</span><span>Asignado</span><span>En camino</span><span>Entregado</span>
+                    </div>
+
+                    <a href="#" class="btn btn-outline-secondary btn-sm">Ver pedido</a>
+                </div>
+            </article>
+        </div>
+
+        <!-- Pedido 3: asignado a una domiciliaria de ejemplo -->
+        <div class="col">
+            <article class="card h-100 pedido-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h2 class="h6 mb-0">Pedido #3</h2>
+                            <small class="text-body-secondary">Venta #5 · 24/09/2026 16:50</small>
+                        </div>
+                        <span class="badge rounded-pill estado-asignado">Asignado</span>
+                    </div>
+                    <dl class="row small mb-3">
+                        <dt class="col-sm-4 dato-etiqueta">Cliente</dt>
+                        <dd class="col-sm-8 mb-1">Maria Restrepo · 3011234567</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Entregar en</dt>
+                        <dd class="col-sm-8 mb-1"><i class="fa-solid fa-location-dot"></i> Calle 12 # 4-30 · Centro</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Pago</dt>
+                        <dd class="col-sm-8 mb-1">Nequi · <strong>$12.900</strong></dd>
+                        <dt class="col-sm-4 dato-etiqueta">Domiciliario</dt>
+                        <dd class="col-sm-8 mb-0">Diana Morales</dd>
+                    </dl>
+                    <div class="progress progress-pedido" role="progressbar" aria-label="Avance del pedido"
+                        aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar w-50"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small text-body-secondary mt-1 mb-3">
+                        <span>Pendiente</span><span class="fw-semibold">Asignado</span><span>En camino</span><span>Entregado</span>
+                    </div>
+                    <a href="#" class="btn btn-outline-secondary btn-sm">Ver pedido</a>
+                </div>
+            </article>
+        </div>
+
+        <!-- Pedido 2: la venta #4 de la base de datos (Carlos Ruiz), en camino con Luis Pérez -->
+        <div class="col">
+            <article class="card h-100 pedido-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h2 class="h6 mb-0">Pedido #2</h2>
+                            <small class="text-body-secondary">Venta #4 · 23/09/2026 11:10</small>
+                        </div>
+                        <span class="badge rounded-pill estado-en_camino">En camino</span>
+                    </div>
+                    <dl class="row small mb-3">
+                        <dt class="col-sm-4 dato-etiqueta">Cliente</dt>
+                        <dd class="col-sm-8 mb-1">Carlos Ruiz · 3109876543</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Entregar en</dt>
+                        <dd class="col-sm-8 mb-1"><i class="fa-solid fa-location-dot"></i> Carrera 7 # 15-02 · La Playa</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Pago</dt>
+                        <dd class="col-sm-8 mb-1">Efectivo · <strong>$21.050</strong></dd>
+                        <dt class="col-sm-4 dato-etiqueta">Domiciliario</dt>
+                        <dd class="col-sm-8 mb-0">Luis Pérez</dd>
+                    </dl>
+                    <div class="progress progress-pedido" role="progressbar" aria-label="Avance del pedido"
+                        aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar w-75"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small text-body-secondary mt-1 mb-3">
+                        <span>Pendiente</span><span>Asignado</span><span class="fw-semibold">En camino</span><span>Entregado</span>
+                    </div>
+                    <a href="#" class="btn btn-outline-secondary btn-sm">Ver pedido</a>
+                </div>
+            </article>
+        </div>
+
+        <!-- Pedido 1: el único domicilio que ya existe en la base de datos (venta #3, entregado en portería) -->
+        <div class="col">
+            <article class="card h-100 pedido-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h2 class="h6 mb-0">Pedido #1</h2>
+                            <small class="text-body-secondary">Venta #3 · 23/09/2026 10:10</small>
+                        </div>
+                        <span class="badge rounded-pill estado-entregado">Entregado</span>
+                    </div>
+                    <dl class="row small mb-3">
+                        <dt class="col-sm-4 dato-etiqueta">Cliente</dt>
+                        <dd class="col-sm-8 mb-1">Maria Restrepo · 3011234567</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Entregar en</dt>
+                        <dd class="col-sm-8 mb-1"><i class="fa-solid fa-location-dot"></i> Calle 12 # 4-30 · Centro</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Pago</dt>
+                        <dd class="col-sm-8 mb-1">Nequi · <strong>$32.300</strong></dd>
+                        <dt class="col-sm-4 dato-etiqueta">Domiciliario</dt>
+                        <dd class="col-sm-8 mb-0">Luis Pérez</dd>
+                    </dl>
+                    <div class="progress progress-pedido" role="progressbar" aria-label="Avance del pedido"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar w-100"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small text-body-secondary mt-1 mb-3">
+                        <span>Pendiente</span><span>Asignado</span><span>En camino</span><span class="fw-semibold">Entregado</span>
+                    </div>
+                    <a href="#" class="btn btn-outline-secondary btn-sm">Ver pedido</a>
+                </div>
+            </article>
+        </div>
+
+    </div>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
