@@ -1,0 +1,172 @@
+/* ==========================================================
+   Módulo 4 – Domicilios
+   Paleta propia del módulo y personalización de Bootstrap 5.3.
+
+   Todo cuelga de la clase .modulo-domicilios (puesta en el <body> de las
+   páginas del módulo): así la paleta solo afecta a Domicilios y no cambia
+   el aspecto de Inventario o Usuarios.
+   ========================================================== */
+
+.modulo-domicilios {
+    /* Paleta de 3 colores elegida para el módulo (más el blanco) */
+    --dom-oscuro: #012340;    /* títulos, elementos activos */
+    --dom-primario: #0166B0;  /* botones y acciones principales */
+    --dom-acento: #3B6979;    /* etiquetas y estados neutros */
+    --dom-blanco: #ffffff;
+
+    /* Versiones muy claras de la paleta, para fondos de íconos y avisos */
+    --dom-primario-tenue: #e3eef8;
+    --dom-acento-tenue: #e5eef0;
+
+    /* Bootstrap 5.3 pinta los enlaces con estas variables (en formato R, G, B).
+       Cambiarlas aquí recolorea los enlaces del breadcrumb sin tocar su CSS.
+       Docs: https://getbootstrap.com/docs/5.3/customize/css-variables/ */
+    --bs-link-color-rgb: 1, 102, 176;
+    --bs-link-hover-color-rgb: 1, 35, 64;
+}
+
+.modulo-domicilios h1 {
+    color: var(--dom-oscuro);
+}
+
+/* ---------- Botones ----------
+   Cada botón de Bootstrap 5.3 lee sus colores de variables locales (--bs-btn-*).
+   Sobrescribir solo esas variables es la forma que recomienda la documentación:
+   no se reescribe la regla del botón y se conservan hover, focus y disabled.
+   Docs: https://getbootstrap.com/docs/5.3/components/buttons/#variables */
+.modulo-domicilios .btn-primary {
+    --bs-btn-bg: var(--dom-primario);
+    --bs-btn-border-color: var(--dom-primario);
+    --bs-btn-hover-bg: var(--dom-oscuro);
+    --bs-btn-hover-border-color: var(--dom-oscuro);
+    --bs-btn-active-bg: var(--dom-oscuro);
+    --bs-btn-active-border-color: var(--dom-oscuro);
+    --bs-btn-disabled-bg: var(--dom-primario);
+    --bs-btn-disabled-border-color: var(--dom-primario);
+}
+
+.modulo-domicilios .btn-outline-primary {
+    --bs-btn-color: var(--dom-primario);
+    --bs-btn-border-color: var(--dom-primario);
+    --bs-btn-hover-color: var(--dom-blanco);
+    --bs-btn-hover-bg: var(--dom-primario);
+    --bs-btn-hover-border-color: var(--dom-primario);
+    --bs-btn-active-color: var(--dom-blanco);
+    --bs-btn-active-bg: var(--dom-oscuro);
+    --bs-btn-active-border-color: var(--dom-oscuro);
+}
+
+/* ---------- Filtros (nav pills) ----------
+   El filtro activo usa el color oscuro, como el botón activo del diseño de referencia.
+   Docs: https://getbootstrap.com/docs/5.3/components/navs-tabs/#variables */
+.modulo-domicilios .nav-pills {
+    --bs-nav-pills-link-active-bg: var(--dom-oscuro);
+    --bs-nav-link-color: var(--dom-acento);
+    --bs-nav-link-hover-color: var(--dom-oscuro);
+}
+
+/* ---------- Campos de formulario ----------
+   En Bootstrap 5.3 el color del foco de los campos viene fijo en el CSS compilado
+   (no es una variable), por eso aquí sí se sobrescribe la regla :focus.
+   Docs: https://getbootstrap.com/docs/5.3/forms/form-control/ */
+.modulo-domicilios .form-control:focus,
+.modulo-domicilios .form-select:focus,
+.modulo-domicilios .form-check-input:focus {
+    border-color: #6fa8d6;
+    box-shadow: 0 0 0 0.25rem rgba(1, 102, 176, 0.25);
+}
+
+.modulo-domicilios .form-check-input:checked {
+    background-color: var(--dom-primario);
+    border-color: var(--dom-primario);
+}
+
+/* ---------- Estados del pedido (ENUM domicilios.estado) ----------
+   HU06 pide un color distintivo por estado. Los tres primeros usan la paleta;
+   entregado y cancelado usan el verde y el rojo "subtle" de Bootstrap 5.3
+   porque son colores de significado universal (éxito / anulado).
+   Las mismas clases pintan el badge y el círculo del indicador.
+   Docs: https://getbootstrap.com/docs/5.3/customize/color/#colors (variables *-bg-subtle / *-text-emphasis) */
+.modulo-domicilios .estado-pendiente {
+    background-color: var(--dom-acento-tenue);
+    color: var(--dom-acento);
+}
+
+.modulo-domicilios .estado-asignado {
+    background-color: var(--dom-primario-tenue);
+    color: var(--dom-primario);
+}
+
+.modulo-domicilios .estado-en_camino {
+    background-color: var(--dom-primario);
+    color: var(--dom-blanco);
+}
+
+.modulo-domicilios .estado-entregado {
+    background-color: var(--bs-success-bg-subtle);
+    color: var(--bs-success-text-emphasis);
+}
+
+.modulo-domicilios .estado-cancelado {
+    background-color: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger-text-emphasis);
+}
+
+/* ---------- Indicadores (tarjetas de arriba) ---------- */
+.modulo-domicilios .indicador-icono {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* ---------- Tarjeta de pedido ---------- */
+
+/* Etiquetas pequeñas en mayúscula (CLIENTE, PAGO...) como en el diseño de referencia */
+.modulo-domicilios .dato-etiqueta {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--dom-acento);
+}
+
+/* Barra de avance más delgada que la de Bootstrap (1rem) y con el color primario.
+   Progress 5.3 expone su alto y su color como variables.
+   Docs: https://getbootstrap.com/docs/5.3/components/progress/#variables */
+.modulo-domicilios .progress-pedido {
+    --bs-progress-height: 0.45rem;
+    --bs-progress-bar-bg: var(--dom-primario);
+}
+
+/* ---------- Registrar pedido ---------- */
+
+/* Ancho fijo para el control − cantidad +: si no, el input-group ocupa toda la celda */
+.modulo-domicilios .cantidad-control {
+    width: 7.5rem;
+}
+
+/* sticky-top pega el resumen al borde; este margen evita que quede pegado al techo del iframe */
+.modulo-domicilios .resumen-pedido {
+    top: 1rem;
+}
+
+/* Recuadro "Estado inicial: Pendiente" (wireframe 22.2) */
+.modulo-domicilios .estado-inicial {
+    background-color: var(--dom-acento-tenue);
+    color: var(--dom-oscuro);
+}
+
+/* Buscadores y cantidad de "Registrar pedido": están dentro del <form> pero no son datos
+   del pedido. Con .was-validated Bootstrap pinta de verde todo campo válido; aquí se
+   devuelve el aspecto normal para no marcar como "correcto" algo que no se valida.
+   Docs: https://getbootstrap.com/docs/5.3/forms/validation/#custom-styles */
+.modulo-domicilios .was-validated .sin-validacion:valid {
+    border-color: var(--bs-border-color);
+    background-image: none;
+    padding-right: 0.75rem;
+}
