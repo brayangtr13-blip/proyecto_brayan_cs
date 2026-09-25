@@ -102,7 +102,36 @@ const ServicioVentas = (function () {
         };
     }
 
+    // Fecha local AAAA-MM-DD (la de los <input type="date">)
+    function fechaLocal(texto) {
+        const f = new Date(texto);
+        return f.getFullYear() + '-' + String(f.getMonth() + 1).padStart(2, '0') + '-' + String(f.getDate()).padStart(2, '0');
+    }
+
+    // HU02: filtros + rol. El cajero solo ve sus ventas; el administrador ve todas.
+    // Con número de factura se busca en todas las fechas.
+    function filtrarVentas(usuario, filtros) {
+        return RepositorioVentas.obtenerVentas().filter(function (v) {
+            if (usuario.rol !== 'administrador' && v.idUsuario !== usuario.idUsuario) return false;
+            if (filtros.factura) return v.id === filtros.factura;
+            const dia = fechaLocal(v.fecha);
+            if (filtros.desde && dia < filtros.desde) return false;
+            if (filtros.hasta && dia > filtros.hasta) return false;
+            if (filtros.idCajero && v.idUsuario !== filtros.idCajero) return false;
+            if (filtros.idMetodo && v.idMetodoPago !== filtros.idMetodo) return false;
+            return true;
+        }).sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
+    }
+
+    // HU04: las anuladas no suman en reportes ni en el cierre
+    function totalSinAnuladas(ventas) {
+        return ventas.reduce(function (suma, v) { return v.estado === 'anulada' ? suma : suma + v.total; }, 0);
+    }
+
     return {
+        fechaLocal: fechaLocal,
+        filtrarVentas: filtrarVentas,
+        totalSinAnuladas: totalSinAnuladas,
         formatearPrecio: formatearPrecio,
         formatearFecha: formatearFecha,
         buscarProducto: buscarProducto,
