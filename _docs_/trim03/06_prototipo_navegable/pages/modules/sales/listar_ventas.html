@@ -73,7 +73,7 @@
                 <thead>
                     <tr>
                         <th>Factura</th><th>Fecha</th><th>Hora</th><th>Cajero</th><th>Método</th>
-                        <th class="text-end">Total</th><th>Estado</th>
+                        <th class="text-end">Total</th><th>Estado</th><th><span class="visually-hidden">Acciones</span></th>
                     </tr>
                 </thead>
                 <tbody id="cuerpoVentas"></tbody>
@@ -81,7 +81,7 @@
                 <tfoot>
                     <tr class="fw-bold">
                         <td colspan="5">Total <span class="fw-normal small text-body-secondary">(sin anuladas)</span></td>
-                        <td class="text-end" id="totalAcumulado">$0</td><td></td>
+                        <td class="text-end" id="totalAcumulado">$0</td><td colspan="2"></td>
                     </tr>
                 </tfoot>
             </table>
@@ -103,6 +103,8 @@
             <td data-campo="cajero"></td><td data-campo="metodo"></td>
             <td class="text-end" data-campo="total"></td>
             <td><span class="badge" data-campo="estado"></span></td>
+            <!-- HU03: "Ver detalle" en cada registro; el JS pone ?id= en el enlace -->
+            <td class="text-end"><a class="btn btn-sm btn-outline-primary" data-campo="detalle" href="consultar_venta.html"><i class="bi bi-eye"></i> Ver detalle</a></td>
         </tr>
     </template>
 

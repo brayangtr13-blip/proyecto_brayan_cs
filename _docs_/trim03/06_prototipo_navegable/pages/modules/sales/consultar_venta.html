@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de venta - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../../../assets/css/ventas.css">
+</head>
+
+<!-- CS-20 · MOD_03_HU03 Consultar ventas · CU021. Solo lectura: no hay campos editables. -->
+<body class="content-body">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Ventas</li>
+            <li class="breadcrumb-item"><a href="listar_ventas.html">Historial</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Detalle</li>
+        </ol>
+    </nav>
+
+    <!-- Búsqueda por número de factura (el rango de fechas está en el Historial).
+         Docs: https://getbootstrap.com/docs/5.3/forms/input-group/ -->
+    <form id="formBuscar" class="input-group mb-3 buscar-factura">
+        <span class="input-group-text">Factura #</span>
+        <input type="number" class="form-control" id="buscarFactura" min="1" placeholder="Número" aria-label="Número de factura">
+        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i> Buscar</button>
+    </form>
+
+    <div id="ventaNoEncontrada" class="alert alert-warning d-none" role="alert">Venta no encontrada</div>
+
+    <div id="detalleVenta">
+        <!-- HU03: si está anulada, marca + fecha + motivo (vienen de log_auditoria) -->
+        <div id="avisoAnulada" class="alert alert-danger d-none" role="alert">
+            <strong>ANULADA</strong> el <span data-campo="fechaAnulacion">24/09/2026 10:00</span> por
+            <span data-campo="usuarioAnulacion">Andrés Gómez</span>. Motivo: <span data-campo="motivoAnulacion">—</span>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8 d-flex flex-column gap-3">
+                <!-- Encabezado de HU03. Docs: https://getbootstrap.com/docs/5.3/content/typography/#description-list-alignment -->
+                <section class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h1 class="h5 mb-0" data-campo="titulo">Factura #4</h1>
+                        <span class="badge text-bg-success" data-campo="estado">Pagada</span>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row small mb-0">
+                            <dt class="col-sm-3">Fecha</dt><dd class="col-sm-9 mb-1" data-campo="fecha">23/09/2026</dd>
+                            <dt class="col-sm-3">Hora</dt><dd class="col-sm-9 mb-1" data-campo="hora">11:10</dd>
+                            <dt class="col-sm-3">Cajero</dt><dd class="col-sm-9 mb-1" data-campo="cajero">Juan Carlos Pérez</dd>
+                            <dt class="col-sm-3">Método de pago</dt><dd class="col-sm-9 mb-0" data-campo="metodo">Efectivo</dd>
+                        </dl>
+                    </div>
+                </section>
+
+                <!-- Productos: columnas de HU03 -->
+                <section class="card">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr><th>Código</th><th>Nombre</th><th class="text-center">Cantidad</th><th class="text-end">Precio unit.</th><th class="text-end">Subtotal</th></tr>
+                            </thead>
+                            <tbody id="cuerpoDetalle">
+                                <tr><td>7702001001</td><td>Leche Entera 1L</td><td class="text-center">3</td><td class="text-end">$2.850</td><td class="text-end">$8.550</td></tr>
+                                <tr><td>7702001002</td><td>Arroz Blanco 5kg</td><td class="text-center">1</td><td class="text-end">$12.500</td><td class="text-end">$12.500</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Resumen. Sin columna de IVA en la BD: subtotal = total, IVA incluido en los precios.
+                 resumenSubtotal/resumenTotal: nombres propios para no chocar con el "subtotal" de cada fila. -->
+            <div class="col-lg-4">
+                <aside class="card">
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item d-flex justify-content-between px-0"><span>Subtotal</span><span data-campo="resumenSubtotal">$21.050</span></li>
+                            <li class="list-group-item d-flex justify-content-between px-0"><span>IVA</span><span class="text-body-secondary">Incluido</span></li>
+                            <li class="list-group-item d-flex justify-content-between px-0 fs-5 fw-bold"><span>Total</span><span data-campo="resumenTotal">$21.050</span></li>
+                        </ul>
+                        <div class="d-grid gap-2">
+                            <!-- HU03: reimprimir el comprobante -->
+                            <button type="button" class="btn btn-primary" id="botonReimprimir"><i class="bi bi-printer"></i> Reimprimir comprobante</button>
+                            <a href="listar_ventas.html" class="btn btn-outline-secondary">Volver al historial</a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comprobante (CU019): el mismo formato de tirilla que el punto de venta -->
+    <section id="comprobante" class="comprobante d-none" aria-label="Comprobante de venta">
+        <h2 class="h5 text-center mb-0">Control Store</h2>
+        <p class="text-center small mb-2">Autoservicio Ayuelal</p>
+        <p class="small mb-2" data-campo="encabezado"></p>
+        <table class="table table-sm small mb-2">
+            <thead><tr><th>Producto</th><th class="text-center">Cant.</th><th class="text-end">Subtotal</th></tr></thead>
+            <tbody data-campo="renglones"></tbody>
+        </table>
+        <p class="small mb-0 d-flex justify-content-between"><span>Total</span><strong data-campo="total"></strong></p>
+        <p class="small mb-0" data-campo="pago"></p>
+        <p class="small text-center mt-2 mb-0">Precios con IVA incluido. ¡Gracias por tu compra!</p>
+    </section>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
