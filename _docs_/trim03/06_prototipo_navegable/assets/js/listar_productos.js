@@ -40,7 +40,9 @@ function renderizarProductos(lista) {
     sinProductos.classList.add('d-none');
 
     lista.forEach(function (producto) {
-        const stockBajo = producto.stock < producto.stockMinimo;
+        // "<=": misma regla de alerta que alertas_stock.js, consultar_producto.js y
+        // dashboard_inicio.js (un producto justo en su stock mínimo también es alerta).
+        const stockBajo = producto.stock <= producto.stockMinimo;
         const activo = producto.estado === 'activo';
         const fila = document.createElement('tr');
         if (stockBajo) {
