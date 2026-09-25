@@ -125,10 +125,81 @@ const ServicioDomicilios = (function () {
             fechaEntrega: null,
             observacion: datos.observacion
         });
+        // Primera entrada del histórico: el pedido nace en "pendiente"
+        registrarHistorial(pedido, null, 'pendiente', 'Administrador', 'Pedido registrado por teléfono');
+        RepositorioDomicilios.actualizarPedido();
         return { ok: true, pedido: pedido };
     }
 
+    // ---------------- Asignación (CS-36 – MOD_04_HU05 / CU038) ----------------
+
+    // Un pedido entregado o cancelado ya terminó: no se asigna ni se reasigna (HU05)
+    function estaTerminado(pedido) {
+        return pedido.estado === 'entregado' || pedido.estado === 'cancelado';
+    }
+
+    // HU05: "contador de pedidos activos por cada domiciliario para distribuir la carga"
+    function cargaDe(idDomiciliario) {
+        return RepositorioDomicilios.obtenerPedidos().filter(function (p) {
+            return p.idDomiciliario === idDomiciliario && (p.estado === 'asignado' || p.estado === 'en_camino');
+        }).length;
+    }
+
+    // HU05: "El domiciliario debe ver en su panel únicamente los pedidos asignados a él"
+    function pedidosDe(idDomiciliario) {
+        return RepositorioDomicilios.obtenerPedidos().filter(function (p) {
+            return p.idDomiciliario === idDomiciliario;
+        });
+    }
+
+    // Histórico del pedido (HU05 y HU06). En la base de datos esto va a log_auditoria
+    // (acción, módulo "domicilios", detalle, usuario y fecha), que ya existe.
+    function registrarHistorial(pedido, estadoAnterior, estadoNuevo, usuario, detalle) {
+        pedido.historial = pedido.historial || [];
+        pedido.historial.push({
+            fecha: new Date().toISOString(),
+            estadoAnterior: estadoAnterior,
+            estadoNuevo: estadoNuevo,
+            usuario: usuario,
+            detalle: detalle
+        });
+    }
+
+    function asignarDomiciliario(idPedido, idDomiciliario, usuario) {
+        const pedido = RepositorioDomicilios.obtenerPedidoPorId(idPedido);
+        const domiciliario = RepositorioDomicilios.obtenerDomiciliarioPorId(idDomiciliario);
+
+        if (!pedido || estaTerminado(pedido)) {
+            return { ok: false, error: 'Este pedido ya terminó y no se puede reasignar.' };
+        }
+        // HU05: "No se debe poder asignar un pedido a un domiciliario inactivo"
+        if (!domiciliario || !domiciliario.activo) {
+            return { ok: false, error: 'Solo se puede asignar a un domiciliario activo.' };
+        }
+
+        const estadoAnterior = pedido.estado;
+        const anterior = RepositorioDomicilios.obtenerDomiciliarioPorId(pedido.idDomiciliario);
+        pedido.idDomiciliario = idDomiciliario;
+        // HU05: al asignar, "pendiente" pasa automáticamente a "asignado" y se registra la hora.
+        // En una reasignación el estado se conserva (un pedido en camino sigue en camino).
+        if (pedido.estado === 'pendiente') {
+            pedido.estado = 'asignado';
+        }
+        pedido.fechaAsignacion = new Date().toISOString();
+        registrarHistorial(pedido, estadoAnterior, pedido.estado, usuario,
+            anterior ? 'Reasignado de ' + anterior.nombre + ' a ' + domiciliario.nombre
+                : 'Asignado a ' + domiciliario.nombre);
+        RepositorioDomicilios.actualizarPedido();
+
+        return { ok: true, pedido: pedido, mensaje: 'Pedido asignado a ' + domiciliario.nombre };
+    }
+
     return {
+        estaTerminado: estaTerminado,
+        cargaDe: cargaDe,
+        pedidosDe: pedidosDe,
+        registrarHistorial: registrarHistorial,
+        asignarDomiciliario: asignarDomiciliario,
         TEXTO_ESTADO: TEXTO_ESTADO,
         AVANCE_ESTADO: AVANCE_ESTADO,
         formatearPrecio: formatearPrecio,

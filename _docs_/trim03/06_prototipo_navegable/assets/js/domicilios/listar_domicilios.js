@@ -51,6 +51,17 @@ function crearTarjeta(pedido) {
         paso.classList.add('fw-semibold', 'text-body');
     }
 
+    // CS-36: "Asignar" si todavía no tiene domiciliario, "Reasignar" mientras no haya terminado
+    // (HU05: se puede reasignar mientras no esté Entregado). Un pedido terminado no muestra el botón.
+    const botonAsignar = tarjeta.querySelector('[data-accion="asignar"]');
+    botonAsignar.dataset.id = pedido.id;
+    if (ServicioDomicilios.estaTerminado(pedido)) {
+        botonAsignar.remove();
+    } else if (pedido.idDomiciliario) {
+        campo('textoAsignar').textContent = 'Reasignar';
+        botonAsignar.classList.replace('btn-primary', 'btn-outline-primary');
+    }
+
     return tarjeta;
 }
 
@@ -107,6 +118,86 @@ filtrosEstado.addEventListener('click', function (evento) {
     boton.classList.add('active');
     estadoFiltro = boton.dataset.estado;
     mostrarPedidos();
+});
+
+// ---------------- Asignar domiciliario (CS-36 – HU05 / CU038) ----------------
+const modalAsignar = document.getElementById('modalAsignar');
+const listaDomiciliarios = document.getElementById('listaDomiciliarios');
+const plantillaDomiciliario = document.getElementById('plantillaDomiciliario');
+const sinDomiciliarios = document.getElementById('sinDomiciliarios');
+const errorAsignar = document.getElementById('errorAsignar');
+const confirmarAsignar = document.getElementById('confirmarAsignar');
+const accionExito = document.getElementById('accionExito');
+let pedidoAAsignar = null;
+let temporizadorAviso = null;
+
+// "show.bs.modal" lo dispara Bootstrap justo antes de abrir el modal; relatedTarget es el
+// botón que lo abrió, así sabemos de qué pedido se trata sin variables globales extra.
+// Docs: https://getbootstrap.com/docs/5.3/components/modal/#events
+modalAsignar.addEventListener('show.bs.modal', function (evento) {
+    pedidoAAsignar = RepositorioDomicilios.obtenerPedidoPorId(Number(evento.relatedTarget.dataset.id));
+    const cliente = RepositorioDomicilios.obtenerClientePorId(pedidoAAsignar.idCliente);
+    document.getElementById('resumenPedidoAsignar').textContent =
+        'Pedido #' + pedidoAAsignar.id + ' · ' + cliente.nombre + ' · ' + pedidoAAsignar.barrio;
+    errorAsignar.classList.add('d-none');
+
+    listaDomiciliarios.replaceChildren();
+    const domiciliarios = RepositorioDomicilios.obtenerDomiciliarios();
+    domiciliarios.forEach(function (domiciliario) {
+        const fila = plantillaDomiciliario.content.cloneNode(true).querySelector('label');
+        const radio = fila.querySelector('input');
+        const carga = fila.querySelector('[data-campo="carga"]');
+        radio.value = domiciliario.id;
+        radio.id = 'domiciliario' + domiciliario.id;
+        fila.htmlFor = radio.id;
+        fila.querySelector('[data-campo="nombre"]').textContent = domiciliario.nombre +
+            (domiciliario.id === pedidoAAsignar.idDomiciliario ? ' (actual)' : '');
+
+        if (domiciliario.activo) {
+            const activos = ServicioDomicilios.cargaDe(domiciliario.id);
+            carga.textContent = activos + (activos === 1 ? ' activo' : ' activos');
+            carga.classList.add('text-bg-light', 'border');
+            radio.checked = domiciliario.id === pedidoAAsignar.idDomiciliario;
+        } else {
+            // HU05: un domiciliario inactivo se ve, pero no se puede elegir
+            carga.textContent = 'Inactivo';
+            carga.classList.add('text-bg-secondary');
+            radio.disabled = true;
+            fila.classList.add('disabled');
+            fila.setAttribute('aria-disabled', 'true');
+        }
+        listaDomiciliarios.appendChild(fila);
+    });
+
+    // Extensión "Sin domiciliarios disponibles": se avisa y no se deja confirmar
+    const hayActivos = domiciliarios.some(function (d) { return d.activo; });
+    sinDomiciliarios.classList.toggle('d-none', hayActivos);
+    confirmarAsignar.disabled = !hayActivos;
+});
+
+confirmarAsignar.addEventListener('click', function () {
+    const elegido = listaDomiciliarios.querySelector('input:checked');
+    if (!elegido) {
+        errorAsignar.textContent = 'Selecciona un domiciliario.';
+        errorAsignar.classList.remove('d-none');
+        return;
+    }
+    // La regla (activo, no terminado, cambio de estado, histórico) es del Service
+    const resultado = ServicioDomicilios.asignarDomiciliario(pedidoAAsignar.id, Number(elegido.value), 'Administrador');
+    if (!resultado.ok) {
+        errorAsignar.textContent = resultado.error;
+        errorAsignar.classList.remove('d-none');
+        return;
+    }
+    // Facade de Bootstrap: cerrar el modal sin manipular sus clases a mano
+    bootstrap.Modal.getInstance(modalAsignar).hide();
+    mostrarPedidos();
+
+    // HU05: "Al asignar se debe mostrar 'Pedido asignado a [nombre del domiciliario]'"
+    clearTimeout(temporizadorAviso);
+    accionExito.textContent = resultado.mensaje + ' (pedido #' + resultado.pedido.id + ').';
+    accionExito.classList.remove('d-none');
+    temporizadorAviso = setTimeout(function () { accionExito.classList.add('d-none'); }, 4000);
 });
 
 document.getElementById('botonRestablecer').addEventListener('click', function () {

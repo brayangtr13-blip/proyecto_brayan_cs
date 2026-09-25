@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del domiciliario - Control Store</title>
+    <!-- Mismos archivos que admin.html: los dos paneles comparten el esqueleto (dashboard.css) -->
+    <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../assets/css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="bi bi-shop"></i>
+                <div>
+                    <div class="sidebar-brand-name">Control Store</div>
+                    <div class="sidebar-brand-sub">Panel del domiciliario</div>
+                </div>
+            </div>
+
+            <!-- Menú corto a propósito: el domiciliario solo participa en
+                 CU040 (Actualizar estado) y CU042 (Notificar al cliente),
+                 que ocurren los dos dentro de "Mis pedidos". -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-label">Domicilios</div>
+                <a href="../modules/deliveries/mis_pedidos.html" target="area_trabajo" class="sidebar-link active">
+                    <i class="bi bi-truck"></i> Mis pedidos
+                </a>
+            </nav>
+        </aside>
+
+        <div class="dashboard-main">
+            <header class="topbar">
+                <div class="topbar-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Buscar pedido...">
+                </div>
+
+                <!-- d-flex + gap-2: utilidades de Bootstrap para poner los botones en fila
+                     con espacio entre ellos, sin escribir CSS nuevo.
+                     Docs: https://getbootstrap.com/docs/5.3/utilities/flex/ -->
+                <div class="topbar-actions d-flex align-items-center gap-2">
+
+                    <!-- Campana con punto azul (como en el diseño de referencia).
+                         position-relative en el botón + position-absolute en el badge:
+                         así el punto queda "pegado" a la esquina del botón.
+                         Docs: https://getbootstrap.com/docs/5.3/components/badge/#positioned -->
+                    <button type="button" class="topbar-icon-btn position-relative" title="Notificaciones">
+                        <i class="bi bi-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-primary border border-light rounded-circle">
+                            <span class="visually-hidden">Hay pedidos nuevos</span>
+                        </span>
+                    </button>
+
+                    <!-- Menú de perfil con nombre y rol: quien entra ve de inmediato
+                         con qué usuario y en qué panel está. Luis Pérez es el domiciliario
+                         real de la base de datos (usuarios.id_usuario = 3, rol domiciliario).
+                         Docs: https://getbootstrap.com/docs/5.3/components/dropdowns/ -->
+                    <div class="dropdown">
+                        <button class="btn border d-flex align-items-center gap-2 dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-5"></i>
+                            <span class="text-start lh-sm">
+                                <span class="d-block small fw-semibold">Luis Pérez</span>
+                                <span class="d-block small text-body-secondary">Domiciliario</span>
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="../modules/perfil/cambiar_contrasena.html" target="area_trabajo">
+                                    <i class="bi bi-key"></i> Cambiar contraseña
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+                                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content">
+                <!-- El iframe arranca en "Mis pedidos" porque es la única pantalla del domiciliario -->
+                <iframe name="area_trabajo" src="../modules/deliveries/mis_pedidos.html" class="content-frame"></iframe>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de cerrar sesión: mismo id que en admin.html (modalCerrarSesion / confirmarCerrarSesion),
+         por eso podemos reutilizar dashboard.js sin copiar código.
+         Docs: https://getbootstrap.com/docs/5.3/components/modal/ -->
+    <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cerrar sesión</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Desea cerrar la sesión?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmarCerrarSesion">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- bootstrap.bundle trae Popper, necesario para que el dropdown se abra -->
+    <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/dashboard.js"></script>
+</body>
+
+</html>

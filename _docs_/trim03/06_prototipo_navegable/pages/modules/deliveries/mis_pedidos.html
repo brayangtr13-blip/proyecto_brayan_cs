@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis pedidos - Control Store</title>
+    <!-- ../../../ porque esta página está tres carpetas debajo de la raíz del prototipo
+         (pages/modules/deliveries/), igual que las páginas de inventory/ y users/ -->
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/solid.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../../../assets/css/domicilios.css">
+</head>
+
+<!-- content-body: el mismo padding que el resto de páginas que cargan dentro del iframe -->
+<body class="content-body modulo-domicilios">
+
+    <!-- Migas de pan (breadcrumb): le dicen al usuario en qué parte del sistema está.
+         Docs: https://getbootstrap.com/docs/5.3/components/breadcrumb/ -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Domicilios</li>
+            <li class="breadcrumb-item active" aria-current="page">Mis pedidos</li>
+        </ol>
+    </nav>
+
+    <div class="mb-4">
+        <h1 class="h4 mb-0"><i class="fa-solid fa-motorcycle"></i> Mis pedidos</h1>
+        <p class="text-muted mb-0">Pedidos asignados a ti para entregar (CU038 – Asignar domiciliario)</p>
+    </div>
+
+    <!-- Saludo del diseño de referencia: resume cuántas entregas tiene el domiciliario.
+         d-flex + gap-2 pone el ícono y el texto en fila sin CSS nuevo.
+         Docs: https://getbootstrap.com/docs/5.3/components/alerts/ -->
+    <div class="alert alert-success d-flex align-items-center gap-2" role="alert" id="saludo">
+        <i class="fa-solid fa-user-check"></i>
+        <div>Hola <strong data-campo="nombreDomiciliario">Luis Pérez</strong>, tienes <strong data-campo="totalActivos">1 entrega activa</strong>.</div>
+    </div>
+
+    <!-- HU05: "La vista del domiciliario debe mostrar: Número de pedido, Cliente, Teléfono,
+         Dirección, Barrio, Total a cobrar, Método de pago y Observaciones". Cada tarjeta
+         muestra exactamente esos 8 datos. -->
+    <h2 class="h6 text-uppercase dato-etiqueta mb-3">Por entregar</h2>
+    <!-- El JS llena este contenedor copiando la <template> de abajo, una vez por pedido -->
+    <div class="row row-cols-1 row-cols-lg-2 g-3 mb-4" id="pedidosActivos"></div>
+
+    <!-- Estado vacío: cuando no tiene pedidos por entregar -->
+    <div id="sinPedidos" class="text-center text-body-secondary py-5 d-none">
+        <i class="fa-solid fa-mug-hot fs-1 d-block mb-3"></i>
+        <p class="mb-0">No tienes pedidos por entregar en este momento.</p>
+    </div>
+
+    <!-- Entregas ya terminadas: lista compacta, porque ya no requieren acción.
+         Docs: https://getbootstrap.com/docs/5.3/components/list-group/ -->
+    <h2 class="h6 text-uppercase dato-etiqueta mb-3">Entregados</h2>
+    <ul class="list-group" id="pedidosEntregados"></ul>
+    <p id="sinEntregados" class="small text-body-secondary d-none">Todavía no tienes entregas terminadas.</p>
+
+    <!-- Tarjeta de un pedido por entregar: los 8 datos que pide HU05 -->
+    <template id="plantillaPedidoDomiciliario">
+        <div class="col">
+            <article class="card h-100 pedido-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h3 class="h6 mb-0" data-campo="titulo"></h3>
+                            <small class="text-body-secondary" data-campo="subtitulo"></small>
+                        </div>
+                        <span class="badge rounded-pill" data-campo="estado"></span>
+                    </div>
+                    <!-- Docs: https://getbootstrap.com/docs/5.3/content/typography/#description-list-alignment -->
+                    <dl class="row small mb-0">
+                        <dt class="col-sm-4 dato-etiqueta">Cliente</dt>
+                        <dd class="col-sm-8 mb-1" data-campo="cliente"></dd>
+                        <dt class="col-sm-4 dato-etiqueta">Teléfono</dt>
+                        <!-- tel: en el celular del domiciliario abre directamente la llamada -->
+                        <dd class="col-sm-8 mb-1"><a data-campo="telefono"></a></dd>
+                        <dt class="col-sm-4 dato-etiqueta">Dirección</dt>
+                        <dd class="col-sm-8 mb-1"><i class="fa-solid fa-location-dot"></i> <span data-campo="direccion"></span></dd>
+                        <dt class="col-sm-4 dato-etiqueta">Barrio</dt>
+                        <dd class="col-sm-8 mb-1" data-campo="barrio"></dd>
+                        <dt class="col-sm-4 dato-etiqueta">Cobrar</dt>
+                        <dd class="col-sm-8 mb-1"><strong data-campo="total"></strong> · <span data-campo="metodo"></span></dd>
+                        <dt class="col-sm-4 dato-etiqueta">Observaciones</dt>
+                        <dd class="col-sm-8 mb-0" data-campo="observacion"></dd>
+                    </dl>
+                </div>
+            </article>
+        </div>
+    </template>
+
+    <!-- Renglón de un pedido ya entregado -->
+    <template id="plantillaEntregado">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span data-campo="resumen"></span>
+            <span class="badge rounded-pill estado-entregado">Entregado</span>
+        </li>
+    </template>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Orden: Repository -> Service -> script de la pantalla -->
+    <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_servicio.js"></script>
+    <script src="../../../assets/js/domicilios/mis_pedidos.js"></script>
+</body>
+
+</html>

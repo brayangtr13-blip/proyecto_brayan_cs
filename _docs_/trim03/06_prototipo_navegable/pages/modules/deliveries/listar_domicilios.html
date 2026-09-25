@@ -38,7 +38,7 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
             <h1 class="h4 mb-0"><i class="fa-solid fa-motorcycle"></i> Domicilios</h1>
-            <p class="text-muted mb-0">Pedidos a domicilio del autoservicio (CU037 – Registrar pedido en sistema)</p>
+            <p class="text-muted mb-0">Pedidos a domicilio del autoservicio (CU037 – Registrar pedido · CU038 – Asignar domiciliario)</p>
         </div>
         <a href="registrar_pedido.html" class="btn btn-primary">
             <i class="fa-solid fa-plus"></i> Registrar pedido
@@ -123,6 +123,9 @@
          (cliente, dirección, pago, avance) y en tabla quedaría ilegible en celular.
          El JS llena este contenedor copiando la <template> de abajo, una vez por pedido.
          =================================================== -->
+    <!-- Aviso de una sola acción (HU05: "Pedido asignado a [nombre]"); el JS lo muestra y lo oculta -->
+    <div id="accionExito" class="alert alert-success d-none" role="alert"></div>
+
     <div class="row row-cols-1 row-cols-lg-2 g-3" id="listaPedidos"></div>
 
     <!-- Estado vacío: se muestra cuando el filtro elegido no tiene pedidos -->
@@ -137,6 +140,55 @@
             <i class="fa-solid fa-rotate-left"></i> Restablecer datos de ejemplo
         </button>
     </div>
+
+    <!-- ===================================================
+         Modal "Asignar domiciliario" (CU038 / HU05)
+         Lista de domiciliarios como radios dentro de un list-group: toda la fila es clicable
+         y solo se puede elegir uno. Cada fila muestra cuántos pedidos activos tiene
+         (HU05: "contador de pedidos activos por cada domiciliario para distribuir la carga")
+         y los inactivos aparecen deshabilitados (HU05: no se asigna a un domiciliario inactivo).
+         Docs: https://getbootstrap.com/docs/5.3/components/list-group/#checkboxes-and-radios
+         Docs: https://getbootstrap.com/docs/5.3/components/modal/
+         =================================================== -->
+    <div class="modal fade" id="modalAsignar" tabindex="-1" aria-labelledby="tituloModalAsignar" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title h5" id="tituloModalAsignar">Asignar domiciliario</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-body-secondary mb-3" id="resumenPedidoAsignar"></p>
+
+                    <!-- Extensión "Sin domiciliarios disponibles" (CU041 del diagrama / wireframe 24.1) -->
+                    <div id="sinDomiciliarios" class="alert alert-warning d-none" role="alert">
+                        <strong>No hay domiciliarios disponibles en este momento.</strong>
+                        Intenta más tarde o activa un domiciliario en el módulo de Usuarios.
+                    </div>
+
+                    <!-- Las filas las genera el JS desde el Repository con la carga actual de cada uno -->
+                    <div class="list-group" id="listaDomiciliarios"></div>
+                    <div id="errorAsignar" class="small text-danger mt-2 d-none">Selecciona un domiciliario.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirmarAsignar">
+                        <i class="fa-solid fa-check"></i> Asignar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fila de un domiciliario dentro del modal. Si está inactivo, el JS agrega "disabled"
+         (Bootstrap lo pinta gris y el navegador no deja marcar el radio). -->
+    <template id="plantillaDomiciliario">
+        <label class="list-group-item d-flex align-items-center gap-3">
+            <input class="form-check-input flex-shrink-0 mt-0" type="radio" name="domiciliario">
+            <span class="flex-grow-1"><i class="fa-solid fa-motorcycle"></i> <span data-campo="nombre"></span></span>
+            <span class="badge rounded-pill" data-campo="carga"></span>
+        </label>
+    </template>
 
     <!-- <template>: HTML que el navegador NO muestra; el JS lo copia (cloneNode) por cada pedido
          y llena los [data-campo] con textContent. Así el HTML de la tarjeta sigue en el .html
@@ -180,6 +232,17 @@
                     <div class="d-flex justify-content-between small text-body-secondary mt-1" data-campo="pasos">
                         <span data-paso="pendiente">Pendiente</span><span data-paso="asignado">Asignado</span>
                         <span data-paso="en_camino">En camino</span><span data-paso="entregado">Entregado</span>
+                    </div>
+
+                    <!-- Acciones del pedido. data-bs-toggle + data-bs-target abren el modal sin JS propio;
+                         el JS solo lee en "show.bs.modal" qué pedido lo abrió (evento.relatedTarget),
+                         el mismo patrón de "Eliminar producto" en Inventario.
+                         Docs: https://getbootstrap.com/docs/5.3/components/modal/#varying-modal-content -->
+                    <div class="d-flex flex-wrap gap-2 mt-3" data-campo="acciones">
+                        <button type="button" class="btn btn-primary btn-sm" data-accion="asignar"
+                            data-bs-toggle="modal" data-bs-target="#modalAsignar">
+                            <i class="fa-solid fa-user-check"></i> <span data-campo="textoAsignar">Asignar domiciliario</span>
+                        </button>
                     </div>
                 </div>
             </article>
