@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte impreso de ventas - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+
+<!-- CS-24 · MOD_05_HU02 Reporte impreso de ventas. Solo HTML + Bootstrap:
+     el reporte muestra las ventas #2, #3 y #4 de la BD. -->
+<body class="content-body">
+
+    <!-- d-print-none: lo que no sale en papel. Docs: https://getbootstrap.com/docs/5.3/utilities/display/#display-in-print -->
+    <nav aria-label="breadcrumb" class="d-print-none">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Reportes</li>
+            <li class="breadcrumb-item active" aria-current="page">Reporte impreso de ventas</li>
+        </ol>
+    </nav>
+
+    <!-- Pestañas del módulo. Docs: https://getbootstrap.com/docs/5.3/components/navs-tabs/#pills -->
+    <ul class="nav nav-pills mb-3 d-print-none">
+        <li class="nav-item"><a class="nav-link" href="reporte_grafico_ventas.html">Gráfico</a></li>
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="reporte_impreso_ventas.html">Impreso</a></li>
+    </ul>
+
+    <!-- Filtros: fechas, vendedor y método de pago. Docs: https://getbootstrap.com/docs/5.3/forms/layout/#gutters -->
+    <form class="card card-body mb-3 d-print-none">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroDesde" class="form-label small">Desde</label>
+                <input type="date" class="form-control" id="filtroDesde" value="2026-09-01">
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroHasta" class="form-label small">Hasta</label>
+                <input type="date" class="form-control" id="filtroHasta" value="2026-09-30">
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <label for="filtroVendedor" class="form-label small">Vendedor</label>
+                <select class="form-select" id="filtroVendedor">
+                    <option value="">Todos</option>
+                    <option value="2">Juan Carlos Pérez</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroMetodo" class="form-label small">Método de pago</label>
+                <select class="form-select" id="filtroMetodo">
+                    <option value="">Todos</option>
+                    <option value="1">Efectivo</option>
+                    <option value="2">Nequi</option>
+                    <option value="3">Transferencia</option>
+                    <option value="4">Tarjeta</option>
+                </select>
+            </div>
+            <div class="col-lg-3 d-flex gap-2">
+                <button type="button" class="btn btn-outline-danger flex-fill"><i class="bi bi-file-earmark-pdf"></i> Exportar PDF</button>
+                <button type="button" class="btn btn-primary flex-fill"><i class="bi bi-printer"></i> Imprimir</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Sin datos: el reporte no se genera (se mostrará con JS) -->
+    <div class="alert alert-secondary d-none" role="alert">No hay información para el periodo seleccionado</div>
+
+    <!-- Hoja del reporte: es lo único que sale al imprimir -->
+    <article class="card">
+        <div class="card-body p-4">
+            <header class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+                <div>
+                    <h1 class="h5 mb-0">Autoservicio Ayuelal</h1>
+                    <!-- La BD no guarda NIT: se usa el de los mockups del trimestre 2 -->
+                    <p class="small text-body-secondary mb-0">NIT 900.123.456-7</p>
+                </div>
+                <div class="text-end">
+                    <h2 class="h6 mb-0">Reporte de ventas</h2>
+                    <p class="small text-body-secondary mb-0">Periodo: 01/09/2026 a 30/09/2026</p>
+                    <p class="small text-body-secondary mb-0">Generado: 25/09/2026 14:30</p>
+                </div>
+            </header>
+
+            <!-- Tabla de ventas pagadas. Docs: https://getbootstrap.com/docs/5.3/content/tables/ -->
+            <div class="table-responsive">
+                <table class="table table-sm table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Factura</th><th>Fecha</th><th>Vendedor</th><th>Método de pago</th><th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>#2</td><td>23/09/2026 09:40</td><td>Juan Carlos Pérez</td><td>Efectivo</td><td class="text-end">$8.700</td></tr>
+                        <tr><td>#3</td><td>23/09/2026 10:10</td><td>Juan Carlos Pérez</td><td>Nequi</td><td class="text-end">$32.300</td></tr>
+                        <tr><td>#4</td><td>23/09/2026 11:10</td><td>Juan Carlos Pérez</td><td>Efectivo</td><td class="text-end">$21.050</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totales del reporte (sin anuladas) -->
+            <dl class="row small mb-3 ms-auto" style="max-width: 320px">
+                <dt class="col-7">Número de ventas</dt><dd class="col-5 text-end mb-1">3</dd>
+                <dt class="col-7">Ticket promedio</dt><dd class="col-5 text-end mb-1">$20.683</dd>
+                <dt class="col-7 fs-6">Total general</dt><dd class="col-5 text-end fs-6 fw-bold mb-0">$62.050</dd>
+            </dl>
+
+            <!-- Anuladas en sección aparte, no suman al total -->
+            <h3 class="h6 text-danger"><i class="bi bi-x-circle"></i> Ventas anuladas</h3>
+            <p class="small text-body-secondary">No hay ventas anuladas en el periodo.</p>
+
+            <footer class="border-top pt-2 mt-4 d-flex justify-content-between small text-body-secondary">
+                <span>Generado por: Andrés Gómez (Administrador)</span>
+                <span>25/09/2026 14:30 · Página 1 de 1</span>
+            </footer>
+        </div>
+    </article>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
