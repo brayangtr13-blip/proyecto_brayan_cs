@@ -90,7 +90,8 @@
         <div class="col">
             <div class="card h-100 indicador">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <span class="indicador-icono estado-asignado"><i class="fa-solid fa-clock"></i></span>
+                    <!-- Ícono de Flaticon (UIcons "shipping-timed"): camión con reloj, más claro que un reloj solo -->
+                    <span class="indicador-icono estado-asignado"><img src="../../../assets/img/domicilios/envio_con_tiempo.png" alt="" width="24" height="24"></span>
                     <div>
                         <!-- Promedio entre fecha_asignacion y fecha_entrega (columnas de la tabla domicilios) -->
                         <div class="small text-body-secondary">Tiempo promedio de entrega</div>
@@ -140,6 +141,12 @@
             <i class="fa-solid fa-rotate-left"></i> Restablecer datos de ejemplo
         </button>
     </div>
+
+
+    <!-- Atribución obligatoria de la licencia gratuita de Flaticon (ver assets/img/domicilios/CREDITOS.txt) -->
+    <p class="small text-body-secondary mt-4 mb-0">
+        Íconos ilustrativos: <a href="https://www.flaticon.com/uicons" target="_blank" rel="noopener">Uicons by Flaticon</a>.
+    </p>
 
     <!-- ===================================================
          Modal "Asignar domiciliario" (CU038 / HU05)
@@ -239,6 +246,10 @@
                          el mismo patrón de "Eliminar producto" en Inventario.
                          Docs: https://getbootstrap.com/docs/5.3/components/modal/#varying-modal-content -->
                     <div class="d-flex flex-wrap gap-2 mt-3" data-campo="acciones">
+                        <!-- CS-37: el detalle del pedido es donde el administrador cambia el estado -->
+                        <a class="btn btn-outline-secondary btn-sm" data-accion="ver" href="consultar_pedido.html">
+                            <i class="fa-solid fa-eye"></i> Ver pedido
+                        </a>
                         <button type="button" class="btn btn-primary btn-sm" data-accion="asignar"
                             data-bs-toggle="modal" data-bs-target="#modalAsignar">
                             <i class="fa-solid fa-user-check"></i> <span data-campo="textoAsignar">Asignar domiciliario</span>
@@ -250,9 +261,11 @@
     </template>
 
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!-- Orden importante: primero los datos (Repository), luego las reglas (Service)
-         y al final el script de esta pantalla, que usa a los dos. -->
+    <!-- Orden importante: datos (Repository) -> máquina de estados (State) -> eventos (Observer)
+         -> reglas (Service, que usa a los tres) -> script de esta pantalla. -->
     <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_estados.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_eventos.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_servicio.js"></script>
     <script src="../../../assets/js/domicilios/listar_domicilios.js"></script>
 </body>

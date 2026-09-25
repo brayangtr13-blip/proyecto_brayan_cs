@@ -9,7 +9,8 @@
 // son dos "puertas" al mismo sistema, y ambas deben usar las mismas reglas.
 // En el backend esta lógica vivirá en el servidor y la llamarán los dos.
 //
-// Depende de: domicilios_datos.js (debe cargarse antes en el HTML).
+// Depende de (cargar antes en el HTML): domicilios_datos.js, domicilios_estados.js
+// y domicilios_eventos.js.
 // ==========================================================
 
 const ServicioDomicilios = (function () {
@@ -190,11 +191,84 @@ const ServicioDomicilios = (function () {
             anterior ? 'Reasignado de ' + anterior.nombre + ' a ' + domiciliario.nombre
                 : 'Asignado a ' + domiciliario.nombre);
         RepositorioDomicilios.actualizarPedido();
+        EventosDomicilios.publicar('estadoCambiado', {
+            pedido: pedido, estadoAnterior: estadoAnterior, estadoNuevo: pedido.estado, usuario: usuario
+        });
 
         return { ok: true, pedido: pedido, mensaje: 'Pedido asignado a ' + domiciliario.nombre };
     }
 
+    // ---------------- Actualizar estado (CS-37 – MOD_04_HU06 / CU040) ----------------
+
+    // quien = { rol: 'administrador' | 'domiciliario', idUsuario, nombre }
+    function cambiarEstado(idPedido, nuevoEstado, quien, observacion, motivo) {
+        const pedido = RepositorioDomicilios.obtenerPedidoPorId(idPedido);
+        if (!pedido) {
+            return { ok: false, error: 'El pedido no existe.' };
+        }
+        // Las reglas de transición y de rol son de la máquina de estados (patrón State)
+        const error = EstadosPedido.validar(pedido, nuevoEstado, quien.rol, quien.idUsuario);
+        if (error) {
+            return { ok: false, error: error };
+        }
+        // HU06: "Para cancelar un pedido se debe exigir un motivo obligatorio"
+        if (nuevoEstado === 'cancelado' && !(motivo && motivo.trim())) {
+            return { ok: false, error: 'Escribe el motivo de la cancelación.' };
+        }
+
+        const estadoAnterior = pedido.estado;
+        pedido.estado = nuevoEstado;
+        if (nuevoEstado === 'entregado') {
+            pedido.fechaEntrega = new Date().toISOString();   // domicilios.fecha_entrega
+        }
+        // HU06: cada cambio guarda estado anterior, nuevo, usuario, fecha y hora.
+        // El motivo de cancelación va en el detalle (log_auditoria.detalle), porque la tabla
+        // domicilios no tiene una columna para él.
+        const detalle = [motivo ? 'Motivo: ' + motivo.trim() : '', observacion ? observacion.trim() : '']
+            .filter(Boolean).join(' · ');
+        registrarHistorial(pedido, estadoAnterior, nuevoEstado, quien.nombre, detalle);
+        RepositorioDomicilios.actualizarPedido();
+
+        // Patrón Observer: los interesados (inventario ahora, notificaciones en CS-38) reaccionan solos
+        EventosDomicilios.publicar('estadoCambiado', {
+            pedido: pedido, estadoAnterior: estadoAnterior, estadoNuevo: nuevoEstado,
+            usuario: quien.nombre, motivo: motivo
+        });
+
+        return { ok: true, pedido: pedido, mensaje: 'Pedido #' + pedido.id + ': ' + TEXTO_ESTADO[nuevoEstado].toLowerCase() + '.' };
+    }
+
+    // ---------------- Oyente de inventario (HU06) ----------------
+    // "Al pasar el pedido a Entregado se debe descontar automáticamente el stock" y
+    // "al cancelar, si el stock ya fue descontado, este debe devolverse".
+    // Como un pedido entregado ya no puede cancelarse (estado final), la devolución no
+    // debería ocurrir; se deja programada por si esa regla cambia. En el backend esto
+    // irá dentro de una transacción junto con el UPDATE del pedido.
+    EventosDomicilios.suscribir('estadoCambiado', function (evento) {
+        const pedido = evento.pedido;
+        const descontar = evento.estadoNuevo === 'entregado' && !pedido.stockDescontado;
+        const devolver = evento.estadoNuevo === 'cancelado' && pedido.stockDescontado;
+        if (!descontar && !devolver) {
+            return;
+        }
+        pedido.items.forEach(function (item) {
+            const producto = RepositorioDomicilios.obtenerProductoPorCodigo(item.codigo);
+            producto.stock += descontar ? -item.cantidad : item.cantidad;
+            RepositorioDomicilios.registrarMovimientoInventario({
+                codigoProducto: item.codigo,
+                tipo: descontar ? 'salida' : 'entrada',
+                cantidad: item.cantidad,
+                usuario: evento.usuario,
+                observacion: (descontar ? 'Entrega' : 'Cancelación') + ' del pedido a domicilio #' + pedido.id,
+                fecha: new Date().toISOString()
+            });
+        });
+        pedido.stockDescontado = descontar;
+        RepositorioDomicilios.actualizarPedido();
+    });
+
     return {
+        cambiarEstado: cambiarEstado,
         estaTerminado: estaTerminado,
         cargaDe: cargaDe,
         pedidosDe: pedidosDe,
