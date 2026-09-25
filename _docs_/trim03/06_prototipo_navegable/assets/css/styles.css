@@ -75,6 +75,11 @@ body {
     width: 100%;
 }
 
+/* El registro tiene dos columnas: necesita más ancho que el login */
+.registro-card {
+    max-width: 580px;
+}
+
 .login-icon {
     font-size: 2.5rem;
 }
