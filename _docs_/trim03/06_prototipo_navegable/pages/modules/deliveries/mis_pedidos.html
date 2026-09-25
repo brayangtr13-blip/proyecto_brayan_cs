@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/solid.min.css">
+    <!-- brands: íconos de marcas (WhatsApp, Telegram) para las notificaciones de CS-38 -->
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/brands.min.css">
     <link rel="stylesheet" href="../../../assets/css/fonts.css">
     <link rel="stylesheet" href="../../../assets/css/dashboard.css">
     <link rel="stylesheet" href="../../../assets/css/domicilios.css">
@@ -36,8 +38,11 @@
     <!-- Saludo del diseño de referencia: resume cuántas entregas tiene el domiciliario.
          d-flex + gap-2 pone el ícono y el texto en fila sin CSS nuevo.
          Docs: https://getbootstrap.com/docs/5.3/components/alerts/ -->
-    <div class="alert alert-success d-flex align-items-center gap-2" role="alert" id="saludo">
-        <i class="fa-solid fa-user-check"></i>
+    <div class="alert alert-success d-flex align-items-center gap-3" role="alert" id="saludo">
+        <!-- En lugar de una foto de Pixabay se reutiliza el ícono de Flaticon que ya tiene el proyecto
+             (repartidor.png, con su crédito al pie de esta página). alt="" porque es decorativo:
+             el texto del saludo ya dice lo importante. -->
+        <img src="../../../assets/img/domicilios/repartidor.png" alt="" width="40" height="40">
         <div>Hola <strong data-campo="nombreDomiciliario">Luis Pérez</strong>, tienes <strong data-campo="totalActivos">1 entrega activa</strong>.</div>
     </div>
 
@@ -147,13 +152,32 @@
         </li>
     </template>
 
+    <!-- Toast: aviso flotante y temporal de "mensaje enviado al cliente". Se usa Toast y no Alert
+         porque no interrumpe ni mueve el contenido de la página, y desaparece solo.
+         toast-container + position-fixed lo deja en la esquina inferior derecha.
+         Docs: https://getbootstrap.com/docs/5.3/components/toasts/ -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toastNotificacion" class="toast" role="status" aria-live="polite" aria-atomic="true">
+            <div class="toast-header">
+                <i class="fa-brands fa-whatsapp me-2 text-success"></i>
+                <strong class="me-auto">Notificación al cliente</strong>
+                <small>ahora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+            </div>
+            <div class="toast-body" data-campo="textoToast">Mensaje enviado a Carlos Ruiz por WhatsApp (simulado).</div>
+        </div>
+    </div>
+
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- Orden importante: datos (Repository) -> máquina de estados (State) -> eventos (Observer)
-         -> reglas (Service, que usa a los tres) -> script de esta pantalla. -->
+         -> reglas (Service) -> canales (Adapter) y notificador -> script de esta pantalla. -->
     <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_estados.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_eventos.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_servicio.js"></script>
+    <!-- CS-38: canales (Adapter) y notificador (otro oyente del Observer) -->
+    <script src="../../../assets/js/domicilios/canales_notificacion.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_notificaciones.js"></script>
     <script src="../../../assets/js/domicilios/mis_pedidos.js"></script>
 </body>
 

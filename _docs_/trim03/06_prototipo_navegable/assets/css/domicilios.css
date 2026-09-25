@@ -170,3 +170,61 @@
     background-image: none;
     padding-right: 0.75rem;
 }
+
+/* ---------- Notificaciones por ChatBot (CS-38 – HU07 / CU042) ----------
+   Bootstrap no trae burbujas de chat, así que se arman con estas clases.
+   La del bot va a la izquierda (color tenue de la paleta) y la del cliente a la
+   derecha (primario), como en los wireframes CU19–CU25 del ChatBot. */
+.modulo-domicilios .chat-notificaciones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    background-color: #f3f6f8;
+}
+
+.modulo-domicilios .burbuja-bot,
+.modulo-domicilios .burbuja-cliente {
+    max-width: 80%;
+    padding: 0.55rem 0.8rem;
+    border-radius: 0.9rem;
+}
+
+.modulo-domicilios .burbuja-bot {
+    align-self: flex-start;
+    background-color: var(--dom-blanco);
+    border: 1px solid var(--bs-border-color);
+    border-bottom-left-radius: 0.2rem;
+}
+
+.modulo-domicilios .burbuja-cliente {
+    align-self: flex-end;
+    background-color: var(--dom-primario);
+    color: var(--dom-blanco);
+    border-bottom-right-radius: 0.2rem;
+}
+
+/* Un intento fallido que no se pudo entregar (HU07: reintentos) se ve en rojo tenue */
+.modulo-domicilios .burbuja-bot.burbuja-error {
+    background-color: var(--bs-danger-bg-subtle);
+    border-color: var(--bs-danger-border-subtle);
+}
+
+.modulo-domicilios .burbuja-meta {
+    font-size: 0.72rem;
+    color: var(--bs-secondary-color);
+    margin-top: 0.2rem;
+}
+
+/* El simulador tiene alto fijo con scroll interno, como una ventana de chat real */
+.modulo-domicilios .chat-simulado .chat-notificaciones {
+    height: 26rem;
+    overflow-y: auto;
+}
+
+/* Toast de "mensaje enviado": Bootstrap lo pinta semitransparente (85 %) y encima de las
+   tarjetas se leía el texto de atrás. Toast 5.3 expone su fondo como variable, así que
+   basta con volverlo opaco. Docs: https://getbootstrap.com/docs/5.3/components/toasts/#variables */
+.modulo-domicilios .toast {
+    --bs-toast-bg: var(--dom-blanco);
+    --bs-toast-header-bg: var(--dom-acento-tenue);
+}

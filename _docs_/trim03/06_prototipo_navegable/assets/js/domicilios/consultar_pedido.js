@@ -79,6 +79,22 @@ function mostrarPedido(pedido) {
         }));
     });
 
+    // CS-38 (HU07): mensajes que recibió el cliente por el ChatBot, uno por cambio de estado
+    campo('canal').textContent = 'Canal: ' + CANAL_ACTIVO.nombre;
+    const listaNotificaciones = document.getElementById('listaNotificaciones');
+    listaNotificaciones.querySelectorAll('.burbuja-bot').forEach(function (b) { b.remove(); });
+    const notificaciones = pedido.notificaciones || [];
+    notificaciones.forEach(function (n) {
+        const burbuja = document.getElementById('plantillaNotificacion').content.cloneNode(true).querySelector('.burbuja-bot');
+        burbuja.querySelector('[data-campo="mensaje"]').textContent = n.mensaje;
+        burbuja.querySelector('[data-campo="meta"]').textContent = ServicioDomicilios.formatearFecha(n.fecha) + ' · ' +
+            texto[n.estado] + ' · ' + n.canal + ' · ' +
+            (n.ok ? 'enviado en el intento ' + n.intentos : 'NO enviado tras ' + n.intentos + ' intentos');
+        burbuja.classList.toggle('burbuja-error', !n.ok);
+        listaNotificaciones.insertBefore(burbuja, document.getElementById('sinNotificaciones'));
+    });
+    document.getElementById('sinNotificaciones').classList.toggle('d-none', notificaciones.length > 0);
+
     // Opciones del select: SOLO lo que permite la máquina de estados para el administrador.
     // "Asignado" no se ofrece aquí porque requiere elegir domiciliario (botón Asignar del panel).
     selectEstado.querySelectorAll('option[value]:not([value=""])').forEach(function (o) { o.remove(); });
@@ -124,6 +140,9 @@ form.addEventListener('submit', function (evento) {
     campoMotivo.required = false;
     mostrarPedido(resultado.pedido);
 });
+
+// CS-38: cuando el notificador envía un mensaje, esta pantalla muestra el Toast
+NotificacionesDomicilios.mostrarToastEn(document.getElementById('toastNotificacion'));
 
 const pedido = RepositorioDomicilios.obtenerPedidoPorId(idPedido);
 if (!pedido) {

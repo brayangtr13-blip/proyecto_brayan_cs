@@ -117,4 +117,7 @@ document.getElementById('confirmarEntrega').addEventListener('click', function (
     mostrarMisPedidos();
 });
 
+// CS-38: al salir o entregar, el cliente recibe su mensaje y aquí se ve el Toast
+NotificacionesDomicilios.mostrarToastEn(document.getElementById('toastNotificacion'));
+
 mostrarMisPedidos();

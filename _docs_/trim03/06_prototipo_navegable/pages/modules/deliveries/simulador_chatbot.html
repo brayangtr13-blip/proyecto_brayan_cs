@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador del ChatBot - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/solid.min.css">
+    <!-- brands: íconos de marcas (WhatsApp, Telegram) -->
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/brands.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../../../assets/css/domicilios.css">
+</head>
+
+<body class="content-body modulo-domicilios">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../_mains_/dashboard_inicio.html">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="listar_domicilios.html">Domicilios</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Simulador del ChatBot</li>
+        </ol>
+    </nav>
+
+    <div class="mb-3">
+        <h1 class="h4 mb-0"><i class="fa-solid fa-robot"></i> Simulador del ChatBot</h1>
+        <p class="text-muted mb-0">Lo que ve el cliente en su chat (CU042 – Notificar estado al cliente)</p>
+    </div>
+
+    <!-- Aclaración honesta: esto NO es el ChatBot real. El real corre en el servidor (WhatsApp con
+         Twilio o Telegram); aquí se simula en el navegador usando el mismo Service y las mismas
+         plantillas de mensajes, para que el instructor vea el flujo completo.
+         Docs: https://getbootstrap.com/docs/5.3/components/alerts/#additional-content -->
+    <div class="alert alert-info d-flex gap-2 small" role="note">
+        <i class="fa-solid fa-circle-info mt-1"></i>
+        <div><strong>Simulación.</strong> En producción esta conversación ocurre en WhatsApp o Telegram.
+            Las notificaciones y las respuestas salen del mismo código que usa el panel.</div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna izquierda: elegir el cliente (su teléfono es el "número de WhatsApp") -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Docs: https://getbootstrap.com/docs/5.3/forms/select/ -->
+                    <label for="telefonoCliente" class="form-label">Chat del cliente</label>
+                    <select class="form-select" id="telefonoCliente">
+                        <!-- Las opciones (clientes de la tabla clientes) las agrega el JS -->
+                    </select>
+                    <div class="form-text">
+                        Se muestran los mensajes que el sistema le envió a ese teléfono.
+                        Escribe un número de pedido (por ejemplo <kbd>2</kbd>) para consultar su estado (HU07).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha: la conversación (estructura del wireframe CU19) -->
+        <div class="col-lg-8">
+            <section class="card chat-simulado">
+                <div class="card-header d-flex align-items-center gap-2 fw-semibold">
+                    <i class="fa-brands fa-whatsapp fs-5"></i> ChatBot – Control Store
+                </div>
+                <!-- aria-live="polite": un lector de pantalla anuncia cada respuesta nueva del bot -->
+                <div class="card-body chat-notificaciones" id="conversacion" aria-live="polite">
+                    <!-- Mensajes del bot y del cliente: los genera el JS con la plantilla de abajo -->
+                </div>
+                <div class="card-footer">
+                    <!-- Input group: el campo y el botón "Enviar" van juntos, como en el wireframe CU19.
+                         Docs: https://getbootstrap.com/docs/5.3/forms/input-group/ -->
+                    <form id="formMensaje" class="input-group">
+                        <input type="text" class="form-control" id="mensaje" placeholder="Escribe un mensaje..."
+                            aria-label="Mensaje para el ChatBot" autocomplete="off">
+                        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Enviar</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Una burbuja de chat; el JS le pone la clase burbuja-bot o burbuja-cliente -->
+    <template id="plantillaBurbuja">
+        <div>
+            <div class="small" data-campo="texto"></div>
+            <div class="burbuja-meta" data-campo="meta"></div>
+        </div>
+    </template>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Orden importante: datos (Repository) -> máquina de estados (State) -> eventos (Observer)
+         -> reglas (Service) -> canales (Adapter) y notificador -> script de esta pantalla. -->
+    <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_estados.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_eventos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_servicio.js"></script>
+    <!-- CS-38: canales (Adapter) y notificador (otro oyente del Observer) -->
+    <script src="../../../assets/js/domicilios/canales_notificacion.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_notificaciones.js"></script>
+    <script src="../../../assets/js/domicilios/simulador_chatbot.js"></script>
+</body>
+
+</html>
