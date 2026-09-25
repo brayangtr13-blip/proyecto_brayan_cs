@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del pedido - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/solid.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../../../assets/css/domicilios.css">
+</head>
+
+<body class="content-body modulo-domicilios">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../_mains_/dashboard_inicio.html">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="listar_domicilios.html">Domicilios</a></li>
+            <li class="breadcrumb-item active" aria-current="page" data-campo="migaPedido">Pedido #2</li>
+        </ol>
+    </nav>
+
+    <!-- Aviso si el ?id= de la URL no corresponde a ningún pedido (mismo criterio que Editar producto) -->
+    <div id="pedidoNoEncontrado" class="alert alert-danger d-none" role="alert">
+        No se encontró ningún pedido con ese número. <a href="listar_domicilios.html" class="alert-link">Volver al panel</a>
+    </div>
+
+    <div id="contenidoPedido">
+        <!-- Encabezado: número, estado con su color (HU06) y tiempo desde que se recibió (HU06) -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+            <div>
+                <h1 class="h4 mb-0"><i class="fa-solid fa-receipt"></i> <span data-campo="titulo">Pedido #2</span>
+                    <span class="badge rounded-pill fs-6 align-middle estado-en_camino" data-campo="estado">En camino</span></h1>
+                <p class="text-muted mb-0">
+                    <span data-campo="recibido">Recibido el 23/09/2026 11:10 · hace 1 día</span>
+                    (CU040 – Actualizar estado del pedido)
+                </p>
+            </div>
+            <a href="listar_domicilios.html" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left"></i> Volver al panel</a>
+        </div>
+
+        <!-- Avance del pedido: el mismo "stepper" (Progress + flex) de las tarjetas del panel.
+             Docs: https://getbootstrap.com/docs/5.3/components/progress/ -->
+        <div class="progress progress-pedido" role="progressbar" aria-label="Avance del pedido" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar w-75" data-campo="avance"></div>
+        </div>
+        <div class="d-flex justify-content-between small text-body-secondary mt-1 mb-4" data-campo="pasos">
+            <span data-paso="pendiente">Pendiente</span><span data-paso="asignado">Asignado</span>
+            <span data-paso="en_camino" class="fw-semibold text-body">En camino</span><span data-paso="entregado">Entregado</span>
+        </div>
+
+        <!-- Aviso de éxito o error después de cambiar el estado -->
+        <div id="cambioExito" class="alert alert-success d-none" role="alert"></div>
+
+        <div class="row g-4">
+            <div class="col-lg-8 d-flex flex-column gap-4">
+
+                <!-- ============ Información del pedido (wireframe CU24) ============ -->
+                <section class="card">
+                    <div class="card-header fw-semibold"><i class="fa-solid fa-circle-info"></i> Información del pedido</div>
+                    <div class="card-body">
+                        <!-- Docs: https://getbootstrap.com/docs/5.3/content/typography/#description-list-alignment -->
+                        <dl class="row small mb-0">
+                            <dt class="col-sm-3 dato-etiqueta">Cliente</dt>
+                            <dd class="col-sm-9 mb-2" data-campo="cliente">Carlos Ruiz · 3109876543</dd>
+                            <dt class="col-sm-3 dato-etiqueta">Entregar en</dt>
+                            <dd class="col-sm-9 mb-2" data-campo="direccion">Carrera 7 # 15-02 · La Playa</dd>
+                            <dt class="col-sm-3 dato-etiqueta">Pago</dt>
+                            <dd class="col-sm-9 mb-2" data-campo="pago">Efectivo · $21.050</dd>
+                            <dt class="col-sm-3 dato-etiqueta">Domiciliario</dt>
+                            <dd class="col-sm-9 mb-2" data-campo="domiciliario">Luis Pérez</dd>
+                            <dt class="col-sm-3 dato-etiqueta">Asignado</dt>
+                            <dd class="col-sm-9 mb-2" data-campo="fechaAsignacion">23/09/2026 11:20</dd>
+                            <dt class="col-sm-3 dato-etiqueta">Entregado</dt>
+                            <dd class="col-sm-9 mb-2" data-campo="fechaEntrega">—</dd>
+                            <dt class="col-sm-3 dato-etiqueta">Observaciones</dt>
+                            <dd class="col-sm-9 mb-0" data-campo="observacion">Sin observaciones</dd>
+                        </dl>
+                    </div>
+                </section>
+
+                <!-- ============ Productos (detalle_venta) ============ -->
+                <section class="card">
+                    <div class="card-header fw-semibold"><i class="fa-solid fa-box-open"></i> Productos</div>
+                    <div class="card-body">
+                        <!-- table-sm: tabla compacta, porque aquí es solo consulta.
+                             Docs: https://getbootstrap.com/docs/5.3/content/tables/#small-tables -->
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr><th>Producto</th><th class="text-end">Precio</th><th class="text-center">Cant.</th><th class="text-end">Subtotal</th></tr>
+                                </thead>
+                                <tbody id="cuerpoProductos">
+                                    <tr><td>Leche Entera 1L</td><td class="text-end">$2.850</td><td class="text-center">3</td><td class="text-end">$8.550</td></tr>
+                                    <tr><td>Arroz Blanco 5kg</td><td class="text-end">$12.500</td><td class="text-center">1</td><td class="text-end">$12.500</td></tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="fw-bold"><td colspan="3">Total</td><td class="text-end" data-campo="total">$21.050</td></tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Historial de estados (wireframe 24.5 / HU06) ============
+                     HU06: "Cada cambio de estado debe registrar: estado anterior, estado nuevo,
+                     usuario, fecha y hora". En la base de datos va a log_auditoria. -->
+                <section class="card">
+                    <div class="card-header fw-semibold"><i class="fa-solid fa-clock-rotate-left"></i> Historial de estados</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped align-middle mb-0">
+                                <thead>
+                                    <tr><th>Fecha y hora</th><th>Estado anterior</th><th>Nuevo estado</th><th>Usuario</th><th>Observaciones</th></tr>
+                                </thead>
+                                <tbody id="cuerpoHistorial">
+                                    <tr><td>23/09/2026 11:20</td><td>Pendiente</td><td>Asignado</td><td>Administrador</td><td>Asignado a Luis Pérez</td></tr>
+                                    <tr><td>23/09/2026 11:35</td><td>Asignado</td><td>En camino</td><td>Luis Pérez</td><td>Salió a entregar</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============ Cambiar estado (wireframes 23.2 y CU24) ============ -->
+            <div class="col-lg-4">
+                <aside class="card sticky-top resumen-pedido">
+                    <div class="card-header fw-semibold"><i class="fa-solid fa-arrows-rotate"></i> Cambiar estado</div>
+                    <div class="card-body">
+                        <!-- HU06: "Un pedido en estado Entregado o Cancelado no debe poder modificarse" -->
+                        <div id="pedidoTerminado" class="alert alert-secondary small d-none" role="status">
+                            Este pedido ya terminó y no se puede modificar.
+                        </div>
+
+                        <form id="formCambiarEstado" novalidate>
+                            <div class="mb-3">
+                                <!-- Solo aparecen los estados permitidos desde el actual (sin saltos, HU06).
+                                     Docs: https://getbootstrap.com/docs/5.3/forms/select/ -->
+                                <label for="nuevoEstado" class="form-label">Nuevo estado</label>
+                                <select class="form-select" id="nuevoEstado" required>
+                                    <option value="" selected disabled>Selecciona un estado</option>
+                                    <option value="entregado">Entregado</option>
+                                    <option value="cancelado">Cancelado</option>
+                                </select>
+                                <div class="invalid-feedback">Selecciona el nuevo estado</div>
+                            </div>
+
+                            <!-- HU06: "Para cancelar un pedido se debe exigir un motivo obligatorio".
+                                 Oculto (d-none) hasta que se elige "Cancelado". -->
+                            <div class="mb-3 d-none" id="grupoMotivo">
+                                <label for="motivoCancelacion" class="form-label">Motivo de la cancelación</label>
+                                <textarea class="form-control" id="motivoCancelacion" rows="2" maxlength="200"
+                                    placeholder="Ej: el cliente no contestó ni estaba en la dirección"></textarea>
+                                <div class="invalid-feedback">El motivo es obligatorio para cancelar</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="observacionCambio" class="form-label">Observaciones <span class="text-body-secondary">(opcional)</span></label>
+                                <textarea class="form-control" id="observacionCambio" rows="2" maxlength="200"></textarea>
+                            </div>
+
+                            <!-- Docs: https://getbootstrap.com/docs/5.3/components/buttons/#block-buttons -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Guardar cambio</button>
+                            </div>
+                        </form>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

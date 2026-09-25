@@ -30,7 +30,7 @@
 
     <div class="mb-4">
         <h1 class="h4 mb-0"><i class="fa-solid fa-motorcycle"></i> Mis pedidos</h1>
-        <p class="text-muted mb-0">Pedidos asignados a ti para entregar (CU038 – Asignar domiciliario)</p>
+        <p class="text-muted mb-0">Pedidos asignados a ti para entregar (CU038 – Asignar domiciliario · CU040 – Actualizar estado)</p>
     </div>
 
     <!-- Saludo del diseño de referencia: resume cuántas entregas tiene el domiciliario.
@@ -44,6 +44,9 @@
     <!-- HU05: "La vista del domiciliario debe mostrar: Número de pedido, Cliente, Teléfono,
          Dirección, Barrio, Total a cobrar, Método de pago y Observaciones". Cada tarjeta
          muestra exactamente esos 8 datos. -->
+    <!-- Aviso de la última acción ("Pedido #2 en camino", "Pedido #2 entregado") -->
+    <div id="accionExito" class="alert alert-success d-none" role="alert"></div>
+
     <h2 class="h6 text-uppercase dato-etiqueta mb-3">Por entregar</h2>
     <!-- El JS llena este contenedor copiando la <template> de abajo, una vez por pedido -->
     <div class="row row-cols-1 row-cols-lg-2 g-3 mb-4" id="pedidosActivos"></div>
@@ -68,6 +71,27 @@
         Íconos ilustrativos: <a href="https://www.flaticon.com/uicons" target="_blank" rel="noopener">Uicons by Flaticon</a>.
     </p>
 
+    <!-- Confirmación antes de "Entregado": es un estado final (HU06: no se puede modificar después)
+         y descuenta el stock, así que se pide confirmar y se recuerda cuánto cobrar.
+         Docs: https://getbootstrap.com/docs/5.3/components/modal/ -->
+    <div class="modal fade" id="modalEntregar" tabindex="-1" aria-labelledby="tituloModalEntregar" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title h5" id="tituloModalEntregar">Confirmar entrega</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="textoModalEntregar">
+                    ¿Entregaste el pedido #2 y cobraste <strong>$21.050</strong> en Efectivo?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Todavía no</button>
+                    <button type="button" class="btn btn-success" id="confirmarEntrega">Sí, entregado</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Tarjeta de un pedido por entregar: los 8 datos que pide HU05 -->
     <template id="plantillaPedidoDomiciliario">
         <div class="col">
@@ -81,7 +105,7 @@
                         <span class="badge rounded-pill" data-campo="estado"></span>
                     </div>
                     <!-- Docs: https://getbootstrap.com/docs/5.3/content/typography/#description-list-alignment -->
-                    <dl class="row small mb-0">
+                    <dl class="row small mb-3">
                         <dt class="col-sm-4 dato-etiqueta">Cliente</dt>
                         <dd class="col-sm-8 mb-1" data-campo="cliente"></dd>
                         <dt class="col-sm-4 dato-etiqueta">Teléfono</dt>
@@ -96,6 +120,20 @@
                         <dt class="col-sm-4 dato-etiqueta">Observaciones</dt>
                         <dd class="col-sm-8 mb-0" data-campo="observacion"></dd>
                     </dl>
+
+                    <!-- CS-37 (HU06): el domiciliario solo puede pasar SUS pedidos a "En camino" y
+                         luego a "Entregado". El JS deja visible el botón que corresponde al estado.
+                         d-grid: botón de ancho completo, más fácil de tocar en el celular.
+                         Docs: https://getbootstrap.com/docs/5.3/components/buttons/#block-buttons -->
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-primary" data-accion="en_camino">
+                            <i class="fa-solid fa-truck-fast"></i> Salir a entregar
+                        </button>
+                        <button type="button" class="btn btn-success" data-accion="entregado"
+                            data-bs-toggle="modal" data-bs-target="#modalEntregar">
+                            <i class="fa-solid fa-house-circle-check"></i> Marcar entregado
+                        </button>
+                    </div>
                 </div>
             </article>
         </div>

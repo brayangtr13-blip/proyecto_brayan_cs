@@ -246,6 +246,10 @@
                          el mismo patrón de "Eliminar producto" en Inventario.
                          Docs: https://getbootstrap.com/docs/5.3/components/modal/#varying-modal-content -->
                     <div class="d-flex flex-wrap gap-2 mt-3" data-campo="acciones">
+                        <!-- CS-37: el detalle del pedido es donde el administrador cambia el estado -->
+                        <a class="btn btn-outline-secondary btn-sm" data-accion="ver" href="consultar_pedido.html">
+                            <i class="fa-solid fa-eye"></i> Ver pedido
+                        </a>
                         <button type="button" class="btn btn-primary btn-sm" data-accion="asignar"
                             data-bs-toggle="modal" data-bs-target="#modalAsignar">
                             <i class="fa-solid fa-user-check"></i> <span data-campo="textoAsignar">Asignar domiciliario</span>
