@@ -158,7 +158,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="small text-body-secondary mb-3" id="resumenPedidoAsignar">Pedido #4 · Paola Díaz · El Prado</p>
+                    <p class="small text-body-secondary mb-3" id="resumenPedidoAsignar"></p>
 
                     <!-- Extensión "Sin domiciliarios disponibles" (CU041 del diagrama / wireframe 24.1) -->
                     <div id="sinDomiciliarios" class="alert alert-warning d-none" role="alert">
@@ -166,24 +166,8 @@
                         Intenta más tarde o activa un domiciliario en el módulo de Usuarios.
                     </div>
 
-                    <div class="list-group" id="listaDomiciliarios">
-                        <label class="list-group-item d-flex align-items-center gap-3">
-                            <input class="form-check-input flex-shrink-0 mt-0" type="radio" name="domiciliario" value="3">
-                            <span class="flex-grow-1"><i class="fa-solid fa-motorcycle"></i> Luis Pérez</span>
-                            <span class="badge rounded-pill text-bg-light border">1 activo</span>
-                        </label>
-                        <label class="list-group-item d-flex align-items-center gap-3">
-                            <input class="form-check-input flex-shrink-0 mt-0" type="radio" name="domiciliario" value="4">
-                            <span class="flex-grow-1"><i class="fa-solid fa-motorcycle"></i> Diana Morales</span>
-                            <span class="badge rounded-pill text-bg-light border">1 activo</span>
-                        </label>
-                        <!-- disabled: Bootstrap lo muestra gris y el navegador no deja marcarlo -->
-                        <label class="list-group-item d-flex align-items-center gap-3 disabled" aria-disabled="true">
-                            <input class="form-check-input flex-shrink-0 mt-0" type="radio" name="domiciliario" value="5" disabled>
-                            <span class="flex-grow-1"><i class="fa-solid fa-motorcycle"></i> Jorge Rincón</span>
-                            <span class="badge rounded-pill text-bg-secondary">Inactivo</span>
-                        </label>
-                    </div>
+                    <!-- Las filas las genera el JS desde el Repository con la carga actual de cada uno -->
+                    <div class="list-group" id="listaDomiciliarios"></div>
                     <div id="errorAsignar" class="small text-danger mt-2 d-none">Selecciona un domiciliario.</div>
                 </div>
                 <div class="modal-footer">
@@ -195,6 +179,16 @@
             </div>
         </div>
     </div>
+
+    <!-- Fila de un domiciliario dentro del modal. Si está inactivo, el JS agrega "disabled"
+         (Bootstrap lo pinta gris y el navegador no deja marcar el radio). -->
+    <template id="plantillaDomiciliario">
+        <label class="list-group-item d-flex align-items-center gap-3">
+            <input class="form-check-input flex-shrink-0 mt-0" type="radio" name="domiciliario">
+            <span class="flex-grow-1"><i class="fa-solid fa-motorcycle"></i> <span data-campo="nombre"></span></span>
+            <span class="badge rounded-pill" data-campo="carga"></span>
+        </label>
+    </template>
 
     <!-- <template>: HTML que el navegador NO muestra; el JS lo copia (cloneNode) por cada pedido
          y llena los [data-campo] con textContent. Así el HTML de la tarjeta sigue en el .html

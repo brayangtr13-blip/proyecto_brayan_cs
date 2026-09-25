@@ -28,6 +28,14 @@ formLogin.addEventListener('submit', function (evento) {
     return;
   }
 
-    // Sin backend todavía: simula el login exitoso y entra al panel
-    window.location.href = '../roles/admin.html';
+    // Sin backend todavía: simula el login exitoso y envía a cada rol a SU panel.
+    // Luis Pérez es el domiciliario de la base de datos (luis.p@controlstore.com);
+    // cualquier otro usuario entra al panel del administrador.
+    // Con Django, el rol vendrá de usuarios.id_rol y no de lo que se escriba aquí.
+    const usuario = document.getElementById('usuario').value.trim().toLowerCase();
+    if (usuario === 'luis' || usuario === 'luis.p@controlstore.com') {
+        window.location.href = '../roles/domiciliario.html';
+    } else {
+        window.location.href = '../roles/admin.html';
+    }
 });
