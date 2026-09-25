@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de movimientos de inventario - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+
+<!-- CS-30 · MOD_05_HU07 Reporte impreso de movimientos (kardex). Solo HTML + Bootstrap:
+     filas de movimientos_inventario #1 a #5; el stock anterior se calcula hacia atrás desde stock_actual. -->
+<body class="content-body">
+
+    <!-- d-print-none: lo que no sale en papel. Docs: https://getbootstrap.com/docs/5.3/utilities/display/#display-in-print -->
+    <nav aria-label="breadcrumb" class="d-print-none">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Reportes</li>
+            <li class="breadcrumb-item active" aria-current="page">Movimientos de inventario</li>
+        </ol>
+    </nav>
+
+    <!-- Filtros: fechas, producto, categoría y tipo. Docs: https://getbootstrap.com/docs/5.3/forms/layout/#gutters -->
+    <form class="card card-body mb-3 d-print-none">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroDesde" class="form-label small">Desde</label>
+                <input type="date" class="form-control" id="filtroDesde" value="2026-09-01">
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroHasta" class="form-label small">Hasta</label>
+                <input type="date" class="form-control" id="filtroHasta" value="2026-09-30">
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroProducto" class="form-label small">Producto</label>
+                <select class="form-select" id="filtroProducto">
+                    <option value="">Todos</option>
+                    <option value="7702001001">Leche Entera 1L</option>
+                    <option value="7702001002">Arroz Blanco 5kg</option>
+                    <option value="7702001003">Café Molido 250g</option>
+                    <option value="7702001004">Azúcar Blanca 2kg</option>
+                    <option value="7702001005">Pan Tajado</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroCategoria" class="form-label small">Categoría</label>
+                <select class="form-select" id="filtroCategoria">
+                    <option value="">Todas</option>
+                    <option value="1">Lácteos</option>
+                    <option value="2">Abarrotes</option>
+                    <option value="3">Bebidas</option>
+                    <option value="4">Panadería</option>
+                    <option value="5">Aseo</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroTipo" class="form-label small">Tipo</label>
+                <select class="form-select" id="filtroTipo">
+                    <option value="">Todos</option>
+                    <option value="entrada">Entrada</option>
+                    <option value="salida">Salida</option>
+                    <option value="ajuste">Ajuste</option>
+                </select>
+            </div>
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-earmark-pdf"></i> Exportar PDF</button>
+                <button type="button" class="btn btn-primary"><i class="bi bi-printer"></i> Imprimir</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Sin movimientos en el rango (se mostrará con JS) -->
+    <div class="alert alert-secondary d-none" role="alert">No hay movimientos registrados en el periodo seleccionado</div>
+
+    <!-- Hoja del reporte: es lo único que sale al imprimir -->
+    <article class="card">
+        <div class="card-body p-4">
+            <header class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+                <div>
+                    <h1 class="h5 mb-0">Autoservicio Ayuelal</h1>
+                    <p class="small text-body-secondary mb-0">NIT 900.123.456-7</p>
+                </div>
+                <div class="text-end">
+                    <h2 class="h6 mb-0">Reporte de movimientos de inventario</h2>
+                    <p class="small text-body-secondary mb-0">Periodo: 01/09/2026 a 30/09/2026</p>
+                    <p class="small text-body-secondary mb-0">Generado: 25/09/2026 14:30</p>
+                </div>
+            </header>
+
+            <!-- Kardex ordenado por fecha. Badges por tipo. Docs: https://getbootstrap.com/docs/5.3/components/badge/ -->
+            <div class="table-responsive">
+                <table class="table table-sm table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th><th>Código</th><th>Producto</th><th>Tipo</th>
+                            <th class="text-end">Cantidad</th><th class="text-end">Stock anterior</th>
+                            <th class="text-end">Stock resultante</th><th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>22/09/2026 11:40</td><td>7702001004</td><td>Azúcar Blanca 2kg</td>
+                            <td><span class="badge text-bg-success">Entrada</span></td>
+                            <td class="text-end">+30</td><td class="text-end">0</td><td class="text-end">30</td><td>Andrés Gómez</td>
+                        </tr>
+                        <tr>
+                            <td>23/09/2026 09:40</td><td>7702001005</td><td>Pan Tajado</td>
+                            <td><span class="badge text-bg-danger">Salida</span></td>
+                            <td class="text-end">-1</td><td class="text-end">34</td><td class="text-end">33</td><td>Juan Carlos Pérez</td>
+                        </tr>
+                        <tr>
+                            <td>23/09/2026 10:10</td><td>7702001003</td><td>Café Molido 250g</td>
+                            <td><span class="badge text-bg-danger">Salida</span></td>
+                            <td class="text-end">-2</td><td class="text-end">7</td><td class="text-end">5</td><td>Juan Carlos Pérez</td>
+                        </tr>
+                        <tr>
+                            <td>23/09/2026 11:10</td><td>7702001001</td><td>Leche Entera 1L</td>
+                            <td><span class="badge text-bg-danger">Salida</span></td>
+                            <td class="text-end">-5</td><td class="text-end">62</td><td class="text-end">57</td><td>Juan Carlos Pérez</td>
+                        </tr>
+                        <tr>
+                            <td>23/09/2026 11:10</td><td>7702001002</td><td>Arroz Blanco 5kg</td>
+                            <td><span class="badge text-bg-danger">Salida</span></td>
+                            <td class="text-end">-2</td><td class="text-end">15</td><td class="text-end">13</td><td>Juan Carlos Pérez</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Leyenda: el reverso por anulación de venta lleva su propio badge -->
+            <p class="small text-body-secondary">
+                Tipos: <span class="badge text-bg-success">Entrada</span> <span class="badge text-bg-danger">Salida</span>
+                <span class="badge text-bg-warning">Ajuste</span> <span class="badge text-bg-info">Reverso</span> (anulación de venta)
+            </p>
+
+            <!-- Resumen del periodo -->
+            <dl class="row small mb-3 ms-auto" style="max-width: 320px">
+                <dt class="col-8">Unidades ingresadas</dt><dd class="col-4 text-end mb-1">30</dd>
+                <dt class="col-8">Unidades vendidas</dt><dd class="col-4 text-end mb-1">10</dd>
+                <dt class="col-8 fs-6">Saldo del periodo</dt><dd class="col-4 text-end fs-6 fw-bold mb-0">+20</dd>
+            </dl>
+
+            <footer class="border-top pt-2 mt-4 d-flex justify-content-between small text-body-secondary">
+                <span>Generado por: Andrés Gómez (Administrador)</span>
+                <span>25/09/2026 14:30 · Página 1 de 1</span>
+            </footer>
+        </div>
+    </article>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
