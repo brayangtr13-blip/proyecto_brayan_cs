@@ -49,3 +49,15 @@
 .buscar-factura {
     max-width: 24rem;
 }
+
+/* Diferencia del cierre (HU05): verde si la caja cuadra, rojo si hay faltante o sobrante.
+   Colores "subtle" de Bootstrap 5.3. Docs: https://getbootstrap.com/docs/5.3/customize/color/ */
+.diferencia-cuadrada {
+    background-color: var(--bs-success-bg-subtle);
+    color: var(--bs-success-text-emphasis);
+}
+
+.diferencia-descuadre {
+    background-color: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger-text-emphasis);
+}

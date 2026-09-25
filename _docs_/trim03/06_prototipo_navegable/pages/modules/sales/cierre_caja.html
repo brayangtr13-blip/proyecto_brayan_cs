@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cierre de caja - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../../../assets/css/ventas.css">
+</head>
+
+<!-- CS-22 · MOD_03_HU05 Cierre de caja · CU026 (+ CU027 calcular total, CU028 comprobante) -->
+<body class="content-body">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Ventas</li>
+            <li class="breadcrumb-item active" aria-current="page">Cierre de caja</li>
+        </ol>
+    </nav>
+
+    <!-- Pestañas del módulo. Docs: https://getbootstrap.com/docs/5.3/components/navs-tabs/#pills -->
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item"><a class="nav-link" href="listar_ventas.html">Historial</a></li>
+        <li class="nav-item"><a class="nav-link" href="registrar_venta.html">Punto de venta</a></li>
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="cierre_caja.html">Cierre de caja</a></li>
+    </ul>
+
+    <div id="cierreExito" class="alert alert-success d-none" role="alert"></div>
+
+    <!-- Sin turno abierto no hay nada que cerrar -->
+    <div id="sinTurno" class="alert alert-secondary d-none" role="status">
+        No tienes un turno abierto. <a href="registrar_venta.html" class="alert-link">Abre la caja en el Punto de venta</a>.
+    </div>
+
+    <div class="row g-4 mb-4" id="seccionCierre">
+        <!-- ===== Recaudo por método (CU027) ===== -->
+        <div class="col-lg-6">
+            <section class="card h-100">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Recaudo por método de pago <span class="small text-body-secondary fw-normal" data-campo="turno">· Turno #3</span></h2>
+                    <!-- Docs: https://getbootstrap.com/docs/5.3/components/list-group/#flush -->
+                    <ul class="list-group list-group-flush" id="listaMetodos"></ul>
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-2">
+                        <span class="fw-bold">Total del turno</span>
+                        <!-- HU05: las anuladas no se incluyen -->
+                        <span class="fs-4 fw-bold text-success" id="totalTurno">$0</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===== Cuadre de caja (CU026) ===== -->
+        <div class="col-lg-6">
+            <form class="card h-100" id="formCierre" novalidate>
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Cuadre de caja</h2>
+                    <dl class="row small mb-3">
+                        <dt class="col-7 fw-normal">Base inicial</dt><dd class="col-5 text-end mb-1" data-campo="base">$20.000</dd>
+                        <dt class="col-7 fw-normal">Ventas en efectivo</dt><dd class="col-5 text-end mb-1" data-campo="efectivo">$29.750</dd>
+                        <!-- Mejora sobre la referencia: lo que DEBERÍA haber en el cajón -->
+                        <dt class="col-7">Efectivo esperado</dt><dd class="col-5 text-end fw-bold mb-0" data-campo="esperado">$49.750</dd>
+                    </dl>
+
+                    <!-- HU05: el cajero digita el dinero físico contado (arqueo_caja.monto_final) -->
+                    <label for="efectivoContado" class="form-label">Efectivo contado en caja</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="efectivoContado" min="0" step="50" required>
+                        <div class="invalid-feedback">Escribe el efectivo contado.</div>
+                    </div>
+
+                    <!-- Diferencia = contado − base − efectivo (fórmula de la columna generada de la BD).
+                         Verde "Caja cuadrada" si es 0; rojo con faltante/sobrante si no. -->
+                    <div class="rounded-3 p-3 mb-3 d-flex justify-content-between align-items-center diferencia-caja diferencia-cuadrada" id="cajaDiferencia">
+                        <span id="textoDiferencia">Caja cuadrada</span>
+                        <strong class="fs-5" id="valorDiferencia">$0</strong>
+                    </div>
+
+                    <!-- HU05: obligatorio si hay faltante o sobrante (arqueo_caja.observacion) -->
+                    <div class="mb-3 d-none" id="grupoObservacion">
+                        <label for="observacionCierre" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observacionCierre" rows="2" maxlength="255"
+                            placeholder="Explica el faltante o sobrante"></textarea>
+                        <div class="invalid-feedback">Explica la diferencia antes de cerrar.</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg"><i class="bi bi-lock"></i> Cerrar caja del turno</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== Histórico de cierres (descripción de HU05) ===== -->
+    <section class="card">
+        <div class="card-header fw-semibold">Histórico de cierres</div>
+        <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+                <thead>
+                    <tr><th>Turno</th><th>Cajero</th><th>Apertura</th><th>Cierre</th><th class="text-end">Ventas</th>
+                        <th class="text-end">Contado</th><th class="text-end">Diferencia</th><th>Observación</th><th></th></tr>
+                </thead>
+                <tbody id="cuerpoCierres"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===== Comprobante de cierre (CU028): oculto; es lo único que sale al imprimir ===== -->
+    <section id="comprobante" class="comprobante d-none" aria-label="Comprobante de cierre">
+        <h2 class="h5 text-center mb-0">Control Store</h2>
+        <p class="text-center small mb-2">Comprobante de cierre de caja</p>
+        <p class="small mb-2" data-campo="encabezado"></p>
+        <table class="table table-sm small mb-2"><tbody data-campo="renglones"></tbody></table>
+        <p class="small mb-0" data-campo="cuadre"></p>
+        <p class="small mb-0" data-campo="observacion"></p>
+    </section>
+
+    <template id="plantillaMetodo">
+        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+            <div><span data-campo="nombre"></span> <div class="small text-body-secondary" data-campo="cantidad"></div></div>
+            <span class="fw-semibold" data-campo="total"></span>
+        </li>
+    </template>
+    <template id="plantillaCierre">
+        <tr>
+            <td data-campo="turno"></td><td data-campo="cajero"></td><td data-campo="apertura"></td><td data-campo="cierre"></td>
+            <td class="text-end" data-campo="ventas"></td><td class="text-end" data-campo="contado"></td>
+            <td class="text-end fw-semibold" data-campo="diferencia"></td><td class="small" data-campo="observacion"></td>
+            <!-- CU028: reimprimir el comprobante de ese cierre -->
+            <td class="text-end"><button type="button" class="btn btn-sm btn-outline-secondary" data-accion="imprimir" title="Imprimir comprobante"><i class="bi bi-printer"></i></button></td>
+        </tr>
+    </template>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/sesion.js"></script>
+    <script src="../../../assets/js/ventas/ventas_datos.js"></script>
+    <script src="../../../assets/js/ventas/ventas_servicio.js"></script>
+    <script src="../../../assets/js/ventas/cierre_caja.js"></script>
+</body>
+
+</html>

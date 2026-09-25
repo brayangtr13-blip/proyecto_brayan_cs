@@ -4,8 +4,9 @@
 
 const ServicioVentas = (function () {
 
+    // El signo va antes del $ ("-$700"), como se escribe un faltante
     function formatearPrecio(valor) {
-        return '$' + Math.round(valor).toLocaleString('es-CO');
+        return (valor < 0 ? '-' : '') + '$' + Math.abs(Math.round(valor)).toLocaleString('es-CO');
     }
 
     function formatearFecha(texto) {
@@ -179,7 +180,67 @@ const ServicioVentas = (function () {
         return { ok: true, venta: venta };
     }
 
+    // ---------------- Cierre de caja (CS-22 · HU05) ----------------
+
+    // CU027: totales del turno por método de pago, sin anuladas (HU05)
+    function resumenTurno(turno) {
+        const ventas = RepositorioVentas.obtenerVentas().filter(function (v) {
+            return v.idArqueo === turno.id && v.estado !== 'anulada';
+        });
+        const porMetodo = RepositorioVentas.obtenerMetodosPago().map(function (m) {
+            const delMetodo = ventas.filter(function (v) { return v.idMetodoPago === m.id; });
+            return { id: m.id, nombre: m.nombre, cantidad: delMetodo.length, total: calcularTotalVentas(delMetodo) };
+        });
+        return {
+            porMetodo: porMetodo,
+            totalVentas: calcularTotalVentas(ventas),                   // arqueo_caja.total_ventas
+            totalEfectivo: porMetodo.find(function (m) { return m.id === 1; }).total   // arqueo_caja.total_efectivo
+        };
+    }
+
+    function calcularTotalVentas(ventas) {
+        return ventas.reduce(function (suma, v) { return suma + v.total; }, 0);
+    }
+
+    // Misma fórmula que la columna generada arqueo_caja.diferencia: negativo = faltante, positivo = sobrante
+    function calcularDiferencia(turno, contado) {
+        return contado - turno.montoInicial - resumenTurno(turno).totalEfectivo;
+    }
+
+    // HU05: cerrar el turno. Con diferencia, la observación es obligatoria. Después no se modifica.
+    function cerrarCaja(usuario, contado, observacion) {
+        const turno = RepositorioVentas.obtenerTurnoAbierto(usuario.idUsuario);
+        if (!turno) return { ok: false, error: 'No tienes un turno abierto.' };
+        if (!(contado >= 0)) return { ok: false, error: 'Escribe el efectivo contado.' };
+        const diferencia = calcularDiferencia(turno, contado);
+        const nota = (observacion || '').trim();
+        if (diferencia !== 0 && !nota) return { ok: false, error: 'Explica la diferencia antes de cerrar.' };
+
+        const resumen = resumenTurno(turno);
+        turno.fechaCierre = new Date().toISOString();   // con fecha_cierre ya no se puede vender en este turno
+        turno.montoFinal = contado;
+        turno.totalVentas = resumen.totalVentas;
+        turno.totalEfectivo = resumen.totalEfectivo;
+        turno.observacion = nota || null;
+        RepositorioVentas.registrarAuditoria({
+            idUsuario: usuario.idUsuario, accion: 'cerrar_caja', modulo: 'ventas', fecha: turno.fechaCierre,
+            detalle: 'Cerró el turno #' + turno.id + ' con diferencia de ' + formatearPrecio(diferencia)
+        });
+        return { ok: true, turno: turno, resumen: resumen, diferencia: diferencia };
+    }
+
+    // Histórico: el administrador ve todos los cierres; el cajero, los suyos
+    function listarCierres(usuario) {
+        return RepositorioVentas.obtenerArqueos().filter(function (a) {
+            return a.fechaCierre && (usuario.rol === 'administrador' || a.idUsuario === usuario.idUsuario);
+        }).sort(function (a, b) { return new Date(b.fechaCierre) - new Date(a.fechaCierre); });
+    }
+
     return {
+        resumenTurno: resumenTurno,
+        calcularDiferencia: calcularDiferencia,
+        cerrarCaja: cerrarCaja,
+        listarCierres: listarCierres,
         puedeAnular: puedeAnular,
         anularVenta: anularVenta,
         consultarVenta: consultarVenta,
