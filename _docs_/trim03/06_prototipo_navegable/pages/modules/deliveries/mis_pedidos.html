@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis pedidos - Control Store</title>
+    <!-- ../../../ porque esta página está tres carpetas debajo de la raíz del prototipo
+         (pages/modules/deliveries/), igual que las páginas de inventory/ y users/ -->
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/solid.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../../../assets/css/domicilios.css">
+</head>
+
+<!-- content-body: el mismo padding que el resto de páginas que cargan dentro del iframe -->
+<body class="content-body modulo-domicilios">
+
+    <!-- Migas de pan (breadcrumb): le dicen al usuario en qué parte del sistema está.
+         Docs: https://getbootstrap.com/docs/5.3/components/breadcrumb/ -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Domicilios</li>
+            <li class="breadcrumb-item active" aria-current="page">Mis pedidos</li>
+        </ol>
+    </nav>
+
+    <div class="mb-4">
+        <h1 class="h4 mb-0"><i class="fa-solid fa-motorcycle"></i> Mis pedidos</h1>
+        <p class="text-muted mb-0">Pedidos asignados a ti para entregar (CU038 – Asignar domiciliario)</p>
+    </div>
+
+    <!-- Saludo del diseño de referencia: resume cuántas entregas tiene el domiciliario.
+         d-flex + gap-2 pone el ícono y el texto en fila sin CSS nuevo.
+         Docs: https://getbootstrap.com/docs/5.3/components/alerts/ -->
+    <div class="alert alert-success d-flex align-items-center gap-2" role="alert" id="saludo">
+        <i class="fa-solid fa-user-check"></i>
+        <div>Hola <strong>Luis Pérez</strong>, tienes <strong>1 entrega activa</strong>.</div>
+    </div>
+
+    <!-- HU05: "La vista del domiciliario debe mostrar: Número de pedido, Cliente, Teléfono,
+         Dirección, Barrio, Total a cobrar, Método de pago y Observaciones". Cada tarjeta
+         muestra exactamente esos 8 datos. -->
+    <h2 class="h6 text-uppercase dato-etiqueta mb-3">Por entregar</h2>
+    <div class="row row-cols-1 row-cols-lg-2 g-3 mb-4" id="pedidosActivos">
+        <div class="col">
+            <article class="card h-100 pedido-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h3 class="h6 mb-0">Pedido #2</h3>
+                            <small class="text-body-secondary">Asignado 23/09/2026 11:20</small>
+                        </div>
+                        <span class="badge rounded-pill estado-en_camino">En camino</span>
+                    </div>
+                    <dl class="row small mb-3">
+                        <dt class="col-sm-4 dato-etiqueta">Cliente</dt>
+                        <dd class="col-sm-8 mb-1">Carlos Ruiz</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Teléfono</dt>
+                        <!-- tel: en el celular del domiciliario abre directamente la llamada -->
+                        <dd class="col-sm-8 mb-1"><a href="tel:3109876543">3109876543</a></dd>
+                        <dt class="col-sm-4 dato-etiqueta">Dirección</dt>
+                        <dd class="col-sm-8 mb-1"><i class="fa-solid fa-location-dot"></i> Carrera 7 # 15-02</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Barrio</dt>
+                        <dd class="col-sm-8 mb-1">La Playa</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Cobrar</dt>
+                        <dd class="col-sm-8 mb-1"><strong>$21.050</strong> · Efectivo</dd>
+                        <dt class="col-sm-4 dato-etiqueta">Observaciones</dt>
+                        <dd class="col-sm-8 mb-0 text-body-secondary">Sin observaciones</dd>
+                    </dl>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <!-- Estado vacío: cuando no tiene pedidos por entregar -->
+    <div id="sinPedidos" class="text-center text-body-secondary py-5 d-none">
+        <i class="fa-solid fa-mug-hot fs-1 d-block mb-3"></i>
+        <p class="mb-0">No tienes pedidos por entregar en este momento.</p>
+    </div>
+
+    <!-- Entregas ya terminadas: lista compacta, porque ya no requieren acción.
+         Docs: https://getbootstrap.com/docs/5.3/components/list-group/ -->
+    <h2 class="h6 text-uppercase dato-etiqueta mb-3">Entregados</h2>
+    <ul class="list-group" id="pedidosEntregados">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>Pedido #1 · Maria Restrepo · Centro</span>
+            <span class="badge rounded-pill estado-entregado">Entregado</span>
+        </li>
+    </ul>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
