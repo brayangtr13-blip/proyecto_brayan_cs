@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte impreso de usuarios - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+
+<!-- CS-28 · MOD_05_HU06 Reporte impreso de usuarios (solo administrador). Solo HTML + Bootstrap:
+     usuarios #1 a #3 de la BD. La contraseña nunca se lista. -->
+<body class="content-body">
+
+    <!-- d-print-none: lo que no sale en papel. Docs: https://getbootstrap.com/docs/5.3/utilities/display/#display-in-print -->
+    <nav aria-label="breadcrumb" class="d-print-none">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Reportes</li>
+            <li class="breadcrumb-item active" aria-current="page">Reporte impreso de usuarios</li>
+        </ol>
+    </nav>
+
+    <!-- Filtros: rol, estado y rango opcional para el desempeño. Docs: https://getbootstrap.com/docs/5.3/forms/layout/#gutters -->
+    <form class="card card-body mb-3 d-print-none">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-6 col-lg-3">
+                <label for="filtroRol" class="form-label small">Rol</label>
+                <select class="form-select" id="filtroRol">
+                    <option value="">Todos</option>
+                    <option value="1">Administrador</option>
+                    <option value="2">Vendedor (cajero)</option>
+                    <option value="3">Domiciliario</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <label for="filtroEstado" class="form-label small">Estado</label>
+                <select class="form-select" id="filtroEstado">
+                    <option value="">Todos</option>
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <label for="filtroDesde" class="form-label small">Ventas desde (opcional)</label>
+                <input type="date" class="form-control" id="filtroDesde" value="2026-09-01">
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <label for="filtroHasta" class="form-label small">Ventas hasta (opcional)</label>
+                <input type="date" class="form-control" id="filtroHasta" value="2026-09-30">
+            </div>
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-earmark-pdf"></i> Exportar PDF</button>
+                <button type="button" class="btn btn-primary"><i class="bi bi-printer"></i> Imprimir</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Hoja del reporte: es lo único que sale al imprimir -->
+    <article class="card">
+        <div class="card-body p-4">
+            <header class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+                <div>
+                    <h1 class="h5 mb-0">Autoservicio Ayuelal</h1>
+                    <p class="small text-body-secondary mb-0">NIT 900.123.456-7</p>
+                </div>
+                <div class="text-end">
+                    <h2 class="h6 mb-0">Reporte de usuarios</h2>
+                    <p class="small text-body-secondary mb-0">Ventas: 01/09/2026 a 30/09/2026</p>
+                    <p class="small text-body-secondary mb-0">Generado: 25/09/2026 14:30</p>
+                </div>
+            </header>
+
+            <!-- Sin columna de contraseña. Las dos últimas salen porque hay rango de fechas.
+                 Docs: https://getbootstrap.com/docs/5.3/content/tables/ -->
+            <div class="table-responsive">
+                <table class="table table-sm table-striped align-middle small">
+                    <thead>
+                        <tr>
+                            <th>Documento</th><th>Nombres</th><th>Apellidos</th><th>Correo</th><th>Teléfono</th>
+                            <th>Rol</th><th>Estado</th><th>Registro</th>
+                            <th class="text-end">Total vendido</th><th class="text-end">N.º ventas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1000000001</td><td>Andrés</td><td>Gómez</td><td>admin@controlstore.com</td><td>—</td>
+                            <td>Administrador</td><td><span class="badge text-bg-success">Activo</span></td><td>18/08/2026</td>
+                            <td class="text-end">—</td><td class="text-end">—</td>
+                        </tr>
+                        <tr>
+                            <td>1000000002</td><td>Juan Carlos</td><td>Pérez</td><td>juan.perez@controlstore.com</td><td>—</td>
+                            <td>Vendedor (cajero)</td><td><span class="badge text-bg-success">Activo</span></td><td>18/08/2026</td>
+                            <td class="text-end">$62.050</td><td class="text-end">3</td>
+                        </tr>
+                        <tr>
+                            <td>1000000003</td><td>Luis</td><td>Pérez</td><td>luis.p@controlstore.com</td><td>—</td>
+                            <td>Domiciliario</td><td><span class="badge text-bg-success">Activo</span></td><td>18/08/2026</td>
+                            <td class="text-end">—</td><td class="text-end">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Los inactivos llevan badge gris y texto, para que se note también en blanco y negro -->
+            <p class="small text-body-secondary">
+                Estado: <span class="badge text-bg-success">Activo</span>
+                <span class="badge text-bg-secondary">Inactivo</span> · Teléfono "—" = no registrado.
+            </p>
+
+            <!-- Total de usuarios por rol -->
+            <dl class="row small mb-3 ms-auto" style="max-width: 320px">
+                <dt class="col-8">Administradores</dt><dd class="col-4 text-end mb-1">1</dd>
+                <dt class="col-8">Vendedores (cajeros)</dt><dd class="col-4 text-end mb-1">1</dd>
+                <dt class="col-8">Domiciliarios</dt><dd class="col-4 text-end mb-1">1</dd>
+                <dt class="col-8 fs-6">Total de usuarios</dt><dd class="col-4 text-end fs-6 fw-bold mb-0">3</dd>
+            </dl>
+
+            <footer class="border-top pt-2 mt-4 d-flex justify-content-between small text-body-secondary">
+                <span>Generado por: Andrés Gómez (Administrador)</span>
+                <span>25/09/2026 14:30 · Página 1 de 1</span>
+            </footer>
+        </div>
+    </article>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
