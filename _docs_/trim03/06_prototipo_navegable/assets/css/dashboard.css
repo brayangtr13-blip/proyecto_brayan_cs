@@ -334,3 +334,9 @@ body {
         width: 160px;
     }
 }
+
+/* Menú de avisos de la campana del domiciliario (CS-38 / CU039): más ancho que un
+   dropdown normal para que el texto del aviso no se parta en muchas líneas */
+.lista-avisos {
+    min-width: 18rem;
+}
