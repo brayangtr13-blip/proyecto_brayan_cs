@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de ventas - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../../../assets/css/ventas.css">
+</head>
+
+<!-- CS-19 · MOD_03_HU02 Listar venta · CU021 -->
+<body class="content-body">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Ventas</li>
+            <li class="breadcrumb-item active" aria-current="page">Historial</li>
+        </ol>
+    </nav>
+
+    <!-- Pestañas del módulo (diseño de referencia): cada una es una página del iframe.
+         Docs: https://getbootstrap.com/docs/5.3/components/navs-tabs/#pills -->
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="listar_ventas.html">Historial</a></li>
+        <li class="nav-item"><a class="nav-link" href="registrar_venta.html">Punto de venta</a></li>
+    </ul>
+
+    <!-- Filtros de HU02. row + col-*: en celular quedan uno debajo del otro.
+         Docs: https://getbootstrap.com/docs/5.3/forms/layout/#gutters -->
+    <form id="formFiltros" class="card card-body mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroDesde" class="form-label small">Desde</label>
+                <input type="date" class="form-control" id="filtroDesde">
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroHasta" class="form-label small">Hasta</label>
+                <input type="date" class="form-control" id="filtroHasta">
+            </div>
+            <!-- Solo el administrador filtra por cajero; el cajero ve únicamente lo suyo -->
+            <div class="col-sm-6 col-lg-3" id="grupoFiltroCajero">
+                <label for="filtroCajero" class="form-label small">Cajero</label>
+                <select class="form-select" id="filtroCajero">
+                    <option value="">Todos</option>
+                    <option value="2">Juan Carlos Pérez</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroMetodo" class="form-label small">Método de pago</label>
+                <select class="form-select" id="filtroMetodo">
+                    <option value="">Todos</option>
+                    <option value="1">Efectivo</option>
+                </select>
+            </div>
+            <div class="col-sm-8 col-lg-2">
+                <label for="filtroFactura" class="form-label small">N.º de factura</label>
+                <input type="number" class="form-control" id="filtroFactura" min="1" placeholder="Ej: 4">
+            </div>
+            <div class="col-sm-4 col-lg-1 d-grid">
+                <button type="button" class="btn btn-outline-secondary" id="botonLimpiarFiltros" title="Ver las ventas de hoy">
+                    <i class="bi bi-arrow-counterclockwise"></i><span class="visually-hidden">Limpiar filtros</span>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabla con las columnas de HU02. Docs: https://getbootstrap.com/docs/5.3/content/tables/ -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Factura</th><th>Fecha</th><th>Hora</th><th>Cajero</th><th>Método</th>
+                        <th class="text-end">Total</th><th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoVentas">
+                    <tr>
+                        <td>#4</td><td>23/09/2026</td><td>11:10</td><td>Juan Carlos Pérez</td><td>Efectivo</td>
+                        <td class="text-end">$21.050</td><td><span class="badge text-bg-success">Pagada</span></td>
+                    </tr>
+                    <!-- Anulada: fila en rojo tenue + etiqueta ANULADA (HU02) -->
+                    <tr class="table-danger">
+                        <td>#2</td><td>23/09/2026</td><td>09:40</td><td>Juan Carlos Pérez</td><td>Efectivo</td>
+                        <td class="text-end text-decoration-line-through">$8.700</td><td><span class="badge text-bg-danger">ANULADA</span></td>
+                    </tr>
+                </tbody>
+                <!-- HU02: total acumulado de lo filtrado; las anuladas no suman (HU04) -->
+                <tfoot>
+                    <tr class="fw-bold">
+                        <td colspan="5">Total <span class="fw-normal small text-body-secondary">(sin anuladas)</span></td>
+                        <td class="text-end" id="totalAcumulado">$21.050</td><td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <p id="sinVentas" class="text-center text-body-secondary py-4 d-none">No se encontraron ventas en el periodo seleccionado</p>
+
+    <!-- HU02: máximo 20 por página. Docs: https://getbootstrap.com/docs/5.3/components/pagination/ -->
+    <nav aria-label="Páginas del historial" class="d-flex justify-content-between align-items-center mt-3">
+        <span class="small text-body-secondary" id="resumenPaginas">Mostrando 1–2 de 2</span>
+        <ul class="pagination pagination-sm mb-0" id="paginacion">
+            <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+        </ul>
+    </nav>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
