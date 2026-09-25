@@ -67,11 +67,8 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end lista-avisos" aria-labelledby="botonAvisos">
                             <h6 class="dropdown-header">Avisos</h6>
-                            <div id="listaAvisos">
-                                <div class="dropdown-item-text small">
-                                    <i class="fa-solid fa-motorcycle"></i> Te asignaron el pedido #4 · El Prado
-                                </div>
-                            </div>
+                            <!-- Los avisos los agrega domiciliario_avisos.js desde el Repository -->
+                            <div id="listaAvisos"></div>
                         </div>
                     </div>
 
@@ -136,6 +133,9 @@
     <!-- bootstrap.bundle trae Popper, necesario para que el dropdown se abra -->
     <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/dashboard.js"></script>
+    <!-- CS-38 (CU039): la campana lee los avisos del mismo Repository que usa el módulo -->
+    <script src="../../assets/js/domicilios/domicilios_datos.js"></script>
+    <script src="../../assets/js/domicilios/domiciliario_avisos.js"></script>
 </body>
 
 </html>

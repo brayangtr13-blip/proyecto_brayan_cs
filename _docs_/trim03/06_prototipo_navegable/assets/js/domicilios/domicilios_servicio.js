@@ -132,6 +132,20 @@ const ServicioDomicilios = (function () {
         return { ok: true, pedido: pedido };
     }
 
+    // Promedio de minutos entre fecha_asignacion y fecha_entrega de los pedidos entregados.
+    // Lo usan el indicador del panel y el mensaje "llegará en unos X minutos" (HU07).
+    // Devuelve null si todavía no hay entregas para promediar.
+    function tiempoPromedioEntrega() {
+        const entregados = RepositorioDomicilios.obtenerPedidos().filter(function (p) {
+            return p.fechaAsignacion && p.fechaEntrega;
+        });
+        if (entregados.length === 0) return null;
+        const totalMinutos = entregados.reduce(function (suma, p) {
+            return suma + (new Date(p.fechaEntrega) - new Date(p.fechaAsignacion)) / 60000;
+        }, 0);
+        return Math.round(totalMinutos / entregados.length);
+    }
+
     // ---------------- Asignación (CS-36 – MOD_04_HU05 / CU038) ----------------
 
     // Un pedido entregado o cancelado ya terminó: no se asigna ni se reasigna (HU05)
@@ -155,15 +169,19 @@ const ServicioDomicilios = (function () {
 
     // Histórico del pedido (HU05 y HU06). En la base de datos esto va a log_auditoria
     // (acción, módulo "domicilios", detalle, usuario y fecha), que ya existe.
+    // Devuelve el registro creado: viaja dentro del evento "estadoCambiado" y el notificador
+    // lo usa para reconocer cada cambio y no notificarlo dos veces (HU07)
     function registrarHistorial(pedido, estadoAnterior, estadoNuevo, usuario, detalle) {
-        pedido.historial = pedido.historial || [];
-        pedido.historial.push({
+        const cambio = {
             fecha: new Date().toISOString(),
             estadoAnterior: estadoAnterior,
             estadoNuevo: estadoNuevo,
             usuario: usuario,
             detalle: detalle
-        });
+        };
+        pedido.historial = pedido.historial || [];
+        pedido.historial.push(cambio);
+        return cambio;
     }
 
     function asignarDomiciliario(idPedido, idDomiciliario, usuario) {
@@ -187,12 +205,12 @@ const ServicioDomicilios = (function () {
             pedido.estado = 'asignado';
         }
         pedido.fechaAsignacion = new Date().toISOString();
-        registrarHistorial(pedido, estadoAnterior, pedido.estado, usuario,
+        const cambio = registrarHistorial(pedido, estadoAnterior, pedido.estado, usuario,
             anterior ? 'Reasignado de ' + anterior.nombre + ' a ' + domiciliario.nombre
                 : 'Asignado a ' + domiciliario.nombre);
         RepositorioDomicilios.actualizarPedido();
         EventosDomicilios.publicar('estadoCambiado', {
-            pedido: pedido, estadoAnterior: estadoAnterior, estadoNuevo: pedido.estado, usuario: usuario
+            pedido: pedido, estadoAnterior: estadoAnterior, estadoNuevo: pedido.estado, usuario: usuario, cambio: cambio
         });
 
         return { ok: true, pedido: pedido, mensaje: 'Pedido asignado a ' + domiciliario.nombre };
@@ -226,13 +244,13 @@ const ServicioDomicilios = (function () {
         // domicilios no tiene una columna para él.
         const detalle = [motivo ? 'Motivo: ' + motivo.trim() : '', observacion ? observacion.trim() : '']
             .filter(Boolean).join(' · ');
-        registrarHistorial(pedido, estadoAnterior, nuevoEstado, quien.nombre, detalle);
+        const cambio = registrarHistorial(pedido, estadoAnterior, nuevoEstado, quien.nombre, detalle);
         RepositorioDomicilios.actualizarPedido();
 
         // Patrón Observer: los interesados (inventario ahora, notificaciones en CS-38) reaccionan solos
         EventosDomicilios.publicar('estadoCambiado', {
             pedido: pedido, estadoAnterior: estadoAnterior, estadoNuevo: nuevoEstado,
-            usuario: quien.nombre, motivo: motivo
+            usuario: quien.nombre, motivo: motivo, cambio: cambio
         });
 
         return { ok: true, pedido: pedido, mensaje: 'Pedido #' + pedido.id + ': ' + TEXTO_ESTADO[nuevoEstado].toLowerCase() + '.' };
@@ -268,6 +286,7 @@ const ServicioDomicilios = (function () {
     });
 
     return {
+        tiempoPromedioEntrega: tiempoPromedioEntrega,
         cambiarEstado: cambiarEstado,
         estaTerminado: estaTerminado,
         cargaDe: cargaDe,

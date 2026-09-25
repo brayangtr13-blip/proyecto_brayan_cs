@@ -133,10 +133,7 @@
                         <span class="badge rounded-pill text-bg-light border" data-campo="canal">Canal: Simulado</span>
                     </div>
                     <div class="card-body chat-notificaciones" id="listaNotificaciones">
-                        <div class="burbuja-bot">
-                            <div class="small">Hola Carlos Ruiz, tu pedido #2 ya salió con Luis Pérez. Llegará en unos 40 minutos.</div>
-                            <div class="burbuja-meta">23/09/2026 11:35 · En camino · enviado al 1.er intento</div>
-                        </div>
+                        <!-- Las burbujas las genera el JS desde pedido.notificaciones -->
                         <p class="small text-body-secondary mb-0 d-none" id="sinNotificaciones">Todavía no se han enviado notificaciones.</p>
                     </div>
                 </section>
@@ -194,6 +191,12 @@
         <tr><td data-campo="nombre"></td><td class="text-end" data-campo="precio"></td>
             <td class="text-center" data-campo="cantidad"></td><td class="text-end" data-campo="subtotal"></td></tr>
     </template>
+    <template id="plantillaNotificacion">
+        <div class="burbuja-bot">
+            <div class="small" data-campo="mensaje"></div>
+            <div class="burbuja-meta" data-campo="meta"></div>
+        </div>
+    </template>
     <template id="plantillaHistorial">
         <tr><td data-campo="fecha"></td><td data-campo="anterior"></td><td data-campo="nuevo"></td>
             <td data-campo="usuario"></td><td data-campo="detalle"></td></tr>
@@ -217,11 +220,14 @@
 
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- Orden importante: datos (Repository) -> máquina de estados (State) -> eventos (Observer)
-         -> reglas (Service, que usa a los tres) -> script de esta pantalla. -->
+         -> reglas (Service) -> canales (Adapter) y notificador -> script de esta pantalla. -->
     <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_estados.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_eventos.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_servicio.js"></script>
+    <!-- CS-38: canales (Adapter) y notificador (otro oyente del Observer) -->
+    <script src="../../../assets/js/domicilios/canales_notificacion.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_notificaciones.js"></script>
     <script src="../../../assets/js/domicilios/consultar_pedido.js"></script>
 </body>
 

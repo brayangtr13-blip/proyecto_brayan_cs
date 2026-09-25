@@ -189,6 +189,29 @@ const RepositorioDomicilios = (function () {
         obtenerMovimientosInventario: function () {
             return leer().movimientos || [];
         },
+        obtenerClientes: function () {
+            return leer().clientes;
+        },
+        // Avisos para el domiciliario (CU039 "Notificar al domiciliario"): los muestra la campana de su panel
+        agregarAvisoDomiciliario: function (aviso) {
+            const datos = leer();
+            datos.avisos = datos.avisos || [];
+            datos.avisos.push(aviso);
+            guardar();
+        },
+        obtenerAvisos: function (idDomiciliario) {
+            return (leer().avisos || []).filter(function (a) { return a.idDomiciliario === idDomiciliario; });
+        },
+        marcarAvisosLeidos: function (idDomiciliario) {
+            (leer().avisos || []).forEach(function (a) {
+                if (a.idDomiciliario === idDomiciliario) a.leido = true;
+            });
+            guardar();
+        },
+        // Olvida la copia en memoria para leer de nuevo lo guardado (otra página pudo cambiarlo)
+        recargar: function () {
+            enMemoria = null;
+        },
         // Vuelve a los datos de ejemplo (útil para repetir la demostración ante el instructor)
         restablecer: function () {
             enMemoria = datosDeEjemplo();

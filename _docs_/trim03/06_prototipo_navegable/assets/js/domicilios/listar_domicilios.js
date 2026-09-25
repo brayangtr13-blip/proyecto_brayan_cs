@@ -77,17 +77,9 @@ function actualizarIndicadores(pedidos) {
     document.getElementById('kpiEnCamino').textContent = contar('en_camino');
     document.getElementById('kpiEntregados').textContent = contar('entregado');
 
-    // Promedio entre fecha_asignacion y fecha_entrega de los pedidos ya entregados
-    const entregados = pedidos.filter(function (p) { return p.fechaAsignacion && p.fechaEntrega; });
-    const kpiTiempo = document.getElementById('kpiTiempo');
-    if (entregados.length === 0) {
-        kpiTiempo.textContent = '—';
-    } else {
-        const totalMinutos = entregados.reduce(function (suma, p) {
-            return suma + (new Date(p.fechaEntrega) - new Date(p.fechaAsignacion)) / 60000;
-        }, 0);
-        kpiTiempo.textContent = Math.round(totalMinutos / entregados.length) + ' min';
-    }
+    // Promedio entre fecha_asignacion y fecha_entrega: lo calcula el Service (también lo usa HU07)
+    const promedio = ServicioDomicilios.tiempoPromedioEntrega();
+    document.getElementById('kpiTiempo').textContent = promedio === null ? '—' : promedio + ' min';
 
     // Cantidad en cada píldora de filtro
     filtrosEstado.querySelectorAll('[data-estado]').forEach(function (boton) {
@@ -207,5 +199,8 @@ document.getElementById('botonRestablecer').addEventListener('click', function (
     RepositorioDomicilios.restablecer();
     mostrarPedidos();
 });
+
+// CS-38: al asignar, el cliente recibe "tu pedido está siendo preparado" y aquí se ve el Toast
+NotificacionesDomicilios.mostrarToastEn(document.getElementById('toastNotificacion'));
 
 mostrarPedidos();

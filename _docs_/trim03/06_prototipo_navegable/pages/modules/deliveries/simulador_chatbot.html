@@ -49,7 +49,7 @@
                     <!-- Docs: https://getbootstrap.com/docs/5.3/forms/select/ -->
                     <label for="telefonoCliente" class="form-label">Chat del cliente</label>
                     <select class="form-select" id="telefonoCliente">
-                        <option value="3109876543">Carlos Ruiz · 3109876543</option>
+                        <!-- Las opciones (clientes de la tabla clientes) las agrega el JS -->
                     </select>
                     <div class="form-text">
                         Se muestran los mensajes que el sistema le envió a ese teléfono.
@@ -67,16 +67,7 @@
                 </div>
                 <!-- aria-live="polite": un lector de pantalla anuncia cada respuesta nueva del bot -->
                 <div class="card-body chat-notificaciones" id="conversacion" aria-live="polite">
-                    <div class="burbuja-bot">
-                        <div class="small">Hola Carlos Ruiz, tu pedido #2 ya salió con Luis Pérez. Llegará en unos 40 minutos.</div>
-                        <div class="burbuja-meta">23/09/2026 11:35</div>
-                    </div>
-                    <div class="burbuja-cliente">
-                        <div class="small">2</div>
-                    </div>
-                    <div class="burbuja-bot">
-                        <div class="small">Tu pedido #2 está: En camino. Total: $21.050.</div>
-                    </div>
+                    <!-- Mensajes del bot y del cliente: los genera el JS con la plantilla de abajo -->
                 </div>
                 <div class="card-footer">
                     <!-- Input group: el campo y el botón "Enviar" van juntos, como en el wireframe CU19.
@@ -91,7 +82,25 @@
         </div>
     </div>
 
+    <!-- Una burbuja de chat; el JS le pone la clase burbuja-bot o burbuja-cliente -->
+    <template id="plantillaBurbuja">
+        <div>
+            <div class="small" data-campo="texto"></div>
+            <div class="burbuja-meta" data-campo="meta"></div>
+        </div>
+    </template>
+
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Orden importante: datos (Repository) -> máquina de estados (State) -> eventos (Observer)
+         -> reglas (Service) -> canales (Adapter) y notificador -> script de esta pantalla. -->
+    <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_estados.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_eventos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_servicio.js"></script>
+    <!-- CS-38: canales (Adapter) y notificador (otro oyente del Observer) -->
+    <script src="../../../assets/js/domicilios/canales_notificacion.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_notificaciones.js"></script>
+    <script src="../../../assets/js/domicilios/simulador_chatbot.js"></script>
 </body>
 
 </html>
