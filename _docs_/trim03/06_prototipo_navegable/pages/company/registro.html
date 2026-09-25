@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta - Control Store</title>
+    <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+
+<!-- CS-77 · Registro desde el login. Sin rol ni estado: la cuenta nace inactiva
+     y el administrador le asigna el rol (así nadie se registra como administrador). -->
+<body>
+    <div class="d-flex align-items-center justify-content-center min-vh-100 bg-light py-4">
+        <div class="card shadow-sm login-card registro-card">
+            <div class="card-body p-4">
+
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-plus text-primary login-icon"></i>
+                    <h1 class="h4 mt-2">Crear cuenta</h1>
+                    <p class="text-muted mb-0">Regístrate para usar Control Store</p>
+                </div>
+
+                <div id="registroExito" class="alert alert-success d-none" role="alert">
+                    Cuenta creada. Queda pendiente hasta que el administrador te asigne un rol y la active.
+                    <a href="login.html" class="alert-link">Volver a iniciar sesión</a>
+                </div>
+                <div id="registroError" class="alert alert-danger d-none" role="alert"></div>
+
+                <!-- row + col-sm-6: dos columnas en PC, una en celular.
+                     Docs: https://getbootstrap.com/docs/5.3/forms/validation/ -->
+                <form id="formRegistro" novalidate>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="nombres" class="form-label">Nombres</label>
+                            <input type="text" class="form-control" id="nombres" name="nombres" maxlength="60" required>
+                            <div class="invalid-feedback">Este campo es obligatorio</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="apellidos" class="form-label">Apellidos</label>
+                            <input type="text" class="form-control" id="apellidos" name="apellidos" maxlength="60" required>
+                            <div class="invalid-feedback">Este campo es obligatorio</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="documento" class="form-label">Documento</label>
+                            <input type="text" class="form-control" id="documento" name="documento"
+                                inputmode="numeric" pattern="[0-9]{6,15}" maxlength="15" required>
+                            <div class="invalid-feedback">Solo números, entre 6 y 15 dígitos</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="telefono" class="form-label">Teléfono <span class="text-muted small">(opcional)</span></label>
+                            <input type="tel" class="form-control" id="telefono" name="telefono"
+                                inputmode="numeric" pattern="3[0-9]{9}" maxlength="10">
+                            <div class="invalid-feedback">Celular de 10 dígitos que empiece por 3</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="correo" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="correo" name="correo" maxlength="100" required>
+                            <div class="form-text">Con este correo iniciarás sesión.</div>
+                            <div class="invalid-feedback">Escribe un correo válido</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="contrasena" class="form-label">Contraseña</label>
+                            <!-- has-validation: redondea bien el grupo cuando aparece el error.
+                                 Docs: https://getbootstrap.com/docs/5.3/forms/input-group/ -->
+                            <div class="input-group has-validation">
+                                <input type="password" class="form-control" id="contrasena" name="contrasena" minlength="8" required>
+                                <button class="btn btn-outline-secondary" type="button" id="botonMostrarContrasena" title="Mostrar contraseña">
+                                    <i class="bi bi-eye" id="iconoOjo"></i>
+                                </button>
+                                <div class="invalid-feedback">Mínimo 8 caracteres</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="confirmarContrasena" class="form-label">Confirmar contraseña</label>
+                            <input type="password" class="form-control" id="confirmarContrasena" name="confirmarContrasena" required>
+                            <div class="invalid-feedback">Las contraseñas no coinciden</div>
+                        </div>
+                        <!-- Ley 1581 de 2012: autorización para tratar datos personales -->
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="aceptoDatos" required>
+                                <label class="form-check-label small" for="aceptoDatos">
+                                    Autorizo el tratamiento de mis datos personales (Ley 1581 de 2012)
+                                </label>
+                                <div class="invalid-feedback">Debes aceptar para crear la cuenta</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mt-4">Crear cuenta</button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <span class="small text-muted">¿Ya tienes cuenta?</span>
+                    <a href="login.html" class="small">Inicia sesión</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/registro.js"></script>
+</body>
+
+</html>
