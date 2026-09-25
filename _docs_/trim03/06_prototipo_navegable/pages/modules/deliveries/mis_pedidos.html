@@ -50,7 +50,9 @@
 
     <!-- Estado vacío: cuando no tiene pedidos por entregar -->
     <div id="sinPedidos" class="text-center text-body-secondary py-5 d-none">
-        <i class="fa-solid fa-mug-hot fs-1 d-block mb-3"></i>
+        <!-- Ícono de Flaticon (UIcons "delivery-man"), recoloreado con la paleta del módulo.
+             alt="" porque es decorativo: el texto de abajo ya explica la situación. -->
+        <img src="../../../assets/img/domicilios/repartidor.png" alt="" width="96" height="96" class="mb-3">
         <p class="mb-0">No tienes pedidos por entregar en este momento.</p>
     </div>
 
@@ -59,6 +61,12 @@
     <h2 class="h6 text-uppercase dato-etiqueta mb-3">Entregados</h2>
     <ul class="list-group" id="pedidosEntregados"></ul>
     <p id="sinEntregados" class="small text-body-secondary d-none">Todavía no tienes entregas terminadas.</p>
+
+
+    <!-- Atribución obligatoria de la licencia gratuita de Flaticon (ver assets/img/domicilios/CREDITOS.txt) -->
+    <p class="small text-body-secondary mt-4 mb-0">
+        Íconos ilustrativos: <a href="https://www.flaticon.com/uicons" target="_blank" rel="noopener">Uicons by Flaticon</a>.
+    </p>
 
     <!-- Tarjeta de un pedido por entregar: los 8 datos que pide HU05 -->
     <template id="plantillaPedidoDomiciliario">

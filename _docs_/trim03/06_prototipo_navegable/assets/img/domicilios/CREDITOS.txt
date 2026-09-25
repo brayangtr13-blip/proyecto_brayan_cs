@@ -1,0 +1,18 @@
+Créditos de las imágenes del Módulo 4 – Domicilios
+===================================================
+
+repartidor.png
+    Ícono "delivery-man" (familia UIcons, estilo solid rounded: fi-sr-delivery-man)
+    Uicons by Flaticon – https://www.flaticon.com/uicons
+    Licencia gratuita de Flaticon: uso permitido con atribución.
+    Modificación: recoloreado a #3B6979 (paleta del módulo) y reducido a 256 x 256 px.
+
+envio_con_tiempo.png
+    Ícono "shipping-timed" (familia UIcons, estilo solid straight: fi-ss-shipping-timed)
+    Uicons by Flaticon – https://www.flaticon.com/uicons
+    Licencia gratuita de Flaticon: uso permitido con atribución.
+    Modificación: recoloreado a #0166B0 (paleta del módulo) y reducido a 128 x 128 px.
+
+Se verificó en la página de cada ícono que no son Premium (sin corona).
+No se cargan desde el CDN de Flaticon: los archivos viven en el proyecto.
+La atribución también se muestra en las páginas donde aparecen los íconos.
