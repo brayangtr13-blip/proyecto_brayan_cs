@@ -292,6 +292,11 @@ body {
     --icono-fondo: var(--color-usuarios-tenue);
 }
 
+.modulo-icono-reportes {
+    --icono-color: var(--color-reportes);
+    --icono-fondo: var(--color-reportes-tenue);
+}
+
 .modulo-icono-alerta {
     --icono-color: var(--color-alerta);
     --icono-fondo: var(--color-alerta-tenue);
