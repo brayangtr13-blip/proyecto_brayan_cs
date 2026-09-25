@@ -44,3 +44,8 @@
         border: none;
     }
 }
+
+/* Buscador de factura del detalle: angosto, es un número corto */
+.buscar-factura {
+    max-width: 24rem;
+}
