@@ -43,16 +43,11 @@
                 <div class="card-body">
                     <h2 class="h6 mb-3">Recaudo por método de pago <span class="small text-body-secondary fw-normal" data-campo="turno">· Turno #3</span></h2>
                     <!-- Docs: https://getbootstrap.com/docs/5.3/components/list-group/#flush -->
-                    <ul class="list-group list-group-flush" id="listaMetodos">
-                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <div>Efectivo <div class="small text-body-secondary">2 ventas</div></div>
-                            <span class="fw-semibold">$29.750</span>
-                        </li>
-                    </ul>
+                    <ul class="list-group list-group-flush" id="listaMetodos"></ul>
                     <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-2">
                         <span class="fw-bold">Total del turno</span>
                         <!-- HU05: las anuladas no se incluyen -->
-                        <span class="fs-4 fw-bold text-success" id="totalTurno">$62.050</span>
+                        <span class="fs-4 fw-bold text-success" id="totalTurno">$0</span>
                     </div>
                 </div>
             </section>
@@ -110,11 +105,7 @@
                     <tr><th>Turno</th><th>Cajero</th><th>Apertura</th><th>Cierre</th><th class="text-end">Ventas</th>
                         <th class="text-end">Contado</th><th class="text-end">Diferencia</th><th>Observación</th><th></th></tr>
                 </thead>
-                <tbody id="cuerpoCierres">
-                    <tr><td>#2</td><td>Juan Carlos Pérez</td><td>23/09/2026 08:40</td><td>23/09/2026 11:40</td>
-                        <td class="text-end">$62.050</td><td class="text-end">$49.750</td><td class="text-end text-success">$0</td>
-                        <td>Turno de la tarde, sin novedades</td><td></td></tr>
-                </tbody>
+                <tbody id="cuerpoCierres"></tbody>
             </table>
         </div>
     </section>
@@ -129,7 +120,27 @@
         <p class="small mb-0" data-campo="observacion"></p>
     </section>
 
+    <template id="plantillaMetodo">
+        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+            <div><span data-campo="nombre"></span> <div class="small text-body-secondary" data-campo="cantidad"></div></div>
+            <span class="fw-semibold" data-campo="total"></span>
+        </li>
+    </template>
+    <template id="plantillaCierre">
+        <tr>
+            <td data-campo="turno"></td><td data-campo="cajero"></td><td data-campo="apertura"></td><td data-campo="cierre"></td>
+            <td class="text-end" data-campo="ventas"></td><td class="text-end" data-campo="contado"></td>
+            <td class="text-end fw-semibold" data-campo="diferencia"></td><td class="small" data-campo="observacion"></td>
+            <!-- CU028: reimprimir el comprobante de ese cierre -->
+            <td class="text-end"><button type="button" class="btn btn-sm btn-outline-secondary" data-accion="imprimir" title="Imprimir comprobante"><i class="bi bi-printer"></i></button></td>
+        </tr>
+    </template>
+
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/sesion.js"></script>
+    <script src="../../../assets/js/ventas/ventas_datos.js"></script>
+    <script src="../../../assets/js/ventas/ventas_servicio.js"></script>
+    <script src="../../../assets/js/ventas/cierre_caja.js"></script>
 </body>
 
 </html>
