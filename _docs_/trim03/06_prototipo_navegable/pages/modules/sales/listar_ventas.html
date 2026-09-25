@@ -29,6 +29,9 @@
         <li class="nav-item"><a class="nav-link" href="registrar_venta.html">Punto de venta</a></li>
     </ul>
 
+    <!-- CS-21: "Venta anulada correctamente" -->
+    <div id="accionExito" class="alert alert-success d-none" role="alert"></div>
+
     <!-- Filtros de HU02. row + col-*: en celular quedan uno debajo del otro.
          Docs: https://getbootstrap.com/docs/5.3/forms/layout/#gutters -->
     <form id="formFiltros" class="card card-body mb-3">
@@ -96,6 +99,40 @@
         <ul class="pagination pagination-sm mb-0" id="paginacion"></ul>
     </nav>
 
+    <!-- ===== Modal de anulación (CS-21 · HU04 · CU024/CU025; devolución CU022/CU023 como tipo) =====
+         Docs: https://getbootstrap.com/docs/5.3/components/modal/ -->
+    <div class="modal fade" id="modalAnular" tabindex="-1" aria-labelledby="tituloAnular" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" id="formAnular" novalidate>
+                <div class="modal-header">
+                    <h2 class="modal-title h5" id="tituloAnular">Anular factura #<span data-campo="numero">4</span></h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-body-secondary" data-campo="resumen">Total $21.050 · 2 productos volverán al inventario.</p>
+                    <!-- Devolución = anulación con motivo "Devolución" (decisión del equipo, sin cambiar la BD) -->
+                    <div class="mb-3">
+                        <label for="tipoAnulacion" class="form-label">Tipo</label>
+                        <select class="form-select" id="tipoAnulacion">
+                            <option value="anulacion">Anulación (venta registrada por error o cliente desiste)</option>
+                            <option value="devolucion">Devolución (el cliente devuelve los productos)</option>
+                        </select>
+                    </div>
+                    <!-- HU04: motivo obligatorio de al menos 10 caracteres -->
+                    <label for="motivoAnulacion" class="form-label">Motivo</label>
+                    <textarea class="form-control" id="motivoAnulacion" rows="3" minlength="10" maxlength="200" required></textarea>
+                    <div class="invalid-feedback">Escribe el motivo (mínimo 10 caracteres).</div>
+                    <div class="form-text text-end" id="contadorMotivo">0 / 200</div>
+                    <div id="errorAnular" class="small text-danger d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Anular venta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Fila de la tabla; el JS la copia y la llena con textContent -->
     <template id="plantillaVenta">
         <tr>
@@ -104,7 +141,12 @@
             <td class="text-end" data-campo="total"></td>
             <td><span class="badge" data-campo="estado"></span></td>
             <!-- HU03: "Ver detalle" en cada registro; el JS pone ?id= en el enlace -->
-            <td class="text-end"><a class="btn btn-sm btn-outline-primary" data-campo="detalle" href="consultar_venta.html"><i class="bi bi-eye"></i> Ver detalle</a></td>
+            <td class="text-end text-nowrap">
+                <a class="btn btn-sm btn-outline-primary" data-campo="detalle" href="consultar_venta.html"><i class="bi bi-eye"></i> Ver detalle</a>
+                <!-- CS-21: abre el modal; se deshabilita si ya está anulada o el rol no puede anularla -->
+                <button type="button" class="btn btn-sm btn-outline-danger" data-campo="anular"
+                    data-bs-toggle="modal" data-bs-target="#modalAnular"><i class="bi bi-x-circle"></i> Anular</button>
+            </td>
         </tr>
     </template>
 

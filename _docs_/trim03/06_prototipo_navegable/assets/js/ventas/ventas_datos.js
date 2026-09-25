@@ -99,6 +99,10 @@ const RepositorioVentas = (function () {
             guardar();
             return venta;
         },
+        // INSERT INTO movimientos_inventario (entradas al anular)
+        agregarMovimientos: function (lista) {
+            lista.forEach(function (m) { leer().movimientos.push(m); });
+        },
         registrarAuditoria: function (evento) {
             leer().auditoria.push(evento);
             guardar();

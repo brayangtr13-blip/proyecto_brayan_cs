@@ -47,6 +47,11 @@ function crearFila(venta) {
     campo('metodo').textContent = RepositorioVentas.obtenerMetodoPago(venta.idMetodoPago).nombre;
     campo('total').textContent = ServicioVentas.formatearPrecio(venta.total);
     campo('detalle').href = 'consultar_venta.html?id=' + venta.id;   // HU03: Ver detalle
+    // HU04: deshabilitado si ya está anulada o si este usuario no puede anularla
+    const permiso = ServicioVentas.puedeAnular(usuario, venta);
+    campo('anular').dataset.id = venta.id;
+    campo('anular').disabled = !permiso.ok;
+    if (!permiso.ok) campo('anular').title = permiso.razon;
     // HU02: anuladas en otro color y con la etiqueta ANULADA
     campo('estado').textContent = anulada ? 'ANULADA' : venta.estado === 'pagada' ? 'Pagada' : 'Pendiente';
     campo('estado').classList.add(anulada ? 'text-bg-danger' : venta.estado === 'pagada' ? 'text-bg-success' : 'text-bg-warning');
@@ -94,6 +99,45 @@ el('botonLimpiarFiltros').addEventListener('click', function () { ponerHoy(); pa
 el('paginacion').addEventListener('click', function (e) {
     const boton = e.target.closest('[data-pagina]');
     if (boton) { pagina = Number(boton.dataset.pagina); mostrar(); }
+});
+
+// ---------- Anular (CS-21 · HU04) ----------
+let ventaAAnular = null;
+let temporizador = null;
+
+// Docs: https://getbootstrap.com/docs/5.3/components/modal/#events
+el('modalAnular').addEventListener('show.bs.modal', function (evento) {
+    ventaAAnular = RepositorioVentas.obtenerVenta(Number(evento.relatedTarget.dataset.id));
+    const modal = el('modalAnular');
+    modal.querySelector('[data-campo="numero"]').textContent = ventaAAnular.id;
+    modal.querySelector('[data-campo="resumen"]').textContent = 'Total ' + ServicioVentas.formatearPrecio(ventaAAnular.total) +
+        ' · ' + ventaAAnular.detalle.length + ' producto(s) volverán al inventario.';
+    el('formAnular').reset();
+    el('formAnular').classList.remove('was-validated');
+    el('contadorMotivo').textContent = '0 / 200';
+    el('errorAnular').classList.add('d-none');
+});
+
+el('motivoAnulacion').addEventListener('input', function () {
+    el('contadorMotivo').textContent = el('motivoAnulacion').value.length + ' / 200';
+});
+
+el('formAnular').addEventListener('submit', function (evento) {
+    evento.preventDefault();
+    el('formAnular').classList.add('was-validated');
+    if (!el('formAnular').checkValidity()) return;
+    const resultado = ServicioVentas.anularVenta(usuario, ventaAAnular.id, el('tipoAnulacion').value, el('motivoAnulacion').value);
+    if (!resultado.ok) {
+        el('errorAnular').textContent = resultado.error;
+        el('errorAnular').classList.remove('d-none');
+        return;
+    }
+    bootstrap.Modal.getInstance(el('modalAnular')).hide();
+    mostrar();   // HU04: refrescar el listado
+    clearTimeout(temporizador);
+    el('accionExito').textContent = 'Venta anulada correctamente (factura #' + resultado.venta.id + ').';
+    el('accionExito').classList.remove('d-none');
+    temporizador = setTimeout(function () { el('accionExito').classList.add('d-none'); }, 4000);
 });
 
 ponerHoy();

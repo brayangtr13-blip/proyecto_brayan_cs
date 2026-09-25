@@ -144,7 +144,44 @@ const ServicioVentas = (function () {
         }).pop();
     }
 
+    // HU04: quién puede anular. Admin: cualquier venta. Cajero: solo las de su turno abierto.
+    function puedeAnular(usuario, venta) {
+        if (venta.estado === 'anulada') return { ok: false, razon: 'La venta ya está anulada.' };
+        if (usuario.rol === 'administrador') return { ok: true };
+        const turno = RepositorioVentas.obtenerTurnoAbierto(usuario.idUsuario);
+        if (venta.idUsuario !== usuario.idUsuario || !turno || venta.idArqueo !== turno.id) {
+            return { ok: false, razon: 'Solo puedes anular ventas de tu turno actual.' };
+        }
+        return { ok: true };
+    }
+
+    // HU04: anular = cambiar estado + devolver stock + auditoría. Todo se valida antes de modificar.
+    // tipo "devolucion" (CU022) es una anulación con motivo "Devolución" (sin cambiar la BD).
+    function anularVenta(usuario, idVenta, tipo, motivo) {
+        const venta = RepositorioVentas.obtenerVenta(idVenta);
+        if (!venta) return { ok: false, error: 'Venta no encontrada' };
+        const permiso = puedeAnular(usuario, venta);
+        if (!permiso.ok) return { ok: false, error: permiso.razon };
+        const texto = (motivo || '').trim();
+        if (texto.length < 10) return { ok: false, error: 'El motivo debe tener al menos 10 caracteres.' };
+
+        const fecha = new Date().toISOString();
+        venta.detalle.forEach(function (d) { RepositorioVentas.obtenerProducto(d.codigo).stock += d.cantidad; });
+        RepositorioVentas.agregarMovimientos(venta.detalle.map(function (d) {
+            return { codigoProducto: d.codigo, idUsuario: usuario.idUsuario, tipo: 'entrada', cantidad: d.cantidad,
+                observacion: (tipo === 'devolucion' ? 'Devolución' : 'Anulación') + ' de la venta #' + venta.id, fecha: fecha };
+        }));
+        venta.estado = 'anulada';   // no se borra: queda en el historial (HU04)
+        RepositorioVentas.registrarAuditoria({
+            idUsuario: usuario.idUsuario, accion: 'anular', modulo: 'ventas', idVenta: venta.id, fecha: fecha,
+            motivo: (tipo === 'devolucion' ? 'Devolución: ' : '') + texto
+        });
+        return { ok: true, venta: venta };
+    }
+
     return {
+        puedeAnular: puedeAnular,
+        anularVenta: anularVenta,
         consultarVenta: consultarVenta,
         datosAnulacion: datosAnulacion,
         fechaLocal: fechaLocal,
