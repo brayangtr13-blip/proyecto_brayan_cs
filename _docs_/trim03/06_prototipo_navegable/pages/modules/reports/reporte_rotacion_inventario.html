@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de rotación de inventario - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+
+<!-- CS-31 · MOD_05_HU08 Reporte gráfico de rotación. Solo HTML + Bootstrap:
+     barras con movimientos_inventario #1 a #5 y el stock_actual de productos. -->
+<body class="content-body">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Reportes</li>
+            <li class="breadcrumb-item active" aria-current="page">Rotación de inventario</li>
+        </ol>
+    </nav>
+
+    <!-- Filtros. Docs: https://getbootstrap.com/docs/5.3/forms/layout/#gutters -->
+    <form class="card card-body mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroDesde" class="form-label small">Desde</label>
+                <input type="date" class="form-control" id="filtroDesde" value="2026-09-01">
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroHasta" class="form-label small">Hasta</label>
+                <input type="date" class="form-control" id="filtroHasta" value="2026-09-30">
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <label for="filtroCategoria" class="form-label small">Categoría</label>
+                <select class="form-select" id="filtroCategoria">
+                    <option value="">Todas</option>
+                    <option value="1">Lácteos</option>
+                    <option value="2">Abarrotes</option>
+                    <option value="3">Bebidas</option>
+                    <option value="4">Panadería</option>
+                    <option value="5">Aseo</option>
+                </select>
+            </div>
+            <!-- La BD no tiene tabla de proveedores: filtro deshabilitado -->
+            <div class="col-sm-6 col-lg-3">
+                <label for="filtroProveedor" class="form-label small">Proveedor</label>
+                <select class="form-select" id="filtroProveedor" disabled>
+                    <option value="">Sin proveedores registrados</option>
+                </select>
+            </div>
+            <div class="col-lg-2 d-grid">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Generar</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Sin movimientos en el rango (se mostrará con JS) -->
+    <div class="alert alert-secondary d-none" role="alert">No hay movimientos de inventario en el periodo seleccionado</div>
+
+    <!-- Próximos a vencer: la BD no guarda fecha de vencimiento. Docs: https://getbootstrap.com/docs/5.3/components/alerts/ -->
+    <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+        <i class="bi bi-calendar-x fs-5"></i>
+        <div><strong>Próximos a vencer (30 días):</strong> sin datos, los productos no tienen fecha de vencimiento registrada.</div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Mayor rotación: unidades vendidas; title = valor exacto al pasar el cursor.
+             Docs: https://getbootstrap.com/docs/5.3/components/progress/ -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header"><i class="bi bi-graph-up-arrow text-success"></i> Mayor rotación (unidades vendidas)</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between small"><span>Leche Entera 1L</span><span>5 und.</span></div>
+                    <div class="progress mb-2" role="progressbar" aria-label="Leche Entera 1L" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5" title="Leche Entera 1L: 5 unidades">
+                        <div class="progress-bar bg-success" style="width: 100%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small"><span>Arroz Blanco 5kg</span><span>2 und.</span></div>
+                    <div class="progress mb-2" role="progressbar" aria-label="Arroz Blanco 5kg" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" title="Arroz Blanco 5kg: 2 unidades">
+                        <div class="progress-bar bg-success" style="width: 40%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small"><span>Café Molido 250g</span><span>2 und.</span></div>
+                    <div class="progress mb-2" role="progressbar" aria-label="Café Molido 250g" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" title="Café Molido 250g: 2 unidades">
+                        <div class="progress-bar bg-success" style="width: 40%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small"><span>Pan Tajado</span><span>1 und.</span></div>
+                    <div class="progress" role="progressbar" aria-label="Pan Tajado" aria-valuenow="1" aria-valuemin="0" aria-valuemax="5" title="Pan Tajado: 1 unidad">
+                        <div class="progress-bar bg-success" style="width: 20%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menor rotación: de menos a más vendido -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header"><i class="bi bi-graph-down-arrow text-danger"></i> Menor rotación (unidades vendidas)</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between small"><span>Azúcar Blanca 2kg</span><span>0 und.</span></div>
+                    <div class="progress mb-2" role="progressbar" aria-label="Azúcar Blanca 2kg" aria-valuenow="0" aria-valuemin="0" aria-valuemax="5" title="Azúcar Blanca 2kg: 0 unidades">
+                        <div class="progress-bar bg-danger" style="width: 0%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small"><span>Pan Tajado</span><span>1 und.</span></div>
+                    <div class="progress mb-2" role="progressbar" aria-label="Pan Tajado" aria-valuenow="1" aria-valuemin="0" aria-valuemax="5" title="Pan Tajado: 1 unidad">
+                        <div class="progress-bar bg-danger" style="width: 20%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small"><span>Arroz Blanco 5kg</span><span>2 und.</span></div>
+                    <div class="progress mb-2" role="progressbar" aria-label="Arroz Blanco 5kg" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" title="Arroz Blanco 5kg: 2 unidades">
+                        <div class="progress-bar bg-danger" style="width: 40%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small"><span>Café Molido 250g</span><span>2 und.</span></div>
+                    <div class="progress" role="progressbar" aria-label="Café Molido 250g" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" title="Café Molido 250g: 2 unidades">
+                        <div class="progress-bar bg-danger" style="width: 40%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evolución del stock total: stock_actual hoy (138) y hacia atrás con cada movimiento -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">Evolución del stock total</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between small"><span>21/09/2026</span><span>118 und.</span></div>
+                    <div class="progress mb-2" role="progressbar" aria-label="21/09/2026" aria-valuenow="118" aria-valuemin="0" aria-valuemax="148" title="21/09/2026: 118 unidades">
+                        <div class="progress-bar" style="width: 80%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small"><span>22/09/2026</span><span>148 und.</span></div>
+                    <div class="progress mb-2" role="progressbar" aria-label="22/09/2026" aria-valuenow="148" aria-valuemin="0" aria-valuemax="148" title="22/09/2026: 148 unidades">
+                        <div class="progress-bar" style="width: 100%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small"><span>23/09/2026</span><span>138 und.</span></div>
+                    <div class="progress" role="progressbar" aria-label="23/09/2026" aria-valuenow="138" aria-valuemin="0" aria-valuemax="148" title="23/09/2026: 138 unidades">
+                        <div class="progress-bar" style="width: 93%"></div>
+                    </div>
+                    <p class="small text-body-secondary mt-3 mb-0">Eje: fecha · Valor: unidades en inventario</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Entradas frente a salidas por día. Docs: https://getbootstrap.com/docs/5.3/components/progress/#multiple-bars -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">Entradas frente a salidas</div>
+                <div class="card-body">
+                    <p class="small fw-semibold mb-1">22/09/2026</p>
+                    <div class="progress mb-1" role="progressbar" aria-label="Entradas 22/09" aria-valuenow="30" aria-valuemin="0" aria-valuemax="30" title="Entradas 22/09/2026: 30 unidades">
+                        <div class="progress-bar bg-success" style="width: 100%">30</div>
+                    </div>
+                    <div class="progress mb-3" role="progressbar" aria-label="Salidas 22/09" aria-valuenow="0" aria-valuemin="0" aria-valuemax="30" title="Salidas 22/09/2026: 0 unidades">
+                        <div class="progress-bar bg-danger" style="width: 0%"></div>
+                    </div>
+                    <p class="small fw-semibold mb-1">23/09/2026</p>
+                    <div class="progress mb-1" role="progressbar" aria-label="Entradas 23/09" aria-valuenow="0" aria-valuemin="0" aria-valuemax="30" title="Entradas 23/09/2026: 0 unidades">
+                        <div class="progress-bar bg-success" style="width: 0%"></div>
+                    </div>
+                    <div class="progress mb-3" role="progressbar" aria-label="Salidas 23/09" aria-valuenow="10" aria-valuemin="0" aria-valuemax="30" title="Salidas 23/09/2026: 10 unidades">
+                        <div class="progress-bar bg-danger" style="width: 33%">10</div>
+                    </div>
+                    <p class="small mb-0">
+                        <i class="bi bi-square-fill text-success"></i> Entradas
+                        <i class="bi bi-square-fill text-danger ms-2"></i> Salidas (sin reversos)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
