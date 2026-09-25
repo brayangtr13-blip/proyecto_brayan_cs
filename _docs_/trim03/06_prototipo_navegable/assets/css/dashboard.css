@@ -18,8 +18,8 @@
        basta con editar el par de líneas de ese módulo aquí. */
     --color-inventario: #2f6fd0;
     --color-inventario-tenue: #e7f0fc;
-    --color-ventas: #1aa179;
-    --color-ventas-tenue: #e3f6ef;
+    --color-ventas: #1e4f9c;
+    --color-ventas-tenue: #e6edf8;
     /* Acento de la paleta propia del Módulo 4 (ver domicilios.css) */
     --color-domicilios: #3B6979;
     --color-domicilios-tenue: #e5eef0;
@@ -274,6 +274,12 @@ body {
 .modulo-icono-inventario {
     --icono-color: var(--color-inventario);
     --icono-fondo: var(--color-inventario-tenue);
+}
+
+/* Ventas: azul oscuro de los botones activos de la referencia del Módulo 3 */
+.modulo-icono-ventas {
+    --icono-color: var(--color-ventas);
+    --icono-fondo: var(--color-ventas-tenue);
 }
 
 .modulo-icono-domicilios {

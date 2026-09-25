@@ -1,0 +1,46 @@
+/* Módulo 3 – Ventas y Caja. Solo lo que Bootstrap no trae. */
+
+/* Accesos rápidos: misma altura aunque el nombre ocupe 1 o 2 líneas */
+.producto-rapido {
+    min-height: 4.5rem;
+}
+
+/* Cantidad editable en la tabla: angosta para no ensanchar la fila */
+.cantidad-venta {
+    width: 5rem;
+}
+
+/* sticky-top pega el resumen al borde; este margen lo separa del techo del iframe */
+.resumen-cobro {
+    top: 1rem;
+}
+
+/* Comprobante (CU019): tamaño de tirilla de caja registradora */
+.comprobante {
+    max-width: 22rem;
+    margin: 1rem auto;
+    padding: 1rem;
+    border: 1px dashed var(--bs-border-color);
+}
+
+/* Al imprimir solo sale el comprobante, sin menús ni botones */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .comprobante,
+    .comprobante * {
+        visibility: visible;
+    }
+
+    /* !important: en pantalla el comprobante tiene d-none (display: none !important de Bootstrap) */
+    .comprobante {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        border: none;
+    }
+}
