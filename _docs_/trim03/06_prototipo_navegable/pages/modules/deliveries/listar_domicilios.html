@@ -13,6 +13,8 @@
          Solo se cargan los estilos "solid" y "brands": all.min.css traería estilos que no usamos. -->
     <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/solid.min.css">
+    <!-- brands: íconos de marcas (WhatsApp, Telegram) para las notificaciones de CS-38 -->
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/brands.min.css">
     <link rel="stylesheet" href="../../../assets/css/fonts.css">
     <link rel="stylesheet" href="../../../assets/css/dashboard.css">
     <!-- Paleta y estilos propios del Módulo 4 (se cargan después de Bootstrap para poder personalizarlo) -->
@@ -40,9 +42,15 @@
             <h1 class="h4 mb-0"><i class="fa-solid fa-motorcycle"></i> Domicilios</h1>
             <p class="text-muted mb-0">Pedidos a domicilio del autoservicio (CU037 – Registrar pedido · CU038 – Asignar domiciliario)</p>
         </div>
-        <a href="registrar_pedido.html" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Registrar pedido
-        </a>
+        <div class="d-flex flex-wrap gap-2">
+            <!-- CS-38: el simulador muestra lo que recibe el cliente en su chat (HU07) -->
+            <a href="simulador_chatbot.html" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-robot"></i> Simulador del ChatBot
+            </a>
+            <a href="registrar_pedido.html" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Registrar pedido
+            </a>
+        </div>
     </div>
 
     <!-- ===================================================
@@ -259,6 +267,22 @@
             </article>
         </div>
     </template>
+
+    <!-- Toast: aviso flotante y temporal de "mensaje enviado al cliente". Se usa Toast y no Alert
+         porque no interrumpe ni mueve el contenido de la página, y desaparece solo.
+         toast-container + position-fixed lo deja en la esquina inferior derecha.
+         Docs: https://getbootstrap.com/docs/5.3/components/toasts/ -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toastNotificacion" class="toast" role="status" aria-live="polite" aria-atomic="true">
+            <div class="toast-header">
+                <i class="fa-brands fa-whatsapp me-2 text-success"></i>
+                <strong class="me-auto">Notificación al cliente</strong>
+                <small>ahora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+            </div>
+            <div class="toast-body" data-campo="textoToast">Mensaje enviado a Carlos Ruiz por WhatsApp (simulado).</div>
+        </div>
+    </div>
 
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- Orden importante: datos (Repository) -> máquina de estados (State) -> eventos (Observer)

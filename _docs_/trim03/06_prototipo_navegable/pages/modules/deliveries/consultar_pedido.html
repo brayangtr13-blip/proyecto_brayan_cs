@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/solid.min.css">
+    <!-- brands: íconos de marcas (WhatsApp, Telegram) para las notificaciones de CS-38 -->
+    <link rel="stylesheet" href="../../../assets/vendor/fontawesome/css/brands.min.css">
     <link rel="stylesheet" href="../../../assets/css/fonts.css">
     <link rel="stylesheet" href="../../../assets/css/dashboard.css">
     <link rel="stylesheet" href="../../../assets/css/domicilios.css">
@@ -119,6 +121,25 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- ============ Notificaciones al cliente (CU042 / HU07) ============
+                     Cada cambio de estado genera un mensaje para el cliente por el ChatBot.
+                     Se muestran como burbujas de chat para que se entienda qué recibió el cliente.
+                     Docs: https://getbootstrap.com/docs/5.3/components/card/ -->
+                <section class="card">
+                    <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+                        <span><i class="fa-brands fa-whatsapp"></i> Notificaciones al cliente</span>
+                        <!-- Canal activo del patrón Adapter (Simulado / WhatsApp / Telegram) -->
+                        <span class="badge rounded-pill text-bg-light border" data-campo="canal">Canal: Simulado</span>
+                    </div>
+                    <div class="card-body chat-notificaciones" id="listaNotificaciones">
+                        <div class="burbuja-bot">
+                            <div class="small">Hola Carlos Ruiz, tu pedido #2 ya salió con Luis Pérez. Llegará en unos 40 minutos.</div>
+                            <div class="burbuja-meta">23/09/2026 11:35 · En camino · enviado al 1.er intento</div>
+                        </div>
+                        <p class="small text-body-secondary mb-0 d-none" id="sinNotificaciones">Todavía no se han enviado notificaciones.</p>
+                    </div>
+                </section>
             </div>
 
             <!-- ============ Cambiar estado (wireframes 23.2 y CU24) ============ -->
@@ -177,6 +198,22 @@
         <tr><td data-campo="fecha"></td><td data-campo="anterior"></td><td data-campo="nuevo"></td>
             <td data-campo="usuario"></td><td data-campo="detalle"></td></tr>
     </template>
+
+    <!-- Toast: aviso flotante y temporal de "mensaje enviado al cliente". Se usa Toast y no Alert
+         porque no interrumpe ni mueve el contenido de la página, y desaparece solo.
+         toast-container + position-fixed lo deja en la esquina inferior derecha.
+         Docs: https://getbootstrap.com/docs/5.3/components/toasts/ -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toastNotificacion" class="toast" role="status" aria-live="polite" aria-atomic="true">
+            <div class="toast-header">
+                <i class="fa-brands fa-whatsapp me-2 text-success"></i>
+                <strong class="me-auto">Notificación al cliente</strong>
+                <small>ahora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+            </div>
+            <div class="toast-body" data-campo="textoToast">Mensaje enviado a Carlos Ruiz por WhatsApp (simulado).</div>
+        </div>
+    </div>
 
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- Orden importante: datos (Repository) -> máquina de estados (State) -> eventos (Observer)

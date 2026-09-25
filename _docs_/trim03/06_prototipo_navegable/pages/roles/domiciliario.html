@@ -8,6 +8,9 @@
     <!-- Mismos archivos que admin.html: los dos paneles comparten el esqueleto (dashboard.css) -->
     <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <!-- Font Awesome: ícono de moto en los avisos de la campana -->
+    <link rel="stylesheet" href="../../assets/vendor/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="../../assets/vendor/fontawesome/css/solid.min.css">
     <link rel="stylesheet" href="../../assets/css/fonts.css">
     <link rel="stylesheet" href="../../assets/css/dashboard.css">
 </head>
@@ -50,13 +53,27 @@
                     <!-- Campana con punto azul (como en el diseño de referencia).
                          position-relative en el botón + position-absolute en el badge:
                          así el punto queda "pegado" a la esquina del botón.
-                         Docs: https://getbootstrap.com/docs/5.3/components/badge/#positioned -->
-                    <button type="button" class="topbar-icon-btn position-relative" title="Notificaciones">
-                        <i class="bi bi-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-primary border border-light rounded-circle">
-                            <span class="visually-hidden">Hay pedidos nuevos</span>
-                        </span>
-                    </button>
+                         Docs: https://getbootstrap.com/docs/5.3/components/badge/#positioned
+                         CS-38 (CU039 "Notificar al domiciliario"): la campana abre un dropdown con los
+                         avisos de pedidos asignados; el punto solo aparece si hay avisos sin leer.
+                         Docs: https://getbootstrap.com/docs/5.3/components/dropdowns/ -->
+                    <div class="dropdown">
+                        <button type="button" class="topbar-icon-btn position-relative" title="Notificaciones"
+                            id="botonAvisos" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-bell"></i>
+                            <span id="puntoAvisos" class="position-absolute top-0 start-100 translate-middle p-1 bg-primary border border-light rounded-circle">
+                                <span class="visually-hidden">Hay pedidos nuevos</span>
+                            </span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end lista-avisos" aria-labelledby="botonAvisos">
+                            <h6 class="dropdown-header">Avisos</h6>
+                            <div id="listaAvisos">
+                                <div class="dropdown-item-text small">
+                                    <i class="fa-solid fa-motorcycle"></i> Te asignaron el pedido #4 · El Prado
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Menú de perfil con nombre y rol: quien entra ve de inmediato
                          con qué usuario y en qué panel está. Luis Pérez es el domiciliario
