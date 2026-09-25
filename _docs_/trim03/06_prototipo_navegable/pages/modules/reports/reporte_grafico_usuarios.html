@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte gráfico de usuarios - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+
+<!-- CS-27 · MOD_05_HU05 Reporte gráfico de usuarios (solo administrador). Solo HTML + Bootstrap:
+     usuarios #1 a #3 de la BD y sus ventas pagadas (#2, #3 y #4). -->
+<body class="content-body">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Reportes</li>
+            <li class="breadcrumb-item active" aria-current="page">Gráfico de usuarios</li>
+        </ol>
+    </nav>
+
+    <!-- Filtro de fechas. Docs: https://getbootstrap.com/docs/5.3/forms/layout/#gutters -->
+    <form class="card card-body mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-5 col-lg-3">
+                <label for="filtroDesde" class="form-label small">Desde</label>
+                <input type="date" class="form-control" id="filtroDesde" value="2026-09-01">
+            </div>
+            <div class="col-sm-5 col-lg-3">
+                <label for="filtroHasta" class="form-label small">Hasta</label>
+                <input type="date" class="form-control" id="filtroHasta" value="2026-09-30">
+            </div>
+            <div class="col-sm-2 col-lg-2 d-grid">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Generar</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Sin datos en el rango (se mostrará con JS) -->
+    <div class="alert alert-secondary d-none" role="alert">No hay información de usuarios para el periodo seleccionado</div>
+
+    <!-- Vendedor destacado: el de más ventas del periodo. Docs: https://getbootstrap.com/docs/5.3/components/alerts/ -->
+    <div class="alert alert-primary d-flex align-items-center gap-2" role="alert">
+        <i class="bi bi-trophy-fill fs-5"></i>
+        <div><strong>Vendedor destacado:</strong> Juan Carlos Pérez · 3 ventas · $62.050</div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Total vendido por vendedor (cajeros). title = valor exacto.
+             Docs: https://getbootstrap.com/docs/5.3/components/progress/ -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">Total vendido por vendedor</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between small"><span><i class="bi bi-trophy-fill text-warning"></i> Juan Carlos Pérez</span><span>$62.050</span></div>
+                    <div class="progress" role="progressbar" aria-label="Juan Carlos Pérez" aria-valuenow="62050" aria-valuemin="0" aria-valuemax="62050" title="Juan Carlos Pérez: $62.050">
+                        <div class="progress-bar" style="width: 100%"></div>
+                    </div>
+                    <p class="small text-body-secondary mt-3 mb-0">Valor: total en COP, sin ventas anuladas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Número de ventas (transacciones) por vendedor -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">Número de ventas por vendedor</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between small"><span><i class="bi bi-trophy-fill text-warning"></i> Juan Carlos Pérez</span><span>3 ventas</span></div>
+                    <div class="progress" role="progressbar" aria-label="Juan Carlos Pérez" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3" title="Juan Carlos Pérez: 3 ventas">
+                        <div class="progress-bar bg-info" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usuarios por rol: barra apilada en lugar de torta.
+             Docs: https://getbootstrap.com/docs/5.3/components/progress/#multiple-bars -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">Usuarios por rol</div>
+                <div class="card-body">
+                    <div class="progress-stacked mb-3" style="height: 24px">
+                        <div class="progress" role="progressbar" aria-label="Administrador" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="width: 33.3%" title="Administrador: 1 usuario">
+                            <div class="progress-bar bg-dark">1</div>
+                        </div>
+                        <div class="progress" role="progressbar" aria-label="Vendedor" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="width: 33.3%" title="Vendedor: 1 usuario">
+                            <div class="progress-bar">1</div>
+                        </div>
+                        <div class="progress" role="progressbar" aria-label="Domiciliario" aria-valuenow="34" aria-valuemin="0" aria-valuemax="100" style="width: 33.4%" title="Domiciliario: 1 usuario">
+                            <div class="progress-bar bg-warning text-dark">1</div>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled small mb-0">
+                        <li><i class="bi bi-square-fill text-dark"></i> Administrador · Andrés Gómez</li>
+                        <li><i class="bi bi-square-fill text-primary"></i> Vendedor (cajero) · Juan Carlos Pérez</li>
+                        <li><i class="bi bi-square-fill text-warning"></i> Domiciliario · Luis Pérez</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activos frente a inactivos -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">Usuarios activos e inactivos</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between small"><span>Activos</span><span>3</span></div>
+                    <div class="progress mb-2" role="progressbar" aria-label="Activos" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3" title="Activos: 3 usuarios">
+                        <div class="progress-bar bg-success" style="width: 100%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small"><span>Inactivos</span><span>0</span></div>
+                    <div class="progress" role="progressbar" aria-label="Inactivos" aria-valuenow="0" aria-valuemin="0" aria-valuemax="3" title="Inactivos: 0 usuarios">
+                        <div class="progress-bar bg-secondary" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
