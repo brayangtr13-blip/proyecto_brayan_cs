@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de administración - Control Store</title>
+    <title>Panel del cajero - Control Store</title>
+    <!-- Mismo esqueleto que admin.html y domiciliario.html (dashboard.css) -->
     <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
-    <!-- Fuente Inter descargada (no CDN): ver assets/vendor/fonts/inter/ -->
     <link rel="stylesheet" href="../../assets/css/fonts.css">
     <link rel="stylesheet" href="../../assets/css/dashboard.css">
 </head>
@@ -20,36 +20,16 @@
                 <i class="bi bi-shop"></i>
                 <div>
                     <div class="sidebar-brand-name">Control Store</div>
-                    <div class="sidebar-brand-sub">Autoservicio Ayuelal</div>
+                    <div class="sidebar-brand-sub">Panel del cajero</div>
                 </div>
             </div>
 
+            <!-- Solo las opciones del rol cajero (actor Cajero del Módulo 3).
+                 Historial y Cierre de caja se agregan en CS-19 y CS-22. -->
             <nav class="sidebar-nav">
-                <div class="sidebar-label">General</div>
-                <a href="../modules/_mains_/dashboard_inicio.html" target="area_trabajo" class="sidebar-link active">
-                    <i class="bi bi-grid"></i> Dashboard
-                </a>
-
-                <div class="sidebar-label">Módulos</div>
-                <a href="../modules/inventory/listar_productos.html" target="area_trabajo" class="sidebar-link">
-                    <i class="bi bi-box-seam"></i> Inventario
-                </a>
-                <a href="../modules/sales/registrar_venta.html" target="area_trabajo" class="sidebar-link">
-                    <i class="bi bi-cart"></i> Ventas
-                </a>
-                <a href="../modules/deliveries/listar_domicilios.html" target="area_trabajo" class="sidebar-link">
-                    <i class="bi bi-truck"></i> Domicilios
-                </a>
-                <a href="../modules/users/listar_usuarios.html" target="area_trabajo" class="sidebar-link">
-                    <i class="bi bi-people"></i> Usuarios
-                </a>
-                <a href="#" target="area_trabajo" class="sidebar-link">
-                    <i class="bi bi-bar-chart-line"></i> Reportes gráficos
-                </a>
-
-                <div class="sidebar-label">Seguridad</div>
-                <a href="#" target="area_trabajo" class="sidebar-link">
-                    <i class="bi bi-shield-check"></i> Log de auditoría
+                <div class="sidebar-label">Ventas</div>
+                <a href="../modules/sales/registrar_venta.html" target="area_trabajo" class="sidebar-link active">
+                    <i class="bi bi-cart"></i> Punto de venta
                 </a>
             </nav>
         </aside>
@@ -58,13 +38,20 @@
             <header class="topbar">
                 <div class="topbar-search">
                     <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Buscar...">
+                    <input type="text" placeholder="Buscar producto...">
                 </div>
 
-                <div class="topbar-actions">
+                <!-- Perfil con nombre y rol. Docs: https://getbootstrap.com/docs/5.3/components/dropdowns/ -->
+                <div class="topbar-actions d-flex align-items-center gap-2">
                     <div class="dropdown">
-                        <button class="topbar-icon-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Perfil">
-                            <i class="bi bi-person-circle"></i>
+                        <button class="btn border d-flex align-items-center gap-2 dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-5"></i>
+                            <span class="text-start lh-sm">
+                                <!-- Cajero real de la BD: usuarios.id_usuario = 2 -->
+                                <span class="d-block small fw-semibold">Juan Carlos Pérez</span>
+                                <span class="d-block small text-body-secondary">Cajero</span>
+                            </span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
@@ -84,12 +71,12 @@
             </header>
 
             <main class="content">
-                <iframe name="area_trabajo" src="../modules/_mains_/dashboard_inicio.html" class="content-frame"></iframe>
+                <iframe name="area_trabajo" src="../modules/sales/registrar_venta.html" class="content-frame"></iframe>
             </main>
         </div>
     </div>
 
-    <!-- Modal de confirmación para cerrar sesión (CS-71) -->
+    <!-- Mismos id que en admin.html: así se reutiliza dashboard.js. Docs: https://getbootstrap.com/docs/5.3/components/modal/ -->
     <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -97,9 +84,7 @@
                     <h5 class="modal-title">Cerrar sesión</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="modal-body">
-                    ¿Desea cerrar la sesión?
-                </div>
+                <div class="modal-body">¿Desea cerrar la sesión?</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
                     <button type="button" class="btn btn-danger" id="confirmarCerrarSesion">Sí</button>
