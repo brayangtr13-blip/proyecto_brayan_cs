@@ -46,6 +46,7 @@ function crearFila(venta) {
     campo('cajero').textContent = RepositorioVentas.obtenerUsuario(venta.idUsuario).nombre;
     campo('metodo').textContent = RepositorioVentas.obtenerMetodoPago(venta.idMetodoPago).nombre;
     campo('total').textContent = ServicioVentas.formatearPrecio(venta.total);
+    campo('detalle').href = 'consultar_venta.html?id=' + venta.id;   // HU03: Ver detalle
     // HU02: anuladas en otro color y con la etiqueta ANULADA
     campo('estado').textContent = anulada ? 'ANULADA' : venta.estado === 'pagada' ? 'Pagada' : 'Pendiente';
     campo('estado').classList.add(anulada ? 'text-bg-danger' : venta.estado === 'pagada' ? 'text-bg-success' : 'text-bg-warning');

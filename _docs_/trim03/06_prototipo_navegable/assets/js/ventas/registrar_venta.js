@@ -161,7 +161,7 @@ el('botonRegistrar').addEventListener('click', function () {
     const resultado = ServicioVentas.registrarVenta(usuario, carrito, metodoElegido(), recibido);
     if (!resultado.ok) return mostrarError(resultado.error);
 
-    llenarComprobante(resultado.venta, recibido, resultado.cambio);
+    ComprobanteVenta.llenar(el('comprobante'), resultado.venta, recibido, resultado.cambio);
     // HU01: mensaje + opción de imprimir el comprobante (CU019)
     const imprimir = Object.assign(document.createElement('button'), {
         type: 'button', className: 'btn btn-sm btn-success ms-2', textContent: 'Imprimir comprobante'
@@ -172,24 +172,6 @@ el('botonRegistrar').addEventListener('click', function () {
     limpiar();
     dibujarAccesos();   // el stock mostrado ya bajó
 });
-
-function llenarComprobante(venta, recibido, cambio) {
-    const c = el('comprobante');
-    const metodo = RepositorioVentas.obtenerMetodoPago(venta.idMetodoPago).nombre;
-    c.querySelector('[data-campo="encabezado"]').textContent = 'Factura #' + venta.id + ' · ' +
-        ServicioVentas.formatearFecha(venta.fecha) + ' · Cajero: ' + usuario.nombre;
-    const cuerpo = c.querySelector('[data-campo="renglones"]');
-    cuerpo.replaceChildren();
-    venta.detalle.forEach(function (d) {
-        const fila = cuerpo.insertRow();
-        fila.insertCell().textContent = RepositorioVentas.obtenerProducto(d.codigo).nombre;
-        const cant = fila.insertCell(); cant.textContent = d.cantidad; cant.className = 'text-center';
-        const sub = fila.insertCell(); sub.textContent = ServicioVentas.formatearPrecio(d.cantidad * d.precio); sub.className = 'text-end';
-    });
-    c.querySelector('[data-campo="total"]').textContent = ServicioVentas.formatearPrecio(venta.total);
-    c.querySelector('[data-campo="pago"]').textContent = 'Pago: ' + metodo + (cambio === null ? ''
-        : ' · Recibido ' + ServicioVentas.formatearPrecio(recibido) + ' · Cambio ' + ServicioVentas.formatearPrecio(cambio));
-}
 
 function limpiar() {
     carrito = [];
