@@ -46,14 +46,12 @@
                 <label for="filtroCajero" class="form-label small">Cajero</label>
                 <select class="form-select" id="filtroCajero">
                     <option value="">Todos</option>
-                    <option value="2">Juan Carlos Pérez</option>
                 </select>
             </div>
             <div class="col-sm-6 col-lg-2">
                 <label for="filtroMetodo" class="form-label small">Método de pago</label>
                 <select class="form-select" id="filtroMetodo">
                     <option value="">Todos</option>
-                    <option value="1">Efectivo</option>
                 </select>
             </div>
             <div class="col-sm-8 col-lg-2">
@@ -78,22 +76,12 @@
                         <th class="text-end">Total</th><th>Estado</th>
                     </tr>
                 </thead>
-                <tbody id="cuerpoVentas">
-                    <tr>
-                        <td>#4</td><td>23/09/2026</td><td>11:10</td><td>Juan Carlos Pérez</td><td>Efectivo</td>
-                        <td class="text-end">$21.050</td><td><span class="badge text-bg-success">Pagada</span></td>
-                    </tr>
-                    <!-- Anulada: fila en rojo tenue + etiqueta ANULADA (HU02) -->
-                    <tr class="table-danger">
-                        <td>#2</td><td>23/09/2026</td><td>09:40</td><td>Juan Carlos Pérez</td><td>Efectivo</td>
-                        <td class="text-end text-decoration-line-through">$8.700</td><td><span class="badge text-bg-danger">ANULADA</span></td>
-                    </tr>
-                </tbody>
+                <tbody id="cuerpoVentas"></tbody>
                 <!-- HU02: total acumulado de lo filtrado; las anuladas no suman (HU04) -->
                 <tfoot>
                     <tr class="fw-bold">
                         <td colspan="5">Total <span class="fw-normal small text-body-secondary">(sin anuladas)</span></td>
-                        <td class="text-end" id="totalAcumulado">$21.050</td><td></td>
+                        <td class="text-end" id="totalAcumulado">$0</td><td></td>
                     </tr>
                 </tfoot>
             </table>
@@ -104,13 +92,25 @@
 
     <!-- HU02: máximo 20 por página. Docs: https://getbootstrap.com/docs/5.3/components/pagination/ -->
     <nav aria-label="Páginas del historial" class="d-flex justify-content-between align-items-center mt-3">
-        <span class="small text-body-secondary" id="resumenPaginas">Mostrando 1–2 de 2</span>
-        <ul class="pagination pagination-sm mb-0" id="paginacion">
-            <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
-        </ul>
+        <span class="small text-body-secondary" id="resumenPaginas"></span>
+        <ul class="pagination pagination-sm mb-0" id="paginacion"></ul>
     </nav>
 
+    <!-- Fila de la tabla; el JS la copia y la llena con textContent -->
+    <template id="plantillaVenta">
+        <tr>
+            <td data-campo="factura"></td><td data-campo="fecha"></td><td data-campo="hora"></td>
+            <td data-campo="cajero"></td><td data-campo="metodo"></td>
+            <td class="text-end" data-campo="total"></td>
+            <td><span class="badge" data-campo="estado"></span></td>
+        </tr>
+    </template>
+
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/sesion.js"></script>
+    <script src="../../../assets/js/ventas/ventas_datos.js"></script>
+    <script src="../../../assets/js/ventas/ventas_servicio.js"></script>
+    <script src="../../../assets/js/ventas/listar_ventas.js"></script>
 </body>
 
 </html>

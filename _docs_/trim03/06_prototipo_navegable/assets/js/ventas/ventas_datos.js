@@ -71,6 +71,7 @@ const RepositorioVentas = (function () {
         obtenerProducto: function (codigo) { return leer().productos.find(function (p) { return p.codigo === codigo; }); },
         obtenerMetodosPago: function () { return leer().metodosPago; },
         obtenerMetodoPago: function (id) { return leer().metodosPago.find(function (m) { return m.id === id; }); },
+        obtenerUsuarios: function () { return leer().usuarios; },
         obtenerUsuario: function (id) { return leer().usuarios.find(function (u) { return u.idUsuario === id; }); },
         obtenerVentas: function () { return leer().ventas; },
         obtenerVenta: function (id) { return leer().ventas.find(function (v) { return v.id === id; }); },
