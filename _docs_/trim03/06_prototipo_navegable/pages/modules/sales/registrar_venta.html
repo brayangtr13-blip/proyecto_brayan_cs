@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de venta - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../../../assets/css/ventas.css">
+</head>
+
+<!-- CS-18 · MOD_03_HU01 Registrar venta · CU018 (+ CU019 comprobante, CU020 pago) -->
+<body class="content-body">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Ventas</li>
+            <li class="breadcrumb-item active" aria-current="page">Punto de venta</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-cart"></i> Punto de venta</h1>
+        <!-- Turno activo: cada venta se guarda con su id_arqueo -->
+        <span class="badge rounded-pill text-bg-light border" id="infoTurno"></span>
+    </div>
+
+    <div id="ventaExito" class="alert alert-success d-none" role="alert"></div>
+
+    <!-- ===== Apertura de caja: se muestra si no hay turno abierto (CS-22, primer criterio) ===== -->
+    <section class="card mb-4 d-none" id="seccionApertura" aria-labelledby="tituloApertura">
+        <div class="card-body">
+            <h2 class="h5" id="tituloApertura"><i class="bi bi-unlock"></i> Abrir caja</h2>
+            <p class="text-body-secondary small">No hay un turno abierto. Registra la base con la que empiezas.</p>
+            <!-- Input group con "$" al inicio. Docs: https://getbootstrap.com/docs/5.3/forms/input-group/ -->
+            <form id="formApertura" class="row g-2 align-items-end" novalidate>
+                <div class="col-sm-6 col-lg-4">
+                    <label for="montoInicial" class="form-label">Base inicial</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="montoInicial" min="0" step="50" required>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Abrir caja</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- ===== Punto de venta ===== -->
+    <div class="row g-4" id="seccionVenta">
+        <div class="col-lg-8 d-flex flex-column gap-3">
+
+            <!-- Buscador: el lector de código de barras "escribe" el código y presiona Enter.
+                 datalist sugiere por nombre. Docs: https://getbootstrap.com/docs/5.3/forms/form-control/#datalists -->
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                <input class="form-control" list="catalogoVenta" id="buscarProductoVenta"
+                    placeholder="Escanea el código o busca por nombre" aria-label="Buscar producto">
+                <button class="btn btn-outline-primary" type="button" id="botonAgregar">Agregar</button>
+            </div>
+            <datalist id="catalogoVenta"></datalist>
+            <div id="errorProducto" class="small text-danger d-none"></div>
+
+            <!-- Accesos rápidos (diseño de referencia). Grid row-cols. Docs: https://getbootstrap.com/docs/5.3/layout/grid/#row-columns -->
+            <div class="row row-cols-2 row-cols-md-3 row-cols-xl-5 g-2" id="accesosRapidos"></div>
+
+            <!-- Tabla de la venta: columnas exactas de HU01. Docs: https://getbootstrap.com/docs/5.3/content/tables/ -->
+            <section class="card">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th class="text-end">Precio unit.</th>
+                                <th class="text-center">Cantidad</th>
+                                <th class="text-end">Subtotal</th>
+                                <th><span class="visually-hidden">Quitar</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpoVenta">
+                            <tr id="filaVacia"><td colspan="6" class="text-center text-body-secondary py-3">Aún no hay productos en la venta.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===== Resumen de cobro ===== -->
+        <div class="col-lg-4">
+            <aside class="card sticky-top resumen-cobro">
+                <div class="card-body">
+                    <h2 class="h6">Resumen de cobro</h2>
+
+                    <div class="bg-body-tertiary rounded-3 text-center p-3 mb-3">
+                        <div class="small text-body-secondary">Total a cobrar</div>
+                        <div class="display-6 fw-bold" id="totalVenta">$0</div>
+                        <!-- No hay columna de IVA en la BD: los precios ya lo incluyen -->
+                        <div class="small text-body-secondary">Precios con IVA incluido</div>
+                    </div>
+
+                    <!-- Métodos de la tabla metodos_pago. btn-check: radios con aspecto de botón.
+                         Docs: https://getbootstrap.com/docs/5.3/forms/checks-radios/#toggle-buttons -->
+                    <div class="small text-body-secondary mb-2">Método de pago</div>
+                    <div class="row row-cols-2 g-2 mb-3" id="metodosPago"></div>
+
+                    <!-- Solo con efectivo: recibido y cambio (HU01). El cambio no se guarda (no hay columna). -->
+                    <div id="grupoEfectivo" class="mb-3">
+                        <label for="valorRecibido" class="form-label small">Valor recibido</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="valorRecibido" min="0" step="50">
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span class="small">Cambio</span>
+                            <strong id="valorCambio">$0</strong>
+                        </div>
+                        <div id="errorRecibido" class="small text-danger d-none">El valor recibido no alcanza para el total.</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary btn-lg" id="botonRegistrar">Registrar venta</button>
+                        <button type="button" class="btn btn-outline-secondary" id="botonLimpiar">Limpiar orden</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- ===== Comprobante (CU019): oculto en pantalla, es lo único que sale al imprimir ===== -->
+    <section id="comprobante" class="comprobante d-none" aria-label="Comprobante de venta">
+        <h2 class="h5 text-center mb-0">Control Store</h2>
+        <p class="text-center small mb-2">Autoservicio Ayuelal</p>
+        <p class="small mb-2" data-campo="encabezado">Factura #7 · 25/09/2026 12:10 · Cajero: Juan Carlos Pérez</p>
+        <table class="table table-sm small mb-2">
+            <thead><tr><th>Producto</th><th class="text-center">Cant.</th><th class="text-end">Subtotal</th></tr></thead>
+            <tbody data-campo="renglones"></tbody>
+        </table>
+        <p class="small mb-0 d-flex justify-content-between"><span>Total</span><strong data-campo="total">$5.700</strong></p>
+        <p class="small mb-0" data-campo="pago">Pago: Efectivo · Recibido $10.000 · Cambio $4.300</p>
+        <p class="small text-center mt-2 mb-0">Precios con IVA incluido. ¡Gracias por tu compra!</p>
+    </section>
+
+    <!-- Plantillas que el JS copia (cloneNode) y llena con textContent -->
+    <template id="plantillaRapido">
+        <div class="col">
+            <button type="button" class="btn btn-light border w-100 h-100 text-start producto-rapido">
+                <span class="d-block small fw-semibold" data-campo="nombre"></span>
+                <span class="d-block small" data-campo="detalle"></span>
+            </button>
+        </div>
+    </template>
+    <template id="plantillaRenglon">
+        <tr>
+            <td data-campo="codigo"></td>
+            <td data-campo="nombre"></td>
+            <td class="text-end" data-campo="precio"></td>
+            <td class="text-center">
+                <input type="number" class="form-control form-control-sm cantidad-venta mx-auto" min="1" aria-label="Cantidad">
+            </td>
+            <td class="text-end" data-campo="subtotal"></td>
+            <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-danger" data-accion="quitar" title="Quitar producto"><i class="bi bi-trash"></i></button>
+            </td>
+        </tr>
+    </template>
+    <template id="plantillaMetodo">
+        <div class="col">
+            <input type="radio" class="btn-check" name="metodoPago">
+            <label class="btn btn-outline-primary w-100"></label>
+        </div>
+    </template>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Orden: sesión -> datos (Repository) -> reglas (Service) -> pantalla -->
+    <script src="../../../assets/js/sesion.js"></script>
+    <script src="../../../assets/js/ventas/ventas_datos.js"></script>
+    <script src="../../../assets/js/ventas/ventas_servicio.js"></script>
+    <script src="../../../assets/js/ventas/registrar_venta.js"></script>
+</body>
+
+</html>
