@@ -25,7 +25,7 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
         <h1 class="h4 mb-0"><i class="bi bi-cart"></i> Punto de venta</h1>
         <!-- Turno activo: cada venta se guarda con su id_arqueo -->
-        <span class="badge rounded-pill text-bg-light border" id="infoTurno">Turno #3 abierto · Base $20.000</span>
+        <span class="badge rounded-pill text-bg-light border" id="infoTurno"></span>
     </div>
 
     <div id="ventaExito" class="alert alert-success d-none" role="alert"></div>
@@ -67,21 +67,7 @@
             <div id="errorProducto" class="small text-danger d-none"></div>
 
             <!-- Accesos rápidos (diseño de referencia). Grid row-cols. Docs: https://getbootstrap.com/docs/5.3/layout/grid/#row-columns -->
-            <div class="row row-cols-2 row-cols-md-3 row-cols-xl-5 g-2" id="accesosRapidos">
-                <div class="col">
-                    <button type="button" class="btn btn-light border w-100 h-100 text-start producto-rapido">
-                        <span class="d-block small fw-semibold">Leche Entera 1L</span>
-                        <span class="d-block small text-body-secondary">$2.850 · 15 und.</span>
-                    </button>
-                </div>
-                <div class="col">
-                    <!-- Stock 0: deshabilitado (HU01: no se agregan productos sin stock) -->
-                    <button type="button" class="btn btn-light border w-100 h-100 text-start producto-rapido" disabled>
-                        <span class="d-block small fw-semibold">Azúcar Blanca 2kg</span>
-                        <span class="d-block small text-danger">Agotado</span>
-                    </button>
-                </div>
-            </div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-xl-5 g-2" id="accesosRapidos"></div>
 
             <!-- Tabla de la venta: columnas exactas de HU01. Docs: https://getbootstrap.com/docs/5.3/content/tables/ -->
             <section class="card">
@@ -98,19 +84,7 @@
                             </tr>
                         </thead>
                         <tbody id="cuerpoVenta">
-                            <tr>
-                                <td>7702001001</td>
-                                <td>Leche Entera 1L</td>
-                                <td class="text-end">$2.850</td>
-                                <td class="text-center">
-                                    <!-- Cantidad editable (HU01); max = stock -->
-                                    <input type="number" class="form-control form-control-sm cantidad-venta mx-auto" value="2" min="1" max="15" aria-label="Cantidad">
-                                </td>
-                                <td class="text-end">$5.700</td>
-                                <td class="text-end">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Quitar producto"><i class="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
+                            <tr id="filaVacia"><td colspan="6" class="text-center text-body-secondary py-3">Aún no hay productos en la venta.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -125,7 +99,7 @@
 
                     <div class="bg-body-tertiary rounded-3 text-center p-3 mb-3">
                         <div class="small text-body-secondary">Total a cobrar</div>
-                        <div class="display-6 fw-bold" id="totalVenta">$5.700</div>
+                        <div class="display-6 fw-bold" id="totalVenta">$0</div>
                         <!-- No hay columna de IVA en la BD: los precios ya lo incluyen -->
                         <div class="small text-body-secondary">Precios con IVA incluido</div>
                     </div>
@@ -133,24 +107,7 @@
                     <!-- Métodos de la tabla metodos_pago. btn-check: radios con aspecto de botón.
                          Docs: https://getbootstrap.com/docs/5.3/forms/checks-radios/#toggle-buttons -->
                     <div class="small text-body-secondary mb-2">Método de pago</div>
-                    <div class="row row-cols-2 g-2 mb-3" id="metodosPago">
-                        <div class="col">
-                            <input type="radio" class="btn-check" name="metodoPago" id="pago1" value="1" checked>
-                            <label class="btn btn-outline-primary w-100" for="pago1"><i class="bi bi-cash"></i> Efectivo</label>
-                        </div>
-                        <div class="col">
-                            <input type="radio" class="btn-check" name="metodoPago" id="pago2" value="2">
-                            <label class="btn btn-outline-primary w-100" for="pago2"><i class="bi bi-phone"></i> Nequi</label>
-                        </div>
-                        <div class="col">
-                            <input type="radio" class="btn-check" name="metodoPago" id="pago3" value="3">
-                            <label class="btn btn-outline-primary w-100" for="pago3"><i class="bi bi-bank"></i> Transferencia</label>
-                        </div>
-                        <div class="col">
-                            <input type="radio" class="btn-check" name="metodoPago" id="pago4" value="4">
-                            <label class="btn btn-outline-primary w-100" for="pago4"><i class="bi bi-credit-card"></i> Tarjeta</label>
-                        </div>
-                    </div>
+                    <div class="row row-cols-2 g-2 mb-3" id="metodosPago"></div>
 
                     <!-- Solo con efectivo: recibido y cambio (HU01). El cambio no se guarda (no hay columna). -->
                     <div id="grupoEfectivo" class="mb-3">
@@ -189,7 +146,42 @@
         <p class="small text-center mt-2 mb-0">Precios con IVA incluido. ¡Gracias por tu compra!</p>
     </section>
 
+    <!-- Plantillas que el JS copia (cloneNode) y llena con textContent -->
+    <template id="plantillaRapido">
+        <div class="col">
+            <button type="button" class="btn btn-light border w-100 h-100 text-start producto-rapido">
+                <span class="d-block small fw-semibold" data-campo="nombre"></span>
+                <span class="d-block small" data-campo="detalle"></span>
+            </button>
+        </div>
+    </template>
+    <template id="plantillaRenglon">
+        <tr>
+            <td data-campo="codigo"></td>
+            <td data-campo="nombre"></td>
+            <td class="text-end" data-campo="precio"></td>
+            <td class="text-center">
+                <input type="number" class="form-control form-control-sm cantidad-venta mx-auto" min="1" aria-label="Cantidad">
+            </td>
+            <td class="text-end" data-campo="subtotal"></td>
+            <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-danger" data-accion="quitar" title="Quitar producto"><i class="bi bi-trash"></i></button>
+            </td>
+        </tr>
+    </template>
+    <template id="plantillaMetodo">
+        <div class="col">
+            <input type="radio" class="btn-check" name="metodoPago">
+            <label class="btn btn-outline-primary w-100"></label>
+        </div>
+    </template>
+
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Orden: sesión -> datos (Repository) -> reglas (Service) -> pantalla -->
+    <script src="../../../assets/js/sesion.js"></script>
+    <script src="../../../assets/js/ventas/ventas_datos.js"></script>
+    <script src="../../../assets/js/ventas/ventas_servicio.js"></script>
+    <script src="../../../assets/js/ventas/registrar_venta.js"></script>
 </body>
 
 </html>
