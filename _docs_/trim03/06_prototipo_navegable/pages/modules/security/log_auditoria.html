@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log de auditoría - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+
+<!-- Log de auditoría (solo administrador). Solo HTML + Bootstrap:
+     muestra los 5 eventos de la tabla log_auditoria de la BD, del más reciente al más antiguo. -->
+<body class="content-body">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Seguridad</li>
+            <li class="breadcrumb-item active" aria-current="page">Log de auditoría</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div>
+            <h1 class="h4 mb-0"><i class="bi bi-shield-check text-primary"></i> Log de auditoría</h1>
+            <p class="text-muted small mb-0">Registro de las acciones realizadas en el sistema</p>
+        </div>
+        <button type="button" class="btn btn-outline-primary"><i class="bi bi-printer"></i> Imprimir</button>
+    </div>
+
+    <!-- El log es de solo lectura: nadie puede editarlo ni borrarlo.
+         Docs: https://getbootstrap.com/docs/5.3/components/alerts/ -->
+    <div class="alert alert-info d-flex align-items-center gap-2 py-2 small" role="alert">
+        <i class="bi bi-lock"></i>
+        <div>Los eventos del log no se pueden modificar ni eliminar.</div>
+    </div>
+
+    <!-- Filtros. Docs: https://getbootstrap.com/docs/5.3/forms/layout/#gutters -->
+    <form class="card card-body mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroDesde" class="form-label small">Desde</label>
+                <input type="date" class="form-control" id="filtroDesde" value="2026-09-01">
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroHasta" class="form-label small">Hasta</label>
+                <input type="date" class="form-control" id="filtroHasta" value="2026-09-30">
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroUsuario" class="form-label small">Usuario</label>
+                <select class="form-select" id="filtroUsuario">
+                    <option value="">Todos</option>
+                    <option value="1">Andres Gomez</option>
+                    <option value="2">Juan Carlos Perez</option>
+                    <option value="3">Luis Perez</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroModulo" class="form-label small">Módulo</label>
+                <select class="form-select" id="filtroModulo">
+                    <option value="">Todos</option>
+                    <option value="usuarios">Usuarios</option>
+                    <option value="inventario">Inventario</option>
+                    <option value="ventas">Ventas</option>
+                    <option value="domicilios">Domicilios</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroAccion" class="form-label small">Acción</label>
+                <select class="form-select" id="filtroAccion">
+                    <option value="">Todas</option>
+                    <option value="login">Inicio de sesión</option>
+                    <option value="registrar">Registrar</option>
+                    <option value="actualizar">Actualizar</option>
+                    <option value="anular">Anular</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-lg-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel"></i> Filtrar</button>
+                <button type="reset" class="btn btn-outline-secondary" title="Limpiar filtros">
+                    <i class="bi bi-arrow-counterclockwise"></i><span class="visually-hidden">Limpiar filtros</span>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Resumen del periodo -->
+    <div class="row g-3 mb-3">
+        <div class="col-sm-4">
+            <div class="card card-body">
+                <span class="small text-body-secondary">Eventos registrados</span>
+                <span class="fs-4 fw-bold">5</span>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card card-body">
+                <span class="small text-body-secondary">Usuarios con actividad</span>
+                <span class="fs-4 fw-bold">3</span>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card card-body">
+                <span class="small text-body-secondary">Intentos de acceso fallidos</span>
+                <span class="fs-4 fw-bold text-success">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sin eventos en el rango (se mostrará con JS) -->
+    <div class="alert alert-secondary d-none" role="alert">No hay eventos registrados en el periodo seleccionado</div>
+
+    <!-- Tabla de eventos. Badge por acción. Docs: https://getbootstrap.com/docs/5.3/content/tables/ -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 small">
+                <thead>
+                    <tr>
+                        <th>#</th><th>Fecha y hora</th><th>Usuario</th><th>Acción</th>
+                        <th>Módulo</th><th>Detalle</th><th>IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>5</td><td>23/09/2026 11:00</td>
+                        <td>Luis Perez<br><span class="text-muted">Domiciliario</span></td>
+                        <td><span class="badge text-bg-primary">Actualizar</span></td>
+                        <td>Domicilios</td><td>Marco el domicilio de la venta #3 como entregado</td><td>192.168.1.22</td>
+                    </tr>
+                    <tr>
+                        <td>3</td><td>23/09/2026 10:10</td>
+                        <td>Juan Carlos Perez<br><span class="text-muted">Cajero</span></td>
+                        <td><span class="badge text-bg-success">Registrar</span></td>
+                        <td>Ventas</td><td>Registro la venta #3 por $32.300</td><td>192.168.1.15</td>
+                    </tr>
+                    <tr>
+                        <td>2</td><td>23/09/2026 09:40</td>
+                        <td>Juan Carlos Perez<br><span class="text-muted">Cajero</span></td>
+                        <td><span class="badge text-bg-success">Registrar</span></td>
+                        <td>Ventas</td><td>Registro la venta #2 por $8.700</td><td>192.168.1.15</td>
+                    </tr>
+                    <tr>
+                        <td>1</td><td>23/09/2026 08:40</td>
+                        <td>Juan Carlos Perez<br><span class="text-muted">Cajero</span></td>
+                        <td><span class="badge text-bg-secondary">Inicio de sesión</span></td>
+                        <td>Usuarios</td><td>Inicio de sesion exitoso</td><td>192.168.1.15</td>
+                    </tr>
+                    <tr>
+                        <td>4</td><td>22/09/2026 11:40</td>
+                        <td>Andres Gomez<br><span class="text-muted">Administrador</span></td>
+                        <td><span class="badge text-bg-primary">Actualizar</span></td>
+                        <td>Inventario</td><td>Ingreso de stock: Azucar Blanca 2kg, +30 unidades</td><td>192.168.1.10</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginación. Docs: https://getbootstrap.com/docs/5.3/components/pagination/ -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+        <span class="small text-muted">Mostrando 1–5 de 5 eventos</span>
+        <nav aria-label="Páginas del log">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+            </ul>
+        </nav>
+    </div>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
