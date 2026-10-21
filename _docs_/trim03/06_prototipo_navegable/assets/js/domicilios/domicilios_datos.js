@@ -4,6 +4,7 @@
 // Este es el ÚNICO archivo que sabe dónde viven los datos de Domicilios.
 // Las pantallas (y el servicio) solo llaman a RepositorioDomicilios.*;
 // nunca leen localStorage ni arreglos directamente.
+// Los productos NO viven aquí: se piden a RepositorioInventario (inventario_datos.js).
 //
 // Hoy los datos se guardan en localStorage del navegador, porque el flujo del
 // módulo cruza varias páginas (el admin registra y asigna, el domiciliario
@@ -18,19 +19,11 @@ const RepositorioDomicilios = (function () {
     const CLAVE = 'controlstore_domicilios_v2';
 
     // Datos de ejemplo basados en controlstore_sena (MySQL 8.4):
-    //  - productos: los mismos 5 de Inventario (tabla productos)
     //  - clientes 1 y 2, venta #3 y domicilio #1: registros reales del volcado SQL
     //  - Luis Perez (usuario 3) es el domiciliario real; Diana Morales y Jorge Rincon
     //    son domiciliarios de ejemplo para poder probar asignar y el caso "inactivo" (HU05)
     function datosDeEjemplo() {
         return {
-            productos: [
-                { codigo: '7702001001', nombre: 'Leche Entera 1L', precio: 2850, stock: 15 },
-                { codigo: '7702001002', nombre: 'Arroz Blanco 5kg', precio: 12500, stock: 15 },
-                { codigo: '7702001003', nombre: 'Café Molido 250g', precio: 9900, stock: 5 },
-                { codigo: '7702001004', nombre: 'Azúcar Blanca 2kg', precio: 5800, stock: 0 },
-                { codigo: '7702001005', nombre: 'Pan Tajado', precio: 3000, stock: 34 }
-            ],
             clientes: [
                 { id: 1, nombre: 'Maria Restrepo', telefono: '3011234567', direccion: 'Calle 12 # 4-30', barrio: 'Centro' },
                 { id: 2, nombre: 'Carlos Ruiz', telefono: '3109876543', direccion: 'Carrera 7 # 15-02', barrio: 'La Playa' },
@@ -123,6 +116,8 @@ const RepositorioDomicilios = (function () {
     function guardar() {
         try {
             localStorage.setItem(CLAVE, JSON.stringify(enMemoria));
+            // Entregar o devolver un pedido cambia stock: se guarda junto con el pedido
+            RepositorioInventario.guardarCambios();
         } catch (error) {
             // Sin almacenamiento disponible: los cambios quedan solo en esta página
         }
@@ -137,10 +132,10 @@ const RepositorioDomicilios = (function () {
             return leer().pedidos.find(function (p) { return p.id === id; });
         },
         obtenerProductos: function () {
-            return leer().productos;
+            return RepositorioInventario.obtenerProductos();
         },
         obtenerProductoPorCodigo: function (codigo) {
-            return leer().productos.find(function (p) { return p.codigo === codigo; });
+            return RepositorioInventario.obtenerProducto(codigo);
         },
         obtenerClientePorId: function (id) {
             return leer().clientes.find(function (c) { return c.id === id; });
@@ -211,6 +206,7 @@ const RepositorioDomicilios = (function () {
         // Olvida la copia en memoria para leer de nuevo lo guardado (otra página pudo cambiarlo)
         recargar: function () {
             enMemoria = null;
+            RepositorioInventario.recargar();
         },
         // Vuelve a los datos de ejemplo (útil para repetir la demostración ante el instructor)
         restablecer: function () {

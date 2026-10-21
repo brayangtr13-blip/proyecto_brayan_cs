@@ -1,5 +1,6 @@
 // Módulo 2 – Inventario · Patrón REPOSITORY
-// Único acceso a los productos del módulo. Hoy: localStorage. Con Django: fetch a la API.
+// ÚNICO dueño de la tabla productos en todo el prototipo: Ventas y Domicilios la leen
+// y la modifican a través de este Repository. Hoy: localStorage. Con Django: fetch a la API.
 
 const RepositorioInventario = (function () {
     const CLAVE = 'controlstore_inventario_v1';
@@ -56,6 +57,10 @@ const RepositorioInventario = (function () {
             guardar();
             return producto;
         },
+        // Ventas y Domicilios cambian el stock del objeto y luego piden guardarlo
+        guardarCambios: function () { guardar(); },
+        // Olvida la copia en memoria para leer de nuevo lo guardado (otra página pudo cambiarlo)
+        recargar: function () { enMemoria = null; },
         restablecer: function () { enMemoria = datosDeEjemplo(); guardar(); }
     };
 })();

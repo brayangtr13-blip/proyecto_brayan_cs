@@ -37,7 +37,7 @@ function dibujarAccesos() {
     RepositorioVentas.obtenerProductos().forEach(function (p) {
         const acceso = el('plantillaRapido').content.cloneNode(true);
         const boton = acceso.querySelector('button');
-        const sinStock = !p.activo || p.stock === 0;
+        const sinStock = p.estado !== 'activo' || p.stock === 0;
         acceso.querySelector('[data-campo="nombre"]').textContent = p.nombre;
         const detalle = acceso.querySelector('[data-campo="detalle"]');
         detalle.textContent = sinStock ? 'Agotado' : ServicioVentas.formatearPrecio(p.precio) + ' · ' + p.stock + ' und.';

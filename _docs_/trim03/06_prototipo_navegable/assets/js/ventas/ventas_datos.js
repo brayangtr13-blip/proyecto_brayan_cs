@@ -1,20 +1,14 @@
 // Módulo 3 – Ventas y Caja · Patrón REPOSITORY
 // Único acceso a los datos del módulo. Hoy: localStorage. Con Django: fetch a la API.
+// Depende de: inventario/inventario_datos.js (los productos son de Inventario)
 
 const RepositorioVentas = (function () {
     const CLAVE = 'controlstore_ventas_v1';
 
-    // Datos del volcado de controlstore_sena: productos, métodos de pago, usuarios,
+    // Datos del volcado de controlstore_sena: métodos de pago, usuarios,
     // el turno #2 (arqueo_caja) y las ventas #2, #3 y #4 con su detalle_venta.
     function datosDeEjemplo() {
         return {
-            productos: [
-                { codigo: '7702001001', nombre: 'Leche Entera 1L', precio: 2850, stock: 15, activo: true },
-                { codigo: '7702001002', nombre: 'Arroz Blanco 5kg', precio: 12500, stock: 15, activo: true },
-                { codigo: '7702001003', nombre: 'Café Molido 250g', precio: 9900, stock: 5, activo: true },
-                { codigo: '7702001004', nombre: 'Azúcar Blanca 2kg', precio: 5800, stock: 0, activo: true },
-                { codigo: '7702001005', nombre: 'Pan Tajado', precio: 3000, stock: 34, activo: true }
-            ],
             metodosPago: [
                 { id: 1, nombre: 'Efectivo' },
                 { id: 2, nombre: 'Nequi' },
@@ -60,6 +54,8 @@ const RepositorioVentas = (function () {
 
     function guardar() {
         try { localStorage.setItem(CLAVE, JSON.stringify(enMemoria)); } catch (e) { /* solo en memoria */ }
+        // Una venta o una anulación cambia stock: se guarda junto con la venta
+        RepositorioInventario.guardarCambios();
     }
 
     function siguienteId(lista) {
@@ -67,8 +63,9 @@ const RepositorioVentas = (function () {
     }
 
     return {
-        obtenerProductos: function () { return leer().productos; },
-        obtenerProducto: function (codigo) { return leer().productos.find(function (p) { return p.codigo === codigo; }); },
+        // Los productos no se copian aquí: se piden al Repository de Inventario
+        obtenerProductos: function () { return RepositorioInventario.obtenerProductos(); },
+        obtenerProducto: function (codigo) { return RepositorioInventario.obtenerProducto(codigo); },
         obtenerMetodosPago: function () { return leer().metodosPago; },
         obtenerMetodoPago: function (id) { return leer().metodosPago.find(function (m) { return m.id === id; }); },
         obtenerUsuarios: function () { return leer().usuarios; },
