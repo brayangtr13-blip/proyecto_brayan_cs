@@ -27,7 +27,7 @@ Regla: se avanza paso a paso y cada cambio se revisa antes de seguir.
 | 1 | Carpetas mezclan inglés y español | ✅ Resuelto |
 | 2 | Inventario y Usuarios sin Repository/Service | ✅ Resuelto |
 | 3 | Productos duplicados entre módulos | ✅ Resuelto |
-| 4 | Carpeta `_mains_/` con nombre raro | Pendiente |
+| 4 | Carpeta `_mains_/` con nombre raro | Resuelto |
 | 5 | `delete.txt.txt` en la raíz | Pendiente |
 | 6 | Orden manual de `<script>` sin control | Pendiente |
 | 7 | Variables globales (`const usuario`, `const el`) | Pendiente |
@@ -60,6 +60,11 @@ assets/js/usuarios/    usuarios_datos.js (RepositorioUsuarios)     · usuarios_s
 - Probado: un producto registrado en Inventario aparece en el Punto de venta y en Domicilios; al venderlo,
   el stock baja en Inventario.
 
+### Punto 4 · `_mains_/` → `dashboard/`
+- `git mv pages/modules/_mains_ pages/modules/dashboard` (conserva el historial).
+- Actualizados el enlace "Inicio" y el `src` del iframe en `pages/roles/admin.html` y las migas de pan
+  de Inventario y Domicilios. Las rutas a `assets/` no cambian (misma profundidad).
+
 ## Cómo probar en local
 ```bash
 git fetch origin && git checkout refactor/arquitectura-prototipo && git pull
@@ -69,11 +74,9 @@ en la consola del navegador: `localStorage.clear()` y recargar.
 
 ## Cómo continuar en local
 
-Estado al pausar: puntos 1, 2 y 3 del paso 1 resueltos. Sigue el **punto 4**.
+Estado al pausar: puntos 1 a 4 del paso 1 resueltos. Sigue el **punto 5**.
 
 ### Pendientes del paso 1 (en este orden)
-4. **Renombrar `pages/modules/_mains_/` → `dashboard/`.** Usar `git mv` y actualizar el `src` del iframe
-   y los enlaces "Inicio" en `pages/roles/admin.html` (y cualquier otra referencia: buscar `_mains_`).
 5. **`delete.txt.txt`.** Revisar su contenido; si no sirve, borrarlo con `git rm`.
 6. **Orden de `<script>`.** Cada Repository/Service debe avisar si falta su dependencia, por ejemplo al
    inicio de `ventas_datos.js`: `if (typeof RepositorioInventario === 'undefined') throw new Error('Falta inventario_datos.js');`
