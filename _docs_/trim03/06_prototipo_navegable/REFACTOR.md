@@ -5,7 +5,7 @@ Se actualiza en cada punto, en el mismo commit del cambio.
 
 ## Plan de trabajo
 
-1. Arquitectura (carpetas, cómo se escribe el código, cómo se comenta) ← en curso
+1. Arquitectura (carpetas, cómo se escribe el código, cómo se comenta) ← en curso (puntos 1-3 de 7)
 2. Patrones de diseño en HTML, CSS y JS (referencia: https://refactoring.guru/es/design-patterns)
 3. Lógica de programación
 4. Mejoras visuales y estéticas
@@ -66,3 +66,40 @@ git fetch origin && git checkout refactor/arquitectura-prototipo && git pull
 ```
 Abrir `index.html` con un servidor local (Live Server de VS Code). Para volver a los datos de ejemplo,
 en la consola del navegador: `localStorage.clear()` y recargar.
+
+## Cómo continuar en local
+
+Estado al pausar: puntos 1, 2 y 3 del paso 1 resueltos. Sigue el **punto 4**.
+
+### Pendientes del paso 1 (en este orden)
+4. **Renombrar `pages/modules/_mains_/` → `dashboard/`.** Usar `git mv` y actualizar el `src` del iframe
+   y los enlaces "Inicio" en `pages/roles/admin.html` (y cualquier otra referencia: buscar `_mains_`).
+5. **`delete.txt.txt`.** Revisar su contenido; si no sirve, borrarlo con `git rm`.
+6. **Orden de `<script>`.** Cada Repository/Service debe avisar si falta su dependencia, por ejemplo al
+   inicio de `ventas_datos.js`: `if (typeof RepositorioInventario === 'undefined') throw new Error('Falta inventario_datos.js');`
+   (o pasar a módulos ES con `type="module"` e `import`).
+7. **Globales en las pantallas.** Envolver cada `*.js` de pantalla en una IIFE `(function () { ... })();`
+   para que `usuario`, `el`, `parametros`, etc. no choquen entre scripts.
+
+Después: paso 2 (patrones de diseño), paso 3 (lógica) y paso 4 (visual).
+
+### Forma de trabajo acordada
+- Un punto a la vez: se hace, se muestra el resultado, se revisa y se da el aval antes del siguiente.
+- Cada punto va en su propio commit en `refactor/arquitectura-prototipo`; `develop` no se toca.
+- Este archivo se actualiza en el mismo commit de cada punto.
+- Al terminar, si quieres que quede como un solo commit tuyo:
+  ```bash
+  git reset --soft develop
+  git commit -m "refactor(prototipo): arquitectura"
+  git push -f
+  ```
+  y abrir el pull request de `refactor/arquitectura-prototipo` hacia `develop`.
+
+### Para retomar con Claude Code en local
+Abrir Claude Code en la carpeta del repo, en esta rama, y decir:
+> Lee `_docs_/trim03/06_prototipo_navegable/REFACTOR.md` y continúa con el punto 4, de la misma forma (uno por uno, con mi aval).
+
+### Verificar que nada se rompió
+- Servidor local: `python -m http.server` en la carpeta del prototipo (o Live Server) y abrir `index.html`.
+- Revisar la consola del navegador (F12) en cada pantalla tocada: no debe haber errores.
+- `localStorage.clear()` en la consola para volver a los datos de ejemplo.
