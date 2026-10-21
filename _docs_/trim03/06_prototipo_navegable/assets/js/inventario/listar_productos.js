@@ -1,12 +1,4 @@
-// Datos de ejemplo (Repository): esto se reemplaza por una consulta SELECT cuando exista backend.
-// Dos productos con stock bajo el minimo a proposito, para poder ver el resaltado en rojo.
-const productos = [
-    { codigo: "7702001001", nombre: "Leche Entera 1L", categoria: "lacteos", categoriaTexto: "Lácteos", precio: 2850, stock: 15, stockMinimo: 20, estado: "activo" },
-    { codigo: "7702001002", nombre: "Arroz Blanco 5kg", categoria: "abarrotes", categoriaTexto: "Abarrotes", precio: 12500, stock: 15, stockMinimo: 10, estado: "activo" },
-    { codigo: "7702001003", nombre: "Café Molido 250g", categoria: "abarrotes", categoriaTexto: "Abarrotes", precio: 9900, stock: 5, stockMinimo: 20, estado: "activo" },
-    { codigo: "7702001004", nombre: "Azúcar Blanca 2kg", categoria: "abarrotes", categoriaTexto: "Abarrotes", precio: 5800, stock: 0, stockMinimo: 15, estado: "activo" },
-    { codigo: "7702001005", nombre: "Pan Tajado", categoria: "panaderia", categoriaTexto: "Panadería", precio: 3000, stock: 34, stockMinimo: 10, estado: "activo" }
-];
+// Listar productos (CS-13, CS-16). Solo conecta la pantalla con RepositorioInventario y ServicioInventario.
 
 const cuerpoProductos = document.getElementById('cuerpoProductos');
 const sinProductos = document.getElementById('sinProductos');
@@ -16,17 +8,6 @@ const filtroCategoria = document.getElementById('filtroCategoria');
 
 // Recuerda por cual columna se esta ordenando y en que direccion (1 = asc, -1 = desc)
 const ordenActual = { clave: null, direccion: 1 };
-
-function formatearPrecio(valor) {
-    return '$' + valor.toLocaleString('es-CO');
-}
-
-// Quita tildes antes de comparar: "cafe" sin acento tambien debe encontrar "Café".
-// \p{M} (con la bandera "u") es la categoria Unicode "marca": cubre cualquier tilde
-// que NFD haya separado de su letra, sin depender de escribir un rango de codigos a mano.
-function normalizar(texto) {
-    return texto.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
-}
 
 // Dibuja el <tbody> completo a partir de la lista recibida.
 // No se llama sola: aplicarFiltros() es quien decide que lista mostrar.
@@ -40,9 +21,8 @@ function renderizarProductos(lista) {
     sinProductos.classList.add('d-none');
 
     lista.forEach(function (producto) {
-        // "<=": misma regla de alerta que alertas_stock.js, consultar_producto.js y
-        // dashboard_inicio.js (un producto justo en su stock mínimo también es alerta).
-        const stockBajo = producto.stock <= producto.stockMinimo;
+        // La regla de alerta vive en el Service (la misma para alertas_stock.js y consultar_producto.js)
+        const stockBajo = ServicioInventario.tieneStockBajo(producto);
         const activo = producto.estado === 'activo';
         const fila = document.createElement('tr');
         if (stockBajo) {
@@ -64,8 +44,8 @@ function renderizarProductos(lista) {
         fila.innerHTML =
             '<td>' + producto.codigo + '</td>' +
             '<td>' + producto.nombre + '</td>' +
-            '<td>' + producto.categoriaTexto + '</td>' +
-            '<td>' + formatearPrecio(producto.precio) + '</td>' +
+            '<td>' + ServicioInventario.textoCategoria(producto.categoria) + '</td>' +
+            '<td>' + ServicioInventario.formatearPrecio(producto.precio) + '</td>' +
             '<td>' + producto.stock + (stockBajo ? ' <i class="bi bi-exclamation-triangle-fill text-danger" title="Stock bajo el mínimo"></i>' : '') + '</td>' +
             '<td><span class="badge text-bg-' + (activo ? 'success' : 'secondary') + '">' +
                 (activo ? 'Activo' : 'Inactivo') + '</span></td>' +
@@ -82,11 +62,11 @@ function renderizarProductos(lista) {
 // Une busqueda + filtro de categoria + orden, y vuelve a dibujar la tabla.
 // Se llama cada vez que cambia cualquiera de los tres, o cuando se elimina/reactiva un producto.
 function aplicarFiltros() {
-    const texto = normalizar(buscarProducto.value.trim());
+    const texto = ServicioInventario.normalizar(buscarProducto.value.trim());
     const categoria = filtroCategoria.value;
 
-    let resultado = productos.filter(function (producto) {
-        const coincideTexto = normalizar(producto.nombre).includes(texto) || producto.codigo.includes(texto);
+    let resultado = RepositorioInventario.obtenerProductos().filter(function (producto) {
+        const coincideTexto = ServicioInventario.normalizar(producto.nombre).includes(texto) || producto.codigo.includes(texto);
         const coincideCategoria = categoria === '' || producto.categoria === categoria;
         return coincideTexto && coincideCategoria;
     });
@@ -159,14 +139,8 @@ modalEliminarProducto.addEventListener('show.bs.modal', function (evento) {
 });
 
 confirmarEliminarProducto.addEventListener('click', function () {
-    // Borrado LOGICO: el producto no se quita del arreglo, solo cambia su estado.
-    // Asi se conserva el historico, tal como pide CS-16 (no eliminar fisicamente).
-    const producto = productos.find(function (p) {
-        return p.codigo === codigoAEliminar;
-    });
-    if (producto) {
-        producto.estado = 'inactivo';
-    }
+    // Borrado LOGICO (CS-16): el Service cambia el estado, el producto no se borra
+    ServicioInventario.cambiarEstado(codigoAEliminar, 'inactivo');
     bootstrap.Modal.getInstance(modalEliminarProducto).hide();
     aplicarFiltros();
     mostrarExito('Producto eliminado correctamente');
@@ -178,15 +152,10 @@ cuerpoProductos.addEventListener('click', function (evento) {
     if (!boton) {
         return;
     }
-    const producto = productos.find(function (p) {
-        return p.codigo === boton.dataset.codigo;
-    });
-    if (producto) {
-        producto.estado = 'activo';
-    }
+    ServicioInventario.cambiarEstado(boton.dataset.codigo, 'activo');
     aplicarFiltros();
     mostrarExito('Producto reactivado correctamente');
 });
 
 // Primer dibujo de la tabla al cargar la pagina
-renderizarProductos(productos);
+aplicarFiltros();

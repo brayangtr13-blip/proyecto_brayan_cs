@@ -1,24 +1,8 @@
-// Datos de ejemplo (Repository): mismos valores que listar_productos.js.
-// Cada pantalla tiene su propia copia porque no hay backend que las comparta todavia
-// (mismo criterio que ya se uso entre listar_usuarios.js y editar_usuario.js).
-const productosEjemplo = [
-    { codigo: "7702001001", nombre: "Leche Entera 1L", categoria: "lacteos", descripcion: "Leche entera pasteurizada, bolsa de 1 litro.", precio: 2850, stock: 15, stockMinimo: 20, unidadMedida: "litro", estado: "activo" },
-    { codigo: "7702001002", nombre: "Arroz Blanco 5kg", categoria: "abarrotes", descripcion: "", precio: 12500, stock: 15, stockMinimo: 10, unidadMedida: "paquete", estado: "activo" },
-    { codigo: "7702001003", nombre: "Café Molido 250g", categoria: "abarrotes", descripcion: "", precio: 9900, stock: 5, stockMinimo: 20, unidadMedida: "paquete", estado: "activo" },
-    { codigo: "7702001004", nombre: "Azúcar Blanca 2kg", categoria: "abarrotes", descripcion: "", precio: 5800, stock: 0, stockMinimo: 15, unidadMedida: "paquete", estado: "activo" },
-    { codigo: "7702001005", nombre: "Pan Tajado", categoria: "panaderia", descripcion: "", precio: 3000, stock: 34, stockMinimo: 10, unidadMedida: "unidad", estado: "activo" }
-];
-
-// Repository: busca un producto de ejemplo por su codigo de barras
-function obtenerProductoPorCodigo(codigo) {
-    return productosEjemplo.find(function (producto) {
-        return producto.codigo === codigo;
-    });
-}
+// Editar producto (CS-15). Solo conecta la pantalla con RepositorioInventario y ServicioInventario.
 
 const parametros = new URLSearchParams(window.location.search);
 const codigoUrl = parametros.get('codigo');
-const producto = obtenerProductoPorCodigo(codigoUrl);
+const producto = RepositorioInventario.obtenerProducto(codigoUrl);
 const formEditarProducto = document.getElementById('formEditarProducto');
 const edicionExito = document.getElementById('edicionExito');
 
@@ -53,8 +37,18 @@ if (!producto) {
             return;
         }
 
-        // Sin backend todavia: aqui iria el UPDATE a la tabla productos y el registro
-        // en log_auditoria (CS-15 pide dejar constancia de quien y cuando lo edito)
+        // El codigo no se envia: es la llave y no se edita.
+        // Pendiente con backend: registro en log_auditoria (CS-15: quien y cuando lo edito)
+        ServicioInventario.editarProducto(producto.codigo, {
+            nombre: document.getElementById('nombre').value.trim(),
+            categoria: document.getElementById('categoria').value,
+            unidadMedida: document.getElementById('unidadMedida').value,
+            precio: Number(document.getElementById('precioUnitario').value),
+            stock: Number(document.getElementById('stockActual').value),
+            stockMinimo: Number(document.getElementById('stockMinimo').value),
+            descripcion: document.getElementById('descripcion').value.trim(),
+            estado: document.getElementById('estado').value
+        });
         edicionExito.classList.remove('d-none');
     });
 }

@@ -1,18 +1,8 @@
-// Datos de ejemplo (esto se reemplaza por el backend más adelante)
+// Editar usuario. Solo conecta la pantalla con RepositorioUsuarios y ServicioUsuarios.
 
-const usuariosEjemplo = [
-    { documento: "1020304050", nombres: "Laura", apellidos: "Gomez", correo: "laura@controlstore.com", telefono: "3001234567", rol: "vendedor" },
-    { documento: "1122334455", nombres: "Carlos", apellidos: "Ruiz", correo: "carlos@controlstore.com", telefono: "3009876543", rol: "domiciliario" }
-];
-// Busca un usuario dentro de la lista de ejemplo, por su documento
-function obtenerUsuarioPorDocumento(documento) {
-    return usuariosEjemplo.find(function (usuario) {
-        return usuario.documento === documento;
-    });
-}
 const parametros = new URLSearchParams(window.location.search);
 const documentoUrl = parametros.get('documento');
-const usuario = obtenerUsuarioPorDocumento(documentoUrl);
+const usuario = RepositorioUsuarios.obtenerUsuario(documentoUrl);
 const formEditarUsuario = document.getElementById('formEditarUsuario');
 const edicionExito = document.getElementById('edicionExito');
 
@@ -41,6 +31,14 @@ if (!usuario) {
             formEditarUsuario.classList.add('was-validated');
             return;
         }
+        // El documento no se envia: es la llave y no se edita
+        ServicioUsuarios.editarUsuario(usuario.documento, {
+            nombres: document.getElementById('nombres').value.trim(),
+            apellidos: document.getElementById('apellidos').value.trim(),
+            correo: document.getElementById('correo').value.trim(),
+            telefono: document.getElementById('telefono').value.trim(),
+            rol: document.getElementById('rol').value
+        });
         edicionExito.classList.remove('d-none');
     });
 }

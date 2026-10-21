@@ -1,11 +1,9 @@
+// Registrar usuario. Solo conecta la pantalla con ServicioUsuarios.
+
 const formRegistrarUsuario = document.getElementById('formRegistrarUsuario');
 const registroExito = document.getElementById('registroExito');
 const registroDuplicado = document.getElementById('registroDuplicado');
 const documento = document.getElementById('documento');
-
-// Mismos documentos que ya existen en listar_usuarios.js: sin backend, esta es la
-// unica forma de detectar un documento repetido antes de "guardar".
-const documentosExistentes = ["1020304050", "1122334455"];
 
 formRegistrarUsuario.addEventListener('submit', function (evento) {
     evento.preventDefault();
@@ -19,8 +17,18 @@ formRegistrarUsuario.addEventListener('submit', function (evento) {
         return;
     }
 
-    // El usuario ya se encuentra registrado (mismo documento)
-    if (documentosExistentes.includes(documento.value.trim())) {
+    // El Service rechaza un documento ya registrado.
+    // La contraseña no se guarda en el prototipo: con Django se guarda cifrada.
+    const resultado = ServicioUsuarios.registrarUsuario({
+        documento: documento.value.trim(),
+        nombres: document.getElementById('nombres').value.trim(),
+        apellidos: document.getElementById('apellidos').value.trim(),
+        correo: document.getElementById('correo').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        rol: document.getElementById('rol').value,
+        estado: document.getElementById('estado').value
+    });
+    if (!resultado.ok) {
         registroDuplicado.classList.remove('d-none');
         return;
     }

@@ -5,10 +5,6 @@ const registroExito = document.getElementById('registroExito');
 const registroDuplicado = document.getElementById('registroDuplicado');
 const codigoProducto = document.getElementById('codigoProducto');
 
-// Mismos codigos que ya existen en listar_productos.js: sin backend, esta es la
-// unica forma de detectar un codigo de barras repetido antes de "guardar".
-const codigosExistentes = ["7702001001", "7702001002", "7702001003", "7702001004", "7702001005"];
-
 // Patron Observer: el formulario "avisa" cuando alguien intenta enviarlo,
 // y esta funcion reacciona a ese aviso.
 formRegistrarProducto.addEventListener('submit', function (evento) {
@@ -28,14 +24,24 @@ formRegistrarProducto.addEventListener('submit', function (evento) {
         return;
     }
 
-    // CS-12: no se puede registrar dos veces el mismo codigo de barras.
-    if (codigosExistentes.includes(codigoProducto.value.trim())) {
+    // CS-12: el Service rechaza un codigo de barras repetido
+    const resultado = ServicioInventario.registrarProducto({
+        codigo: codigoProducto.value.trim(),
+        nombre: document.getElementById('nombre').value.trim(),
+        categoria: document.getElementById('categoria').value,
+        unidadMedida: document.getElementById('unidadMedida').value,
+        precio: Number(document.getElementById('precioUnitario').value),
+        stock: Number(document.getElementById('stockActual').value),
+        stockMinimo: Number(document.getElementById('stockMinimo').value),
+        descripcion: document.getElementById('descripcion').value.trim(),
+        estado: document.getElementById('estado').value
+    });
+    if (!resultado.ok) {
         registroDuplicado.classList.remove('d-none');
         return;
     }
 
-    // Sin backend todavia: se simula el registro exitoso mostrando la alerta
-    // y dejando el formulario listo para cargar otro producto.
+    // Formulario listo para cargar otro producto
     registroExito.classList.remove('d-none');
     formRegistrarProducto.reset();
     formRegistrarProducto.classList.remove('was-validated');

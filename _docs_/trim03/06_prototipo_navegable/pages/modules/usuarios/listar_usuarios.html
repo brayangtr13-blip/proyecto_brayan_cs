@@ -42,46 +42,8 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>1020304050</td>
-                    <td>Laura</td>
-                    <td>Gomez</td>
-                    <td>laura@controlstore.com</td>
-                    <td>3001234567</td>
-                    <td>Vendedor</td>
-                    <td><span class="badge text-bg-success" id="estado-1020304050">Activo</span></td>
-                    <td>
-                        <a href="editar_usuario.html?documento=1020304050" class="btn btn-sm btn-outline-primary" title="Editar">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-outline-danger" title="Cambiar estado"
-                            data-bs-toggle="modal" data-bs-target="#modalCambiarEstado"
-                            data-documento="1020304050" data-nombre="Laura Gomez" data-estado-actual="activo">
-                            <i class="bi bi-toggle-on"></i>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>1122334455</td>
-                    <td>Carlos</td>
-                    <td>Ruiz</td>
-                    <td>carlos@controlstore.com</td>
-                    <td>3009876543</td>
-                    <td>Domiciliario</td>
-                    <td><span class="badge text-bg-success" id="estado-1122334455">Activo</span></td>
-                    <td>
-                        <a href="editar_usuario.html?documento=1122334455" class="btn btn-sm btn-outline-primary" title="Editar">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-outline-danger" title="Cambiar estado"
-                            data-bs-toggle="modal" data-bs-target="#modalCambiarEstado"
-                            data-documento="1122334455" data-nombre="Carlos Ruiz" data-estado-actual="activo">
-                            <i class="bi bi-toggle-on"></i>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
+            <!-- Lo llena listar_usuarios.js desde RepositorioUsuarios -->
+            <tbody id="cuerpoUsuarios"></tbody>
         </table>
     </div>
 
@@ -105,7 +67,9 @@
     </div>
 
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../assets/js/listar_usuarios.js"></script>
+    <script src="../../../assets/js/usuarios/usuarios_datos.js"></script>
+    <script src="../../../assets/js/usuarios/usuarios_servicio.js"></script>
+    <script src="../../../assets/js/usuarios/listar_usuarios.js"></script>
 </body>
 
 </html>
