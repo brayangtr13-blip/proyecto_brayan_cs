@@ -28,7 +28,7 @@ Regla: se avanza paso a paso y cada cambio se revisa antes de seguir.
 | 2 | Inventario y Usuarios sin Repository/Service | ✅ Resuelto |
 | 3 | Productos duplicados entre módulos | ✅ Resuelto |
 | 4 | Carpeta `_mains_/` con nombre raro | Resuelto |
-| 5 | `delete.txt.txt` en la raíz | Pendiente |
+| 5 | `delete.txt.txt` en la raíz | Resuelto |
 | 6 | Orden manual de `<script>` sin control | Pendiente |
 | 7 | Variables globales (`const usuario`, `const el`) | Pendiente |
 
@@ -65,6 +65,9 @@ assets/js/usuarios/    usuarios_datos.js (RepositorioUsuarios)     · usuarios_s
 - Actualizados el enlace "Inicio" y el `src` del iframe en `pages/roles/admin.html` y las migas de pan
   de Inventario y Domicilios. Las rutas a `assets/` no cambian (misma profundidad).
 
+### Punto 5 · `delete.txt.txt`
+- Archivo vacío (0 bytes) sin referencias en el proyecto; eliminado con `git rm`.
+
 ## Cómo probar en local
 ```bash
 git fetch origin && git checkout refactor/arquitectura-prototipo && git pull
@@ -74,10 +77,9 @@ en la consola del navegador: `localStorage.clear()` y recargar.
 
 ## Cómo continuar en local
 
-Estado al pausar: puntos 1 a 4 del paso 1 resueltos. Sigue el **punto 5**.
+Estado al pausar: puntos 1 a 5 del paso 1 resueltos. Sigue el **punto 6**.
 
 ### Pendientes del paso 1 (en este orden)
-5. **`delete.txt.txt`.** Revisar su contenido; si no sirve, borrarlo con `git rm`.
 6. **Orden de `<script>`.** Cada Repository/Service debe avisar si falta su dependencia, por ejemplo al
    inicio de `ventas_datos.js`: `if (typeof RepositorioInventario === 'undefined') throw new Error('Falta inventario_datos.js');`
    (o pasar a módulos ES con `type="module"` e `import`).
