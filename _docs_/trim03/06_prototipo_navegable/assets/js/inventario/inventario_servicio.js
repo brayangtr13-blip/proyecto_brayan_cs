@@ -2,6 +2,9 @@
 // Reglas de negocio del módulo. Las pantallas no las repiten: llaman a ServicioInventario.*
 // Depende de: inventario_datos.js
 
+// Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
+if (typeof RepositorioInventario === 'undefined') throw new Error('inventario_servicio.js: falta cargar antes inventario_datos.js');
+
 const ServicioInventario = (function () {
 
     // Textos de la interfaz para los valores que se guardan en la BD

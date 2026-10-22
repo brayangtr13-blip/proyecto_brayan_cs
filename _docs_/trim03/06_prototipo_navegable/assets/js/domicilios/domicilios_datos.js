@@ -13,6 +13,9 @@
 // fetch('/api/domicilios/...'); las pantallas no cambian.
 // ==========================================================
 
+// Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
+if (typeof RepositorioInventario === 'undefined') throw new Error('domicilios_datos.js: falta cargar antes inventario/inventario_datos.js');
+
 const RepositorioDomicilios = (function () {
     // v2: los pedidos ahora traen historial y stockDescontado (CS-37). Cambiar la versión hace que
     // los navegadores con datos guardados en el formato viejo arranquen de nuevo con los de ejemplo.

@@ -2,6 +2,9 @@
 // Único acceso a los datos del módulo. Hoy: localStorage. Con Django: fetch a la API.
 // Depende de: inventario/inventario_datos.js (los productos son de Inventario)
 
+// Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
+if (typeof RepositorioInventario === 'undefined') throw new Error('ventas_datos.js: falta cargar antes inventario/inventario_datos.js');
+
 const RepositorioVentas = (function () {
     const CLAVE = 'controlstore_ventas_v1';
 

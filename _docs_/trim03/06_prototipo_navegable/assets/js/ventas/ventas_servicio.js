@@ -2,6 +2,9 @@
 // Reglas de negocio del módulo. Las pantallas no las repiten: llaman a ServicioVentas.*
 // Depende de: inventario_datos.js, ventas_datos.js
 
+// Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
+if (typeof RepositorioVentas === 'undefined') throw new Error('ventas_servicio.js: falta cargar antes ventas_datos.js');
+
 const ServicioVentas = (function () {
 
     // El signo va antes del $ ("-$700"), como se escribe un faltante

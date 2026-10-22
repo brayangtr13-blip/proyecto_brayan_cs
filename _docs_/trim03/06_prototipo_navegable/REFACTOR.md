@@ -29,7 +29,7 @@ Regla: se avanza paso a paso y cada cambio se revisa antes de seguir.
 | 3 | Productos duplicados entre módulos | ✅ Resuelto |
 | 4 | Carpeta `_mains_/` con nombre raro | Resuelto |
 | 5 | `delete.txt.txt` en la raíz | Resuelto |
-| 6 | Orden manual de `<script>` sin control | Pendiente |
+| 6 | Orden manual de `<script>` sin control | Resuelto |
 | 7 | Variables globales (`const usuario`, `const el`) | Pendiente |
 
 ## Cambios realizados
@@ -68,6 +68,14 @@ assets/js/usuarios/    usuarios_datos.js (RepositorioUsuarios)     · usuarios_s
 ### Punto 5 · `delete.txt.txt`
 - Archivo vacío (0 bytes) sin referencias en el proyecto; eliminado con `git rm`.
 
+### Punto 6 · Orden de `<script>`
+- Cada Repository/Service que depende de otro archivo revisa al cargar que exista, por ejemplo en `ventas_datos.js`:
+  `if (typeof RepositorioInventario === 'undefined') throw new Error('ventas_datos.js: falta cargar antes inventario/inventario_datos.js');`
+- Aplicado en `ventas_datos`, `ventas_servicio`, `inventario_servicio`, `usuarios_servicio`, `domicilios_datos`,
+  `domicilios_servicio` y `domicilios_notificaciones`. Si un HTML carga los scripts en otro orden, la consola dice cuál falta.
+- Se mantienen scripts clásicos (no módulos ES) para que el prototipo siga abriendo sin servidor.
+- Probado: las 34 páginas cargan en Chromium sin errores en consola.
+
 ## Cómo probar en local
 ```bash
 git fetch origin && git checkout refactor/arquitectura-prototipo && git pull
@@ -77,12 +85,9 @@ en la consola del navegador: `localStorage.clear()` y recargar.
 
 ## Cómo continuar en local
 
-Estado al pausar: puntos 1 a 5 del paso 1 resueltos. Sigue el **punto 6**.
+Estado al pausar: puntos 1 a 6 del paso 1 resueltos. Sigue el **punto 7**.
 
 ### Pendientes del paso 1 (en este orden)
-6. **Orden de `<script>`.** Cada Repository/Service debe avisar si falta su dependencia, por ejemplo al
-   inicio de `ventas_datos.js`: `if (typeof RepositorioInventario === 'undefined') throw new Error('Falta inventario_datos.js');`
-   (o pasar a módulos ES con `type="module"` e `import`).
 7. **Globales en las pantallas.** Envolver cada `*.js` de pantalla en una IIFE `(function () { ... })();`
    para que `usuario`, `el`, `parametros`, etc. no choquen entre scripts.
 

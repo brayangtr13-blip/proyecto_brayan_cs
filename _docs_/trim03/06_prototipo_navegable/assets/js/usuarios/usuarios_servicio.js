@@ -2,6 +2,9 @@
 // Reglas de negocio del módulo. Las pantallas no las repiten: llaman a ServicioUsuarios.*
 // Depende de: usuarios_datos.js
 
+// Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
+if (typeof RepositorioUsuarios === 'undefined') throw new Error('usuarios_servicio.js: falta cargar antes usuarios_datos.js');
+
 const ServicioUsuarios = (function () {
 
     const ROLES = { vendedor: 'Vendedor', domiciliario: 'Domiciliario' };
