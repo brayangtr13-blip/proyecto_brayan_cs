@@ -30,7 +30,7 @@ Regla: se avanza paso a paso y cada cambio se revisa antes de seguir.
 | 4 | Carpeta `_mains_/` con nombre raro | Resuelto |
 | 5 | `delete.txt.txt` en la raíz | Resuelto |
 | 6 | Orden manual de `<script>` sin control | Resuelto |
-| 7 | Variables globales (`const usuario`, `const el`) | Pendiente |
+| 7 | Variables globales (`const usuario`, `const el`) | Resuelto |
 
 ## Cambios realizados
 
@@ -76,6 +76,14 @@ assets/js/usuarios/    usuarios_datos.js (RepositorioUsuarios)     · usuarios_s
 - Se mantienen scripts clásicos (no módulos ES) para que el prototipo siga abriendo sin servidor.
 - Probado: las 34 páginas cargan en Chromium sin errores en consola.
 
+### Punto 7 · Globales en las pantallas
+- Los 26 JS de pantalla quedan envueltos en una IIFE `(function () { ... })();`: `usuario`, `el`, `parametros`,
+  `carrito`, etc. ya no son globales y no chocan entre scripts.
+- No se envuelven `sesion.js` ni `ventas/comprobante_venta.js`: ya son módulos (`Sesion`, `ComprobanteVenta`)
+  que otras pantallas usan. Ningún HTML usa `onclick=""`, así que nada dependía de esas globales.
+- Probado: las 34 páginas cargan sin errores; registrar un producto, venderlo en el Punto de venta y verlo
+  con el stock descontado en Inventario funciona sin errores en consola.
+
 ## Cómo probar en local
 ```bash
 git fetch origin && git checkout refactor/arquitectura-prototipo && git pull
@@ -85,11 +93,7 @@ en la consola del navegador: `localStorage.clear()` y recargar.
 
 ## Cómo continuar en local
 
-Estado al pausar: puntos 1 a 6 del paso 1 resueltos. Sigue el **punto 7**.
-
-### Pendientes del paso 1 (en este orden)
-7. **Globales en las pantallas.** Envolver cada `*.js` de pantalla en una IIFE `(function () { ... })();`
-   para que `usuario`, `el`, `parametros`, etc. no choquen entre scripts.
+Estado al pausar: paso 1 (arquitectura) completo: los 7 puntos resueltos. Sigue el **paso 2** (patrones de diseño).
 
 Después: paso 2 (patrones de diseño), paso 3 (lógica) y paso 4 (visual).
 
