@@ -5,7 +5,7 @@ Se actualiza en cada punto, en el mismo commit del cambio.
 
 ## Plan de trabajo
 
-1. Arquitectura (carpetas, cómo se escribe el código, cómo se comenta) ← en curso (puntos 1-3 de 7)
+1. Arquitectura (carpetas, cómo se escribe el código, cómo se comenta) ✅ completo (7 de 7 puntos)
 2. Patrones de diseño en HTML, CSS y JS (referencia: https://refactoring.guru/es/design-patterns)
 3. Lógica de programación
 4. Mejoras visuales y estéticas
@@ -27,10 +27,10 @@ Regla: se avanza paso a paso y cada cambio se revisa antes de seguir.
 | 1 | Carpetas mezclan inglés y español | ✅ Resuelto |
 | 2 | Inventario y Usuarios sin Repository/Service | ✅ Resuelto |
 | 3 | Productos duplicados entre módulos | ✅ Resuelto |
-| 4 | Carpeta `_mains_/` con nombre raro | Resuelto |
-| 5 | `delete.txt.txt` en la raíz | Resuelto |
-| 6 | Orden manual de `<script>` sin control | Resuelto |
-| 7 | Variables globales (`const usuario`, `const el`) | Resuelto |
+| 4 | Carpeta `_mains_/` con nombre raro | ✅ Resuelto |
+| 5 | `delete.txt.txt` en la raíz | ✅ Resuelto |
+| 6 | Orden manual de `<script>` sin control | ✅ Resuelto |
+| 7 | Variables globales (`const usuario`, `const el`) | ✅ Resuelto |
 
 ## Cambios realizados
 
@@ -93,25 +93,17 @@ en la consola del navegador: `localStorage.clear()` y recargar.
 
 ## Cómo continuar en local
 
-Estado al pausar: paso 1 (arquitectura) completo: los 7 puntos resueltos. Sigue el **paso 2** (patrones de diseño).
-
-Después: paso 2 (patrones de diseño), paso 3 (lógica) y paso 4 (visual).
+Estado: paso 1 (arquitectura) completo, con los 7 puntos resueltos y revisados commit por commit.
+Siguen el paso 2 (patrones de diseño), el paso 3 (lógica) y el paso 4 (visual).
 
 ### Forma de trabajo acordada
 - Un punto a la vez: se hace, se muestra el resultado, se revisa y se da el aval antes del siguiente.
-- Cada punto va en su propio commit en `refactor/arquitectura-prototipo`; `develop` no se toca.
+- Cada punto va en su propio commit; los cambios llegan a `develop` mediante un pull request.
 - Este archivo se actualiza en el mismo commit de cada punto.
-- Al terminar, si quieres que quede como un solo commit tuyo:
-  ```bash
-  git reset --soft develop
-  git commit -m "refactor(prototipo): arquitectura"
-  git push -f
-  ```
-  y abrir el pull request de `refactor/arquitectura-prototipo` hacia `develop`.
 
 ### Para retomar con Claude Code en local
-Abrir Claude Code en la carpeta del repo, en esta rama, y decir:
-> Lee `_docs_/trim03/06_prototipo_navegable/REFACTOR.md` y continúa con el punto 4, de la misma forma (uno por uno, con mi aval).
+Abrir Claude Code en la carpeta del repo, en una rama nueva creada desde `develop`, y decir:
+> Lee `_docs_/trim03/06_prototipo_navegable/REFACTOR.md` y continúa con el paso 2 (patrones de diseño), de la misma forma (uno por uno, con mi aval).
 
 ### Verificar que nada se rompió
 - Servidor local: `python -m http.server` en la carpeta del prototipo (o Live Server) y abrir `index.html`.
