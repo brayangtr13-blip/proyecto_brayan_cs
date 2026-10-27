@@ -1,15 +1,7 @@
-// Mismos datos de ejemplo que alertas_stock.js, solo para calcular el contador.
-// Cuando exista backend, este numero vendria de un SELECT COUNT(*) con la misma condicion.
-const productosEjemplo = [
-    { stock: 15, stockMinimo: 20 },
-    { stock: 15, stockMinimo: 10 },
-    { stock: 5, stockMinimo: 20 },
-    { stock: 0, stockMinimo: 15 },
-    { stock: 34, stockMinimo: 10 }
-];
+// Contador de alertas del dashboard: la misma regla y los mismos datos que alertas_stock.js,
+// porque los dos le preguntan a ServicioInventario. Con backend: SELECT COUNT(*) con esa condición.
 
-const totalEnAlerta = productosEjemplo.filter(function (producto) {
-    return producto.stock <= producto.stockMinimo;
-}).length;
-
-document.getElementById('contadorAlertas').textContent = totalEnAlerta;
+// IIFE: las variables de esta pantalla no quedan globales ni chocan con otros scripts
+(function () {
+    document.getElementById('contadorAlertas').textContent = ServicioInventario.obtenerAlertas().length;
+})();

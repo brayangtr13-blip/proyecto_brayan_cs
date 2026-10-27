@@ -1,0 +1,111 @@
+# Refactor del prototipo navegable
+
+Bitácora de la revisión de arquitectura hecha con Claude Code (rama `refactor/arquitectura-prototipo`).
+Se actualiza en cada punto, en el mismo commit del cambio.
+
+## Plan de trabajo
+
+1. Arquitectura (carpetas, cómo se escribe el código, cómo se comenta) ✅ completo (7 de 7 puntos)
+2. Patrones de diseño en HTML, CSS y JS (referencia: https://refactoring.guru/es/design-patterns)
+3. Lógica de programación
+4. Mejoras visuales y estéticas
+
+Regla: se avanza paso a paso y cada cambio se revisa antes de seguir.
+
+## Paso 1 · Diagnóstico de arquitectura
+
+- **Tipo:** prototipo estático multipágina (HTML + CSS + JS sin build).
+- **Shell con iframe:** `pages/roles/*.html` tiene la barra lateral; cada módulo se carga en `<iframe name="area_trabajo">`.
+- **Capas:** Pantalla (`*.js` por página) → Service (reglas) → Repository (datos en `localStorage`).
+- **Fortalezas:** comentarios que explican el porqué, trazabilidad a HU/CU (`CS-18 · MOD_03_HU01`),
+  notas de qué cambia con Django, librerías locales en `vendor/`.
+
+### Problemas encontrados y estado
+
+| # | Problema | Estado |
+|---|---|---|
+| 1 | Carpetas mezclan inglés y español | ✅ Resuelto |
+| 2 | Inventario y Usuarios sin Repository/Service | ✅ Resuelto |
+| 3 | Productos duplicados entre módulos | ✅ Resuelto |
+| 4 | Carpeta `_mains_/` con nombre raro | ✅ Resuelto |
+| 5 | `delete.txt.txt` en la raíz | ✅ Resuelto |
+| 6 | Orden manual de `<script>` sin control | ✅ Resuelto |
+| 7 | Variables globales (`const usuario`, `const el`) | ✅ Resuelto |
+
+## Cambios realizados
+
+### 1 · Carpetas en español
+`pages/modules/`: `sales→ventas`, `deliveries→domicilios`, `inventory→inventario`, `users→usuarios`,
+`reports→reportes`, `security→seguridad`. Se actualizaron los enlaces del menú (admin, cajero,
+domiciliario), los `src` de los iframes y los accesos del dashboard. Verificado: 0 enlaces rotos.
+
+### 2 · Repository y Service para Inventario y Usuarios
+```
+assets/js/inventario/  inventario_datos.js (RepositorioInventario) · inventario_servicio.js (ServicioInventario) · pantallas
+assets/js/usuarios/    usuarios_datos.js (RepositorioUsuarios)     · usuarios_servicio.js (ServicioUsuarios)     · pantallas
+```
+- Las reglas repetidas (precio, tildes, stock bajo, orden de alertas, duplicados CS-12, borrado lógico CS-16)
+  pasan al Service.
+- La tabla de usuarios ya no está escrita a mano en el HTML: se dibuja desde el Repository.
+- Registrar, editar y dar de baja ahora se guardan y se ven en las demás pantallas.
+- La contraseña no se guarda en el prototipo (no debe quedar en texto plano).
+
+### 3 · Una sola fuente de productos
+- `RepositorioInventario` es el **único dueño de la tabla productos**.
+- `RepositorioVentas` y `RepositorioDomicilios` ya no tienen su copia: sus `obtenerProducto(s)` delegan
+  en Inventario, y al guardar una venta o un pedido también guardan el stock modificado.
+- El estado del producto se unifica en `estado: 'activo' | 'inactivo'` (Ventas usaba `activo: true`).
+- `dashboard_inicio.js` cuenta las alertas con `ServicioInventario.obtenerAlertas()` en vez de su propio arreglo.
+- Las páginas de Ventas, Domicilios, el dashboard y `roles/domiciliario.html` cargan `inventario_datos.js` antes.
+- Probado: un producto registrado en Inventario aparece en el Punto de venta y en Domicilios; al venderlo,
+  el stock baja en Inventario.
+
+### Punto 4 · `_mains_/` → `dashboard/`
+- `git mv pages/modules/_mains_ pages/modules/dashboard` (conserva el historial).
+- Actualizados el enlace "Inicio" y el `src` del iframe en `pages/roles/admin.html` y las migas de pan
+  de Inventario y Domicilios. Las rutas a `assets/` no cambian (misma profundidad).
+
+### Punto 5 · `delete.txt.txt`
+- Archivo vacío (0 bytes) sin referencias en el proyecto; eliminado con `git rm`.
+
+### Punto 6 · Orden de `<script>`
+- Cada Repository/Service que depende de otro archivo revisa al cargar que exista, por ejemplo en `ventas_datos.js`:
+  `if (typeof RepositorioInventario === 'undefined') throw new Error('ventas_datos.js: falta cargar antes inventario/inventario_datos.js');`
+- Aplicado en `ventas_datos`, `ventas_servicio`, `inventario_servicio`, `usuarios_servicio`, `domicilios_datos`,
+  `domicilios_servicio` y `domicilios_notificaciones`. Si un HTML carga los scripts en otro orden, la consola dice cuál falta.
+- Se mantienen scripts clásicos (no módulos ES) para que el prototipo siga abriendo sin servidor.
+- Probado: las 34 páginas cargan en Chromium sin errores en consola.
+
+### Punto 7 · Globales en las pantallas
+- Los 26 JS de pantalla quedan envueltos en una IIFE `(function () { ... })();`: `usuario`, `el`, `parametros`,
+  `carrito`, etc. ya no son globales y no chocan entre scripts.
+- No se envuelven `sesion.js` ni `ventas/comprobante_venta.js`: ya son módulos (`Sesion`, `ComprobanteVenta`)
+  que otras pantallas usan. Ningún HTML usa `onclick=""`, así que nada dependía de esas globales.
+- Probado: las 34 páginas cargan sin errores; registrar un producto, venderlo en el Punto de venta y verlo
+  con el stock descontado en Inventario funciona sin errores en consola.
+
+## Cómo probar en local
+```bash
+git fetch origin && git checkout refactor/arquitectura-prototipo && git pull
+```
+Abrir `index.html` con un servidor local (Live Server de VS Code). Para volver a los datos de ejemplo,
+en la consola del navegador: `localStorage.clear()` y recargar.
+
+## Cómo continuar en local
+
+Estado: paso 1 (arquitectura) completo, con los 7 puntos resueltos y revisados commit por commit.
+Siguen el paso 2 (patrones de diseño), el paso 3 (lógica) y el paso 4 (visual).
+
+### Forma de trabajo acordada
+- Un punto a la vez: se hace, se muestra el resultado, se revisa y se da el aval antes del siguiente.
+- Cada punto va en su propio commit; los cambios llegan a `develop` mediante un pull request.
+- Este archivo se actualiza en el mismo commit de cada punto.
+
+### Para retomar con Claude Code en local
+Abrir Claude Code en la carpeta del repo, en una rama nueva creada desde `develop`, y decir:
+> Lee `_docs_/trim03/06_prototipo_navegable/REFACTOR.md` y continúa con el paso 2 (patrones de diseño), de la misma forma (uno por uno, con mi aval).
+
+### Verificar que nada se rompió
+- Servidor local: `python -m http.server` en la carpeta del prototipo (o Live Server) y abrir `index.html`.
+- Revisar la consola del navegador (F12) en cada pantalla tocada: no debe haber errores.
+- `localStorage.clear()` en la consola para volver a los datos de ejemplo.

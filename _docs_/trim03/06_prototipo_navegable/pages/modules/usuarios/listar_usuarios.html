@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <!-- Fuente Inter descargada (no CDN): ver assets/vendor/fonts/inter/ -->
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+
+<body class="content-body">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h4 mb-0"><i class="bi bi-people"></i> Usuarios</h1>
+            <p class="text-muted mb-0">Módulo Usuarios</p>
+        </div>
+        <a href="registrar_usuario.html" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> Registrar usuario
+        </a>
+    </div>
+
+    <div id="estadoExito" class="alert alert-success d-none" role="alert">
+        Estado actualizado correctamente
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <!-- Lo llena listar_usuarios.js desde RepositorioUsuarios -->
+            <tbody id="cuerpoUsuarios"></tbody>
+        </table>
+    </div>
+
+    <!-- Modal de confirmación para activar/inactivar (CS-83) -->
+    <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cambiar estado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="modalCambiarEstadoTexto">
+                    ¿Desea cambiar el estado de este usuario?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmarCambiarEstado">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/usuarios/usuarios_datos.js"></script>
+    <script src="../../../assets/js/usuarios/usuarios_servicio.js"></script>
+    <script src="../../../assets/js/usuarios/listar_usuarios.js"></script>
+</body>
+
+</html>
