@@ -8,7 +8,7 @@
     const confirmarCambiarEstado = document.getElementById('confirmarCambiarEstado');
     const estadoExito = document.getElementById('estadoExito');
 
-    let documentoSeleccionado = null;
+    let idSeleccionado = null;
 
     // Dibuja el <tbody> desde el Repository (antes las filas estaban escritas a mano en el HTML)
     function renderizarUsuarios() {
@@ -21,32 +21,34 @@
                 '<td>' + usuario.nombres + '</td>' +
                 '<td>' + usuario.apellidos + '</td>' +
                 '<td>' + usuario.correo + '</td>' +
-                '<td>' + usuario.telefono + '</td>' +
-                '<td>' + ServicioUsuarios.textoRol(usuario.rol) + '</td>' +
+                // En la BD el teléfono es opcional (NULL): se muestra una raya en vez de "null"
+                '<td>' + (usuario.telefono || '—') + '</td>' +
+                '<td>' + ServicioUsuarios.textoRol(usuario.idRol) + '</td>' +
                 '<td><span class="badge text-bg-' + (activo ? 'success' : 'danger') + '">' +
                     (activo ? 'Activo' : 'Inactivo') + '</span></td>' +
                 '<td>' +
-                    '<a href="editar_usuario.html?documento=' + usuario.documento + '" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a> ' +
+                    '<a href="editar_usuario.html?id=' + usuario.idUsuario + '" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a> ' +
                     '<button type="button" class="btn btn-sm btn-outline-danger" title="Cambiar estado" ' +
                         'data-bs-toggle="modal" data-bs-target="#modalCambiarEstado" ' +
-                        'data-documento="' + usuario.documento + '">' +
+                        'data-id="' + usuario.idUsuario + '">' +
                         '<i class="bi bi-toggle-' + (activo ? 'on' : 'off') + '"></i></button>' +
                 '</td>';
             cuerpoUsuarios.appendChild(fila);
         });
     }
 
-    // Antes de que el modal se abra, averigua cuál botón lo activó
+    // Antes de que el modal se abra, averigua cuál botón lo activó.
+    // data-id llega como texto ("6"): Number() lo vuelve número para compararlo con idUsuario.
     modalCambiarEstado.addEventListener('show.bs.modal', function (evento) {
-        documentoSeleccionado = evento.relatedTarget.dataset.documento;
-        const usuario = RepositorioUsuarios.obtenerUsuario(documentoSeleccionado);
+        idSeleccionado = Number(evento.relatedTarget.dataset.id);
+        const usuario = RepositorioUsuarios.obtenerUsuario(idSeleccionado);
         const accion = usuario.estado === 'activo' ? 'inactivar' : 'activar';
         modalCambiarEstadoTexto.textContent = '¿Desea ' + accion + ' a ' + ServicioUsuarios.nombreCompleto(usuario) + '?';
     });
 
     // Al confirmar con "Sí", el Service cambia el estado y la tabla se vuelve a dibujar
     confirmarCambiarEstado.addEventListener('click', function () {
-        ServicioUsuarios.alternarEstado(documentoSeleccionado);
+        ServicioUsuarios.alternarEstado(idSeleccionado);
         bootstrap.Modal.getInstance(modalCambiarEstado).hide();
         renderizarUsuarios();
         estadoExito.classList.remove('d-none');
