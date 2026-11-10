@@ -19,15 +19,16 @@
             return;
         }
 
-        // El Service rechaza un documento ya registrado.
-        // La contraseña no se guarda en el prototipo: con Django se guarda cifrada.
+        // El Service rechaza un documento o un correo ya registrados (RF04.2).
+        // El id no se envía: lo asigna el Repository, como el AUTO_INCREMENT de la BD.
+        // La contraseña no se guarda en el prototipo: con el backend se guarda cifrada.
         const resultado = ServicioUsuarios.registrarUsuario({
             documento: documento.value.trim(),
             nombres: document.getElementById('nombres').value.trim(),
             apellidos: document.getElementById('apellidos').value.trim(),
             correo: document.getElementById('correo').value.trim(),
-            telefono: document.getElementById('telefono').value.trim(),
-            rol: document.getElementById('rol').value,
+            telefono: document.getElementById('telefono').value.trim() || null,
+            idRol: Number(document.getElementById('rol').value),
             estado: document.getElementById('estado').value
         });
         if (!resultado.ok) {

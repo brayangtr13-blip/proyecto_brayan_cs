@@ -22,6 +22,10 @@
     Usuario actualizado correctamente
 </div>
 
+<div id="edicionDuplicado" class="alert alert-danger d-none" role="alert">
+    Ese correo ya pertenece a otro usuario
+</div>
+
 <form id="formEditarUsuario" novalidate>
     <div class="row g-3">
 
@@ -49,17 +53,18 @@
         </div>
 
         <div class="col-md-6">
-            <label for="telefono" class="form-label">Teléfono</label>
-            <input type="tel" class="form-control" id="telefono" name="telefono" required>
-            <div class="invalid-feedback">Este campo es obligatorio</div>
+            <!-- Opcional: en la BD usuarios.telefono admite NULL -->
+            <label for="telefono" class="form-label">Teléfono <span class="text-muted">(opcional)</span></label>
+            <input type="tel" class="form-control" id="telefono" name="telefono">
         </div>
 
         <div class="col-md-6">
             <label for="rol" class="form-label">Rol</label>
-            <!-- Sin "Administrador": ese rol no se asigna desde aquí, lo tiene quien da los permisos -->
+            <!-- Sin "Administrador": ese rol no se asigna desde aquí, lo tiene quien da los permisos.
+                 value = id_rol de la tabla roles (2 cajero, 3 domiciliario) -->
             <select class="form-select" id="rol" name="rol" required>
-                <option value="vendedor">Vendedor</option>
-                <option value="domiciliario">Domiciliario</option>
+                <option value="2">Cajero</option>
+                <option value="3">Domiciliario</option>
             </select>
         </div>
 

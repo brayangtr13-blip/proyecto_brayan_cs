@@ -1,14 +1,27 @@
 # Refactor del prototipo navegable
 
-Bitácora de la revisión de arquitectura hecha con Claude Code (rama `refactor/arquitectura-prototipo`).
-Se actualiza en cada punto, en el mismo commit del cambio.
+Bitácora técnica del prototipo hecha con Claude Code: qué cambió, por qué y cómo se probó.
+Se actualiza en cada punto. Para saber qué es el prototipo y cómo usarlo, ver [README.md](README.md).
 
 ## Plan de trabajo
+
+**Refactor de arquitectura** (rama `refactor/arquitectura-prototipo`, PR #37)
 
 1. Arquitectura (carpetas, cómo se escribe el código, cómo se comenta) ✅ completo (7 de 7 puntos)
 2. Patrones de diseño en HTML, CSS y JS (referencia: https://refactoring.guru/es/design-patterns)
 3. Lógica de programación
 4. Mejoras visuales y estéticas
+
+**Fase 1 · Completar el prototipo** según la matriz de requisitos y Jira (CS-179, CS-193)
+
+1. Una sola fuente de usuarios ✅ (rama `feature/CS-208-fuente-unica-usuarios`)
+2. Catálogos únicos: métodos de pago y clientes
+3. Log de auditoría con JS (RNF04)
+4. Reportes con JS + reporte de domicilios (RF26–RF30)
+5. Kárdex en consultar producto (RF10.2) y paginación real
+6. Responsive y revisión visual
+
+**Fase 2 · API falsa** (CS-189): JSON Server con `db.json`, login con JWT simulado y guards por rol.
 
 Regla: se avanza paso a paso y cada cambio se revisa antes de seguir.
 
@@ -84,17 +97,42 @@ assets/js/usuarios/    usuarios_datos.js (RepositorioUsuarios)     · usuarios_s
 - Probado: las 34 páginas cargan sin errores; registrar un producto, venderlo en el Punto de venta y verlo
   con el stock descontado en Inventario funciona sin errores en consola.
 
+## Fase 1 · Paso 1 · Una sola fuente de usuarios
+
+**Problema:** los usuarios estaban en 7 lugares que no coincidían entre sí ni con la BD: Usuarios
+(Laura y Carlos, rol «vendedor»), `sesion.js`, una copia en Ventas, otra en Domicilios (Diana y Jorge,
+que no existen; el id 4 de la BD es una cajera), `mis_pedidos.js` y `consultar_pedido.js` con un usuario
+fijo, y `registro.js` con su propia lista de correos. Inactivar a alguien no tenía efecto en el resto.
+
+**Solución:** lo mismo que con los productos: `RepositorioUsuarios` es el único dueño de `usuarios` y `roles`.
+
+| Commit | Qué cambió |
+|---|---|
+| `2da5cb1` refactor(usuarios) | Usuarios 1–7 de `controlstore_sena` y catálogo de roles (1 administrador, 2 cajero, 3 domiciliario). Llave `idUsuario` (antes `documento`). Rol «Vendedor» → «Cajero» con `value` = `id_rol`. Teléfono opcional (NULL en la BD). Correo y documento únicos (RF04.2). Clave `v1 → v2`. |
+| `1741c11` refactor(sesion) | `Sesion.iniciar()` busca en el Repository por alias o correo. Usuario desconocido → error (RF01.2; antes entraba como administrador). Inactivo → no entra (RF01.3). `Sesion.cerrar()` (RF02). |
+| `7b63a44` refactor(prototipo) | Ventas y Domicilios delegan en `RepositorioUsuarios` (pedido #3 → Kevin Mora; clave Domicilios `v2 → v3`). Las pantallas de Domicilios y el menú de perfil usan `Sesion.actual()`. Corrige un error que borraba el inventario: `guardar()` escribía `null` después de `recargar()`. |
+| `f2d58ae` feat(usuarios) | «Regístrate» pide el rol (Cajero o Domiciliario, varios); la cuenta nace inactiva con ese rol (`id_rol` es NOT NULL). Un solo administrador: no se registra ni se edita otro, y no se puede inactivar. |
+
+**Por qué así:**
+- Las pantallas no cambiaron: `RepositorioVentas.obtenerUsuario()` y `RepositorioDomicilios.obtenerDomiciliarios()`
+  devuelven la misma forma de antes (`{ idUsuario, nombre }` y `{ id, nombre, activo }`), pero leída de Usuarios.
+- Las reglas (duplicados, un administrador) viven en `ServicioUsuarios`: se cumplen venga de la pantalla que venga.
+- Los campos usan los nombres de la BD (`idUsuario`, `idRol`): en la Fase 2 el `db.json` sale casi directo.
+
+**Probado en el navegador (sin errores en consola):** login con alias, correo en mayúsculas, inactivo y
+desconocido; Kevin ve solo su pedido y el historial guarda su nombre; inactivar a Yeison en Usuarios lo
+muestra «Inactivo» al asignar en Domicilios; filtro de cajeros en Ventas; registro con rol y duplicados;
+un solo administrador; cuenta registrada → activada → entra a su panel.
+
 ## Cómo probar en local
-```bash
-git fetch origin && git checkout refactor/arquitectura-prototipo && git pull
-```
-Abrir `index.html` con un servidor local (Live Server de VS Code). Para volver a los datos de ejemplo,
-en la consola del navegador: `localStorage.clear()` y recargar.
+Abrir la carpeta `06_prototipo_navegable` con Live Server de VS Code y entrar por `index.html`.
+Para volver a los datos de ejemplo, en la consola del navegador: `localStorage.clear()` y recargar.
+Si un cambio no se ve, recargar sin caché (Ctrl + Shift + R).
 
 ## Cómo continuar en local
 
-Estado: paso 1 (arquitectura) completo, con los 7 puntos resueltos y revisados commit por commit.
-Siguen el paso 2 (patrones de diseño), el paso 3 (lógica) y el paso 4 (visual).
+Estado: refactor de arquitectura completo (7 de 7). Fase 1: paso 1 (una sola fuente de usuarios) completo.
+Sigue el paso 2 de la Fase 1 (catálogos únicos: métodos de pago y clientes).
 
 ### Forma de trabajo acordada
 - Un punto a la vez: se hace, se muestra el resultado, se revisa y se da el aval antes del siguiente.
@@ -103,7 +141,7 @@ Siguen el paso 2 (patrones de diseño), el paso 3 (lógica) y el paso 4 (visual)
 
 ### Para retomar con Claude Code en local
 Abrir Claude Code en la carpeta del repo, en una rama nueva creada desde `develop`, y decir:
-> Lee `_docs_/trim03/06_prototipo_navegable/REFACTOR.md` y continúa con el paso 2 (patrones de diseño), de la misma forma (uno por uno, con mi aval).
+> Lee `_docs_/trim03/06_prototipo_navegable/REFACTOR.md` y continúa con el siguiente paso de la Fase 1, de la misma forma (uno por uno, con mi aval).
 
 ### Verificar que nada se rompió
 - Servidor local: `python -m http.server` en la carpeta del prototipo (o Live Server) y abrir `index.html`.

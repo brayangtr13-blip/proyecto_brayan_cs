@@ -53,8 +53,8 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle fs-5"></i>
                             <span class="text-start lh-sm">
-                                <!-- Cajero real de la BD: usuarios.id_usuario = 2 -->
-                                <span class="d-block small fw-semibold">Juan Carlos Pérez</span>
+                                <!-- data-sesion="nombre": dashboard.js pone aquí el nombre de quien inició sesión -->
+                                <span class="d-block small fw-semibold" data-sesion="nombre">Juan Carlos Perez</span>
                                 <span class="d-block small text-body-secondary">Cajero</span>
                             </span>
                         </button>
@@ -99,6 +99,9 @@
     </div>
 
     <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- usuarios_datos.js y sesion.js antes de dashboard.js: cerrar sesión usa Sesion.cerrar() -->
+    <script src="../../assets/js/usuarios/usuarios_datos.js"></script>
+    <script src="../../assets/js/sesion.js"></script>
     <script src="../../assets/js/dashboard.js"></script>
 </body>
 
