@@ -4,7 +4,9 @@
 (function () {
     const confirmarCerrarSesion = document.getElementById('confirmarCerrarSesion');
 
+    // RF02: antes solo volvía al login y la sesión seguía guardada; ahora se borra primero
     confirmarCerrarSesion.addEventListener('click', function () {
+        Sesion.cerrar();
         window.location.href = '../company/login.html';
     });
 })();
