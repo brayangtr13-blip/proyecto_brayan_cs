@@ -2,11 +2,12 @@
 // Las reglas (qué estado sigue, quién puede, motivo obligatorio, stock) NO están aquí:
 // están en EstadosPedido (State) y ServicioDomicilios (Service).
 
-// Sin backend no hay sesión: esta pantalla solo la usa el administrador
+// Pantalla del administrador. Quién hace el cambio sale de la sesión (Sesion.actual()),
+// así el historial del pedido guarda el nombre real de quien lo cambió.
 
 // IIFE: las variables de esta pantalla no quedan globales ni chocan con otros scripts
 (function () {
-    const USUARIO_ACTUAL = { rol: 'administrador', idUsuario: 1, nombre: 'Administrador' };
+    const USUARIO_ACTUAL = Sesion.actual();
 
     const idPedido = Number(new URLSearchParams(window.location.search).get('id'));
     const form = document.getElementById('formCambiarEstado');

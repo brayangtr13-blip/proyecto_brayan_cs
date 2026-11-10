@@ -44,6 +44,8 @@ const RepositorioUsuarios = (function () {
     }
 
     function guardar() {
+        // Igual que en Inventario: después de recargar() no hay nada en memoria y no se debe escribir "null"
+        if (!enMemoria) return;
         try { localStorage.setItem(CLAVE, JSON.stringify(enMemoria)); } catch (e) { /* solo en memoria */ }
     }
 
@@ -86,6 +88,9 @@ const RepositorioUsuarios = (function () {
             guardar();
             return usuario;
         },
+        // Olvida la copia en memoria para leer de nuevo lo guardado (otra página pudo cambiarlo,
+        // por ejemplo inactivar a un domiciliario mientras Domicilios está abierto)
+        recargar: function () { enMemoria = null; },
         restablecer: function () { enMemoria = datosDeEjemplo(); guardar(); }
     };
 })();

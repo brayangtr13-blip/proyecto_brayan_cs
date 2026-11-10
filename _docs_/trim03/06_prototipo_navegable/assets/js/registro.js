@@ -1,4 +1,5 @@
-// Registro desde el login (CS-77). Sin backend: valida y muestra el resultado.
+// Registro desde el login (CS-77). La cuenta se guarda con ServicioUsuarios (la misma regla de
+// duplicados que la pantalla del administrador) y aparece en Usuarios como inactiva y sin rol.
 
 // IIFE: las variables de esta pantalla no quedan globales ni chocan con otros scripts
 (function () {
@@ -8,10 +9,6 @@
     const campoContrasena = document.getElementById('contrasena');
     const campoConfirmar = document.getElementById('confirmarContrasena');
     const iconoOjo = document.getElementById('iconoOjo');
-
-    // Documentos y correos que ya existen en la tabla usuarios (UNIQUE en la BD)
-    const DOCUMENTOS_REGISTRADOS = ['1000000001', '1000000002', '1000000003'];
-    const CORREOS_REGISTRADOS = ['admin@controlstore.com', 'juan.perez@controlstore.com', 'luis.p@controlstore.com'];
 
     // Mostrar u ocultar las dos contraseñas a la vez
     document.getElementById('botonMostrarContrasena').addEventListener('click', function () {
@@ -40,15 +37,23 @@
             return;
         }
 
-        const documento = document.getElementById('documento').value.trim();
-        const correo = document.getElementById('correo').value.trim().toLowerCase();
-        if (DOCUMENTOS_REGISTRADOS.includes(documento) || CORREOS_REGISTRADOS.includes(correo)) {
+        // La cuenta nace inactiva y sin rol (idRol: null): el administrador le pone el rol y la activa.
+        // La contraseña no se guarda en el prototipo: con el backend se guarda cifrada (RF04.1).
+        const resultado = ServicioUsuarios.registrarUsuario({
+            documento: document.getElementById('documento').value.trim(),
+            nombres: document.getElementById('nombres').value.trim(),
+            apellidos: document.getElementById('apellidos').value.trim(),
+            correo: document.getElementById('correo').value.trim().toLowerCase(),
+            telefono: document.getElementById('telefono').value.trim() || null,
+            idRol: null,
+            estado: 'inactivo'
+        });
+        if (!resultado.ok) {
             registroError.textContent = 'Ya existe una cuenta con ese documento o correo. Si olvidaste la contraseña, recupérala desde el inicio de sesión.';
             registroError.classList.remove('d-none');
             return;
         }
 
-        // La cuenta nace inactiva y sin rol: la activa el administrador
         registroExito.classList.remove('d-none');
         formRegistro.reset();
         formRegistro.classList.remove('was-validated');
