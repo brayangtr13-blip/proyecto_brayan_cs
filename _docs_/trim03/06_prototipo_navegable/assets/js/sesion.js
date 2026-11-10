@@ -34,9 +34,6 @@ const Sesion = (function () {
 
         if (!usuario) return { ok: false, error: 'Usuario o contraseña incorrectos' };
         if (usuario.estado !== 'activo') return { ok: false, error: 'Usuario inactivo. Comunícate con el administrador.' };
-        // Cuenta creada desde "Regístrate" (CS-77) que activaron sin asignarle rol: no sabe a qué panel ir
-        if (!RepositorioUsuarios.obtenerRol(usuario.idRol)) return { ok: false, error: 'Tu cuenta aún no tiene rol asignado. Comunícate con el administrador.' };
-
         const sesion = datosDeSesion(usuario);
         try { sessionStorage.setItem(CLAVE, JSON.stringify(sesion)); } catch (e) { /* sin almacenamiento */ }
         return { ok: true, usuario: sesion };

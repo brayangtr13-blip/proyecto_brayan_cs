@@ -7,6 +7,7 @@
     const modalCambiarEstadoTexto = document.getElementById('modalCambiarEstadoTexto');
     const confirmarCambiarEstado = document.getElementById('confirmarCambiarEstado');
     const estadoExito = document.getElementById('estadoExito');
+    const estadoError = document.getElementById('estadoError');
 
     let idSeleccionado = null;
 
@@ -15,6 +16,8 @@
         cuerpoUsuarios.innerHTML = '';
         RepositorioUsuarios.obtenerUsuarios().forEach(function (usuario) {
             const activo = usuario.estado === 'activo';
+            // El administrador no se inactiva (regla de ServicioUsuarios): su botón se ve, pero deshabilitado
+            const esAdministrador = usuario.idRol === 1;
             const fila = document.createElement('tr');
             fila.innerHTML =
                 '<td>' + usuario.documento + '</td>' +
@@ -28,9 +31,11 @@
                     (activo ? 'Activo' : 'Inactivo') + '</span></td>' +
                 '<td>' +
                     '<a href="editar_usuario.html?id=' + usuario.idUsuario + '" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a> ' +
-                    '<button type="button" class="btn btn-sm btn-outline-danger" title="Cambiar estado" ' +
-                        'data-bs-toggle="modal" data-bs-target="#modalCambiarEstado" ' +
-                        'data-id="' + usuario.idUsuario + '">' +
+                    '<button type="button" class="btn btn-sm btn-outline-danger" ' +
+                        (esAdministrador
+                            ? 'title="El administrador no se puede inactivar" disabled>'
+                            : 'title="Cambiar estado" data-bs-toggle="modal" data-bs-target="#modalCambiarEstado" ' +
+                              'data-id="' + usuario.idUsuario + '">') +
                         '<i class="bi bi-toggle-' + (activo ? 'on' : 'off') + '"></i></button>' +
                 '</td>';
             cuerpoUsuarios.appendChild(fila);
@@ -47,11 +52,14 @@
     });
 
     // Al confirmar con "Sí", el Service cambia el estado y la tabla se vuelve a dibujar
+    // Si el Service rechaza el cambio, se muestra su motivo en vez del mensaje de éxito
     confirmarCambiarEstado.addEventListener('click', function () {
-        ServicioUsuarios.alternarEstado(idSeleccionado);
+        const resultado = ServicioUsuarios.alternarEstado(idSeleccionado);
         bootstrap.Modal.getInstance(modalCambiarEstado).hide();
         renderizarUsuarios();
-        estadoExito.classList.remove('d-none');
+        estadoExito.classList.toggle('d-none', !resultado.ok);
+        estadoError.classList.toggle('d-none', resultado.ok);
+        if (!resultado.ok) estadoError.textContent = resultado.error;
     });
 
     renderizarUsuarios();

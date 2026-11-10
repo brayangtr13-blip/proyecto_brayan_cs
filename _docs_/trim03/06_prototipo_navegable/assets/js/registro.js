@@ -1,5 +1,5 @@
-// Registro desde el login (CS-77). La cuenta se guarda con ServicioUsuarios (la misma regla de
-// duplicados que la pantalla del administrador) y aparece en Usuarios como inactiva y sin rol.
+// Registro desde el login (CS-77). La cuenta se guarda con ServicioUsuarios (las mismas reglas que
+// la pantalla del administrador) y aparece en Usuarios como inactiva, con el rol que eligió la persona.
 
 // IIFE: las variables de esta pantalla no quedan globales ni chocan con otros scripts
 (function () {
@@ -9,6 +9,13 @@
     const campoContrasena = document.getElementById('contrasena');
     const campoConfirmar = document.getElementById('confirmarContrasena');
     const iconoOjo = document.getElementById('iconoOjo');
+    const campoRol = document.getElementById('rol');
+
+    // Solo en un sistema recién instalado (sin administrador) se ofrece ese rol: el primero que
+    // se registre lo toma y, desde ahí, la opción desaparece. Con los datos de la BD nunca se ve.
+    if (!ServicioUsuarios.hayAdministrador()) {
+        campoRol.add(new Option('Administrador', '1'));
+    }
 
     // Mostrar u ocultar las dos contraseñas a la vez
     document.getElementById('botonMostrarContrasena').addEventListener('click', function () {
@@ -37,7 +44,7 @@
             return;
         }
 
-        // La cuenta nace inactiva y sin rol (idRol: null): el administrador le pone el rol y la activa.
+        // La cuenta nace inactiva con el rol elegido (en la BD id_rol es NOT NULL): el administrador la activa.
         // La contraseña no se guarda en el prototipo: con el backend se guarda cifrada (RF04.1).
         const resultado = ServicioUsuarios.registrarUsuario({
             documento: document.getElementById('documento').value.trim(),
@@ -45,14 +52,21 @@
             apellidos: document.getElementById('apellidos').value.trim(),
             correo: document.getElementById('correo').value.trim().toLowerCase(),
             telefono: document.getElementById('telefono').value.trim() || null,
-            idRol: null,
+            idRol: Number(campoRol.value),
             estado: 'inactivo'
         });
         if (!resultado.ok) {
-            registroError.textContent = 'Ya existe una cuenta con ese documento o correo. Si olvidaste la contraseña, recupérala desde el inicio de sesión.';
+            // Mensaje según el motivo que devuelve el Service
+            registroError.textContent = resultado.error === 'administrador'
+                ? 'El sistema ya tiene un administrador. Elige otro rol.'
+                : 'Ya existe una cuenta con ese documento o correo. Si olvidaste la contraseña, recupérala desde el inicio de sesión.';
             registroError.classList.remove('d-none');
             return;
         }
+
+        // Si esta cuenta tomó el rol de administrador, la opción ya no se ofrece a nadie más
+        const opcionAdministrador = campoRol.querySelector('option[value="1"]');
+        if (opcionAdministrador && ServicioUsuarios.hayAdministrador()) opcionAdministrador.remove();
 
         registroExito.classList.remove('d-none');
         formRegistro.reset();
