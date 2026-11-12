@@ -31,7 +31,7 @@ CREATE TABLE `arqueo_caja` (
   `monto_final` decimal(12,2) DEFAULT NULL COMMENT 'Efectivo contado al cierre',
   `total_ventas` decimal(12,2) DEFAULT NULL COMMENT 'Total vendido en el turno, todos los medios de pago (reportes)',
   `total_efectivo` decimal(12,2) DEFAULT NULL COMMENT 'Ventas pagadas en efectivo: lo unico que entra al cajon',
-  `diferencia` decimal(12,2) GENERATED ALWAYS AS (((`monto_final` - `monto_inicial`) - `total_efectivo`)) STORED COMMENT 'Descuadre real: efectivo contado menos efectivo esperado',
+  `diferencia` decimal(12,2) GENERATED ALWAYS AS (((`monto_final` - `monto_inicial`) - `total_efectivo`)) VIRTUAL COMMENT 'Faltante (-) o sobrante (+) del turno (calculado al leer, no se almacena)',
   `observacion` varchar(255) COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'Notas del arqueo',
   PRIMARY KEY (`id_arqueo`),
   KEY `fk_arqueo_usuario` (`id_usuario`),
@@ -180,7 +180,7 @@ CREATE TABLE `detalle_venta` (
   `codigo_producto` varchar(20) COLLATE utf8mb4_spanish_ci NOT NULL COMMENT 'FK: producto vendido',
   `cantidad` int NOT NULL COMMENT 'Unidades vendidas',
   `precio_venta` decimal(10,2) NOT NULL COMMENT 'Precio histórico al momento de la venta',
-  `subtotal` decimal(12,2) GENERATED ALWAYS AS ((`cantidad` * `precio_venta`)) STORED COMMENT 'Calculado por el motor: cantidad x precio',
+  `subtotal` decimal(12,2) GENERATED ALWAYS AS ((`cantidad` * `precio_venta`)) VIRTUAL COMMENT 'cantidad x precio_venta (calculado al leer, no se almacena)',
   PRIMARY KEY (`id_detalle`),
   UNIQUE KEY `uq_detalle_venta_producto` (`id_venta`,`codigo_producto`),
   KEY `fk_detalle_producto` (`codigo_producto`),
@@ -677,4 +677,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-12  1:37:01
+-- Dump completed on 2026-11-12  1:56:02
