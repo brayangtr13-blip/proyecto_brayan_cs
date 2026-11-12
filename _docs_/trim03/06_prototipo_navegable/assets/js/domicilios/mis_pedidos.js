@@ -2,13 +2,18 @@
 // HU05: "El domiciliario debe ver en su panel únicamente los pedidos asignados a él".
 // HU06: "El domiciliario solo debe poder cambiar los estados de sus pedidos a En camino y Entregado".
 
-// Sin backend no hay sesión real: el panel es el de Luis Pérez, el domiciliario que existe
-// en la base de datos (usuarios.id_usuario = 3). Con Django, este id vendrá del usuario logueado.
+// El panel es el del domiciliario que inició sesión (Sesion.actual()): si entra Kevin, ve los de Kevin.
+// Si la página se abre sin pasar por el login, se muestra el de Luis Perez (usuario 3) para la demo;
+// los guards por rol (CS-254) cambiarán eso por "volver al login".
 
 // IIFE: las variables de esta pantalla no quedan globales ni chocan con otros scripts
 (function () {
-    const ID_DOMICILIARIO_ACTUAL = 3;
-    const USUARIO_ACTUAL = { rol: 'domiciliario', idUsuario: ID_DOMICILIARIO_ACTUAL, nombre: 'Luis Pérez' };
+    const ID_DOMICILIARIO_DEMO = 3;
+    const sesion = Sesion.actual();
+    const USUARIO_ACTUAL = sesion.rol === 'domiciliario'
+        ? sesion
+        : { rol: 'domiciliario', idUsuario: ID_DOMICILIARIO_DEMO, nombre: 'Luis Perez' };
+    const ID_DOMICILIARIO_ACTUAL = USUARIO_ACTUAL.idUsuario;
 
     const pedidosActivos = document.getElementById('pedidosActivos');
     const pedidosEntregados = document.getElementById('pedidosEntregados');

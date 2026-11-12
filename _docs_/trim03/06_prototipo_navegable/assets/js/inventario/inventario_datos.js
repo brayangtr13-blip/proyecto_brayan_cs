@@ -33,6 +33,9 @@ const RepositorioInventario = (function () {
     }
 
     function guardar() {
+        // Después de recargar() la memoria queda en null: guardar ahí escribiría "null" y borraría
+        // el inventario (pasaba al abrir la campana del domiciliario tras un evento "storage")
+        if (!enMemoria) return;
         try { localStorage.setItem(CLAVE, JSON.stringify(enMemoria)); } catch (e) { /* solo en memoria */ }
     }
 

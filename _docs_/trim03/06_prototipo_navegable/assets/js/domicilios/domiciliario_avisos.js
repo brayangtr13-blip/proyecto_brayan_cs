@@ -1,11 +1,12 @@
 // Campana de avisos del panel del domiciliario (CS-38 – CU039 "Notificar al domiciliario").
 // Lee los avisos que el notificador guarda en el Repository cuando se le asigna un pedido.
 
-// Mismo domiciliario que mis_pedidos.js (Luis Pérez, usuarios.id_usuario = 3 en la base de datos)
+// Mismo domiciliario que mis_pedidos.js: el de la sesión; sin login, Luis Perez (usuario 3) para la demo
 
 // IIFE: las variables de esta pantalla no quedan globales ni chocan con otros scripts
 (function () {
-    const ID_DOMICILIARIO_AVISOS = 3;
+    const sesion = Sesion.actual();
+    const ID_DOMICILIARIO_AVISOS = sesion.rol === 'domiciliario' ? sesion.idUsuario : 3;
 
     const listaAvisos = document.getElementById('listaAvisos');
     const puntoAvisos = document.getElementById('puntoAvisos');

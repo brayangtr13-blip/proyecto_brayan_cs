@@ -21,19 +21,26 @@
 
     // Formulario de login: no enviar si hay campos vacíos
     const formLogin = document.getElementById('formLogin');
+    const loginAlerta = document.getElementById('loginAlerta');
+    const PANEL_POR_ROL = { administrador: 'admin.html', cajero: 'cajero.html', domiciliario: 'domiciliario.html' };
 
     formLogin.addEventListener('submit', function (evento) {
         evento.preventDefault();
+        loginAlerta.classList.add('d-none');
 
        if (formLogin.checkValidity() === false) {
         formLogin.classList.add('was-validated');
         return;
       }
 
-        // Sin backend: guarda la sesión simulada (sesion.js) y abre el panel de su rol.
-        // Con Django, el rol vendrá de usuarios.id_rol.
-        const usuario = Sesion.iniciar(document.getElementById('usuario').value);
-        const PANEL_POR_ROL = { administrador: 'admin.html', cajero: 'cajero.html', domiciliario: 'domiciliario.html' };
-        window.location.href = '../roles/' + PANEL_POR_ROL[usuario.rol];
+        // Sesion busca al usuario en RepositorioUsuarios y decide si puede entrar.
+        // Si no puede (no existe o está inactivo), se muestra el motivo y no se navega.
+        const resultado = Sesion.iniciar(document.getElementById('usuario').value);
+        if (!resultado.ok) {
+            loginAlerta.textContent = resultado.error;
+            loginAlerta.classList.remove('d-none');
+            return;
+        }
+        window.location.href = '../roles/' + PANEL_POR_ROL[resultado.usuario.rol];
     });
 })();

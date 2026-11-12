@@ -1,15 +1,18 @@
 // Módulo 3 – Ventas y Caja · Patrón REPOSITORY
 // Único acceso a los datos del módulo. Hoy: localStorage. Con Django: fetch a la API.
 // Depende de: inventario/inventario_datos.js (los productos son de Inventario)
+//             usuarios/usuarios_datos.js (los cajeros son de Usuarios)
 
 // Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
 if (typeof RepositorioInventario === 'undefined') throw new Error('ventas_datos.js: falta cargar antes inventario/inventario_datos.js');
+if (typeof RepositorioUsuarios === 'undefined') throw new Error('ventas_datos.js: falta cargar antes usuarios/usuarios_datos.js');
 
 const RepositorioVentas = (function () {
     const CLAVE = 'controlstore_ventas_v1';
 
-    // Datos del volcado de controlstore_sena: métodos de pago, usuarios,
+    // Datos del volcado de controlstore_sena: métodos de pago,
     // el turno #2 (arqueo_caja) y las ventas #2, #3 y #4 con su detalle_venta.
+    // Los usuarios ya no se copian aquí: se piden a RepositorioUsuarios.
     function datosDeEjemplo() {
         return {
             metodosPago: [
@@ -17,10 +20,6 @@ const RepositorioVentas = (function () {
                 { id: 2, nombre: 'Nequi' },
                 { id: 3, nombre: 'Transferencia' },
                 { id: 4, nombre: 'Tarjeta' }
-            ],
-            usuarios: [
-                { idUsuario: 1, nombre: 'Andrés Gómez' },
-                { idUsuario: 2, nombre: 'Juan Carlos Pérez' }
             ],
             arqueos: [
                 {
@@ -65,14 +64,30 @@ const RepositorioVentas = (function () {
         return lista.reduce(function (max, x) { return Math.max(max, x.id); }, 0) + 1;
     }
 
+    // Ventas solo necesita id y nombre del cajero: { idUsuario, nombre } (la forma que ya usan las pantallas)
+    function comoCajero(usuario) {
+        return { idUsuario: usuario.idUsuario, nombre: usuario.nombres + ' ' + usuario.apellidos };
+    }
+
+    // RF14: venden el administrador (rol 1) y los cajeros (rol 2)
+    function puedeVender(usuario) {
+        return usuario.idRol === 1 || usuario.idRol === 2;
+    }
+
     return {
         // Los productos no se copian aquí: se piden al Repository de Inventario
         obtenerProductos: function () { return RepositorioInventario.obtenerProductos(); },
         obtenerProducto: function (codigo) { return RepositorioInventario.obtenerProducto(codigo); },
         obtenerMetodosPago: function () { return leer().metodosPago; },
         obtenerMetodoPago: function (id) { return leer().metodosPago.find(function (m) { return m.id === id; }); },
-        obtenerUsuarios: function () { return leer().usuarios; },
-        obtenerUsuario: function (id) { return leer().usuarios.find(function (u) { return u.idUsuario === id; }); },
+        // Los usuarios tampoco se copian: se piden al Repository de Usuarios (una sola fuente)
+        obtenerUsuarios: function () {
+            return RepositorioUsuarios.obtenerUsuarios().filter(puedeVender).map(comoCajero);
+        },
+        obtenerUsuario: function (id) {
+            const usuario = RepositorioUsuarios.obtenerUsuario(id);
+            return usuario ? comoCajero(usuario) : undefined;
+        },
         obtenerVentas: function () { return leer().ventas; },
         obtenerVenta: function (id) { return leer().ventas.find(function (v) { return v.id === id; }); },
         obtenerArqueos: function () { return leer().arqueos; },
