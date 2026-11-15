@@ -16,6 +16,7 @@ Siguen la estructura del repositorio del instructor (05_ddl, 06_dml, 07_avan, 08
 | `03_sentencias_dml` | `02_db_dml_una_tabla.sql` | INSERT, UPDATE, DELETE y todos los tipos de SELECT sobre una tabla |
 | `03_sentencias_dml` | `03_db_dml_multitabla.sql` | JOIN, UNION, subconsultas y borrado en tablas relacionadas |
 | `05_seguridad_db` | `01_usuarios_privilegios.sql` | Usuarios y roles de MySQL, GRANT y REVOKE, bloqueo de cuentas, cifrado (SHA2 y AES) y copias de seguridad |
+| `06_preguntas_sustentacion` | `01_preguntas_sustentacion.sql` | 95 preguntas posibles del instructor, cada una con su respuesta corta y el SQL que la demuestra |
 
 ## Orden para ejecutar
 
@@ -25,6 +26,7 @@ Siguen la estructura del repositorio del instructor (05_ddl, 06_dml, 07_avan, 08
 4. `04_programacion_db/02_views.sql`
 5. `04_programacion_db/03_procedures.sql`
 6. Los de práctica, en cualquier orden: `02_sentencias_ddl/01_db_ddl.sql`, `03_sentencias_dml/02_...` y `03_...`, `05_seguridad_db/01_...`
+7. Para repasar la sustentación: `06_preguntas_sustentacion/01_preguntas_sustentacion.sql`. Las líneas que empiezan con `-- ERR>` dan un error a propósito: quita el `-- ERR>` y ejecuta solo esa línea para verlo.
 
 Los scripts de práctica dejan los datos igual que antes. Para eso usan transacciones con `ROLLBACK`, filas temporales que se borran al final o una base aparte.
 
