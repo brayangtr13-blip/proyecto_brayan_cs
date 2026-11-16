@@ -32,7 +32,7 @@
                  que ocurren los dos dentro de "Mis pedidos". -->
             <nav class="sidebar-nav">
                 <div class="sidebar-label">Domicilios</div>
-                <a href="../modules/deliveries/mis_pedidos.html" target="area_trabajo" class="sidebar-link active">
+                <a href="../modules/domicilios/mis_pedidos.html" target="area_trabajo" class="sidebar-link active">
                     <i class="bi bi-truck"></i> Mis pedidos
                 </a>
             </nav>
@@ -81,7 +81,8 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle fs-5"></i>
                             <span class="text-start lh-sm">
-                                <span class="d-block small fw-semibold">Luis Pérez</span>
+                                <!-- data-sesion="nombre": dashboard.js pone aquí el nombre de quien inició sesión -->
+                                <span class="d-block small fw-semibold" data-sesion="nombre">Luis Perez</span>
                                 <span class="d-block small text-body-secondary">Domiciliario</span>
                             </span>
                         </button>
@@ -104,7 +105,7 @@
 
             <main class="content">
                 <!-- El iframe arranca en "Mis pedidos" porque es la única pantalla del domiciliario -->
-                <iframe name="area_trabajo" src="../modules/deliveries/mis_pedidos.html" class="content-frame"></iframe>
+                <iframe name="area_trabajo" src="../modules/domicilios/mis_pedidos.html" class="content-frame"></iframe>
             </main>
         </div>
     </div>
@@ -132,8 +133,12 @@
 
     <!-- bootstrap.bundle trae Popper, necesario para que el dropdown se abra -->
     <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- usuarios_datos.js y sesion.js antes de dashboard.js: cerrar sesión usa Sesion.cerrar() -->
+    <script src="../../assets/js/usuarios/usuarios_datos.js"></script>
+    <script src="../../assets/js/sesion.js"></script>
     <script src="../../assets/js/dashboard.js"></script>
     <!-- CS-38 (CU039): la campana lee los avisos del mismo Repository que usa el módulo -->
+    <script src="../../assets/js/inventario/inventario_datos.js"></script>
     <script src="../../assets/js/domicilios/domicilios_datos.js"></script>
     <script src="../../assets/js/domicilios/domiciliario_avisos.js"></script>
 </body>

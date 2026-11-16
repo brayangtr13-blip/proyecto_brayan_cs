@@ -9,6 +9,13 @@
 // domicilios_eventos.js, domicilios_servicio.js y canales_notificacion.js.
 // ==========================================================
 
+// Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
+if (typeof RepositorioDomicilios === 'undefined') throw new Error('domicilios_notificaciones.js: falta cargar antes domicilios_datos.js');
+if (typeof EstadosPedido === 'undefined') throw new Error('domicilios_notificaciones.js: falta cargar antes domicilios_estados.js');
+if (typeof EventosDomicilios === 'undefined') throw new Error('domicilios_notificaciones.js: falta cargar antes domicilios_eventos.js');
+if (typeof ServicioDomicilios === 'undefined') throw new Error('domicilios_notificaciones.js: falta cargar antes domicilios_servicio.js');
+if (typeof CANAL_ACTIVO === 'undefined') throw new Error('domicilios_notificaciones.js: falta cargar antes canales_notificacion.js');
+
 const NotificacionesDomicilios = (function () {
     const MAX_INTENTOS = 3;   // HU07: "reintentar hasta 3 veces"
 

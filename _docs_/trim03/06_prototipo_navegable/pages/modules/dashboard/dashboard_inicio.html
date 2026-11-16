@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <!-- Fuente Inter descargada (no CDN): ver assets/vendor/fonts/inter/ -->
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+</head>
+
+<body class="content-body">
+
+    <!-- ===================================================
+         Franja de bienvenida
+         Reemplaza el "Bienvenido a Control Store" plano que
+         había antes por una caja con ícono, para que el dashboard
+         no arranque en blanco cuando el usuario entra al panel.
+         =================================================== -->
+    <div class="dashboard-bienvenida mb-4">
+        <div class="dashboard-bienvenida-icono">
+            <i class="bi bi-shop"></i>
+        </div>
+        <div>
+            <h1 class="h4 mb-1">Bienvenido a Control Store</h1>
+            <p class="text-muted mb-0">
+                Panel de administración · Autoservicio Ayuelal. Selecciona un módulo para comenzar.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         Contador de alertas de stock (CS-17)
+         Usa la misma tarjeta .modulo-card que los accesos rápidos,
+         pero con el color de alerta. El número lo llena
+         dashboard_inicio.js y toda la tarjeta lleva a la
+         pantalla de alertas (stretched-link).
+         =================================================== -->
+    <h2 class="dashboard-seccion-titulo">Resumen</h2>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-4">
+        <div class="col">
+            <div class="card h-100 modulo-card">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="modulo-icono modulo-icono-alerta">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                        <div class="fs-4 fw-bold lh-1" id="contadorAlertas">0</div>
+                        <a href="../inventario/alertas_stock.html" class="text-muted small text-decoration-none stretched-link">
+                            Productos en alerta de stock
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         Accesos rápidos a módulos
+         Una tarjeta por cada módulo del menú lateral (mismo
+         orden que el sidebar de admin.html). Los módulos que
+         YA tienen pantallas construidas llevan un botón real;
+         los que todavía no se han desarrollado quedan marcados
+         como "Próximamente" en vez de simular un enlace que no
+         lleva a ninguna parte, para no mostrar algo que no existe.
+         =================================================== -->
+    <h2 class="dashboard-seccion-titulo">Accesos rápidos</h2>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+
+        <!-- Inventario (CS-12 a CS-17): módulo ya construido -->
+        <div class="col">
+            <div class="card h-100 modulo-card">
+                <div class="card-body">
+                    <div class="modulo-icono modulo-icono-inventario">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <h3 class="h6 card-title mt-3 mb-1">Inventario</h3>
+                    <p class="text-muted small mb-3">Registro, consulta y control de stock de productos.</p>
+                    <a href="../inventario/listar_productos.html" class="btn btn-sm btn-primary stretched-link">
+                        Ir al módulo <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventas (CS-18 a CS-22) -->
+        <div class="col">
+            <div class="card h-100 modulo-card">
+                <div class="card-body">
+                    <div class="modulo-icono modulo-icono-ventas">
+                        <i class="bi bi-cart"></i>
+                    </div>
+                    <h3 class="h6 card-title mt-3 mb-1">Ventas</h3>
+                    <p class="text-muted small mb-3">Registro de ventas y arqueo de caja.</p>
+                    <a href="../ventas/registrar_venta.html" class="btn btn-sm btn-primary stretched-link">
+                        Ir al módulo <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Domicilios (CS-35 a CS-38): módulo ya construido -->
+        <div class="col">
+            <div class="card h-100 modulo-card">
+                <div class="card-body">
+                    <div class="modulo-icono modulo-icono-domicilios">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <h3 class="h6 card-title mt-3 mb-1">Domicilios</h3>
+                    <p class="text-muted small mb-3">Asignación y seguimiento de pedidos a domicilio.</p>
+                    <a href="../domicilios/listar_domicilios.html" class="btn btn-sm btn-primary stretched-link">
+                        Ir al módulo <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usuarios: módulo ya construido -->
+        <div class="col">
+            <div class="card h-100 modulo-card">
+                <div class="card-body">
+                    <div class="modulo-icono modulo-icono-usuarios">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h3 class="h6 card-title mt-3 mb-1">Usuarios</h3>
+                    <p class="text-muted small mb-3">Gestión de cuentas, roles y estado del personal.</p>
+                    <a href="../usuarios/listar_usuarios.html" class="btn btn-sm btn-primary stretched-link">
+                        Ir al módulo <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reportes (CS-23 a CS-31): módulo ya construido -->
+        <div class="col">
+            <div class="card h-100 modulo-card">
+                <div class="card-body">
+                    <div class="modulo-icono modulo-icono-reportes">
+                        <i class="bi bi-bar-chart-line"></i>
+                    </div>
+                    <h3 class="h6 card-title mt-3 mb-1">Reportes gráficos</h3>
+                    <p class="text-muted small mb-3">Indicadores de ventas e inventario en gráficas.</p>
+                    <a href="../reportes/reporte_grafico_ventas.html" class="btn btn-sm btn-primary stretched-link">
+                        Ir al módulo <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log de auditoría -->
+        <div class="col">
+            <div class="card h-100 modulo-card modulo-card-pendiente">
+                <div class="card-body">
+                    <div class="modulo-icono modulo-icono-pendiente">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h3 class="h6 card-title mt-3 mb-1">Log de auditoría</h3>
+                    <p class="text-muted small mb-3">Historial de acciones realizadas en el sistema.</p>
+                    <span class="badge rounded-pill text-bg-light border text-secondary">Próximamente</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../../../assets/js/inventario/inventario_datos.js"></script>
+    <script src="../../../assets/js/inventario/inventario_servicio.js"></script>
+    <script src="../../../assets/js/dashboard_inicio.js"></script>
+</body>
+
+</html>

@@ -13,6 +13,11 @@
 // y domicilios_eventos.js.
 // ==========================================================
 
+// Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
+if (typeof RepositorioDomicilios === 'undefined') throw new Error('domicilios_servicio.js: falta cargar antes domicilios_datos.js');
+if (typeof EstadosPedido === 'undefined') throw new Error('domicilios_servicio.js: falta cargar antes domicilios_estados.js');
+if (typeof EventosDomicilios === 'undefined') throw new Error('domicilios_servicio.js: falta cargar antes domicilios_eventos.js');
+
 const ServicioDomicilios = (function () {
 
     // Texto visible de cada valor del ENUM domicilios.estado

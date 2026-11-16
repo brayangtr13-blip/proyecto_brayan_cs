@@ -4,6 +4,8 @@
 // Este es el ÚNICO archivo que sabe dónde viven los datos de Domicilios.
 // Las pantallas (y el servicio) solo llaman a RepositorioDomicilios.*;
 // nunca leen localStorage ni arreglos directamente.
+// Los productos NO viven aquí: se piden a RepositorioInventario (inventario_datos.js).
+// Los domiciliarios tampoco: son los usuarios con rol domiciliario de RepositorioUsuarios.
 //
 // Hoy los datos se guardan en localStorage del navegador, porque el flujo del
 // módulo cruza varias páginas (el admin registra y asigna, el domiciliario
@@ -12,25 +14,25 @@
 // fetch('/api/domicilios/...'); las pantallas no cambian.
 // ==========================================================
 
+// Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
+if (typeof RepositorioInventario === 'undefined') throw new Error('domicilios_datos.js: falta cargar antes inventario/inventario_datos.js');
+if (typeof RepositorioUsuarios === 'undefined') throw new Error('domicilios_datos.js: falta cargar antes usuarios/usuarios_datos.js');
+
 const RepositorioDomicilios = (function () {
-    // v2: los pedidos ahora traen historial y stockDescontado (CS-37). Cambiar la versión hace que
-    // los navegadores con datos guardados en el formato viejo arranquen de nuevo con los de ejemplo.
-    const CLAVE = 'controlstore_domicilios_v2';
+    // v2: los pedidos ahora traen historial y stockDescontado (CS-37).
+    // v3: el pedido #3 pasa de Diana Morales (no existe en la BD) a Kevin Mora (usuario 6).
+    // Cambiar la versión hace que los navegadores con datos viejos arranquen con los de ejemplo.
+    const CLAVE = 'controlstore_domicilios_v3';
+
+    // id del rol domiciliario en la tabla roles
+    const ROL_DOMICILIARIO = 3;
 
     // Datos de ejemplo basados en controlstore_sena (MySQL 8.4):
-    //  - productos: los mismos 5 de Inventario (tabla productos)
     //  - clientes 1 y 2, venta #3 y domicilio #1: registros reales del volcado SQL
-    //  - Luis Perez (usuario 3) es el domiciliario real; Diana Morales y Jorge Rincon
-    //    son domiciliarios de ejemplo para poder probar asignar y el caso "inactivo" (HU05)
+    //  - domiciliarios: Luis Perez (usuario 3), Kevin Mora (6) y Yeison Castro (7) de RepositorioUsuarios.
+    //    El caso "inactivo" (HU05) se prueba inactivando a uno desde la pantalla de Usuarios.
     function datosDeEjemplo() {
         return {
-            productos: [
-                { codigo: '7702001001', nombre: 'Leche Entera 1L', precio: 2850, stock: 15 },
-                { codigo: '7702001002', nombre: 'Arroz Blanco 5kg', precio: 12500, stock: 15 },
-                { codigo: '7702001003', nombre: 'Café Molido 250g', precio: 9900, stock: 5 },
-                { codigo: '7702001004', nombre: 'Azúcar Blanca 2kg', precio: 5800, stock: 0 },
-                { codigo: '7702001005', nombre: 'Pan Tajado', precio: 3000, stock: 34 }
-            ],
             clientes: [
                 { id: 1, nombre: 'Maria Restrepo', telefono: '3011234567', direccion: 'Calle 12 # 4-30', barrio: 'Centro' },
                 { id: 2, nombre: 'Carlos Ruiz', telefono: '3109876543', direccion: 'Carrera 7 # 15-02', barrio: 'La Playa' },
@@ -41,11 +43,6 @@ const RepositorioDomicilios = (function () {
                 { id: 2, nombre: 'Nequi' },
                 { id: 3, nombre: 'Transferencia' },
                 { id: 4, nombre: 'Tarjeta' }
-            ],
-            domiciliarios: [
-                { id: 3, nombre: 'Luis Pérez', activo: true },
-                { id: 4, nombre: 'Diana Morales', activo: true },
-                { id: 5, nombre: 'Jorge Rincón', activo: false }
             ],
             // Un pedido = una venta (ventas + detalle_venta) + su domicilio (domicilios).
             // historial = los registros de log_auditoria del módulo domicilios para ese pedido.
@@ -82,11 +79,11 @@ const RepositorioDomicilios = (function () {
                     id: 3, idVenta: 5, idCliente: 1, idMetodoPago: 2, fechaVenta: '2026-09-24T16:50:00',
                     items: [{ codigo: '7702001003', cantidad: 1, precio: 9900 }, { codigo: '7702001005', cantidad: 1, precio: 3000 }],
                     total: 12900, direccionEntrega: 'Calle 12 # 4-30', barrio: 'Centro', telefonoContacto: '3011234567',
-                    estado: 'asignado', idDomiciliario: 4,
+                    estado: 'asignado', idDomiciliario: 6,
                     fechaAsignacion: '2026-09-24T17:05:00', fechaEntrega: null, observacion: '',
                     historial: [
                         { fecha: '2026-09-24T16:50:00', estadoAnterior: null, estadoNuevo: 'pendiente', usuario: 'Administrador', detalle: 'Pedido registrado por teléfono' },
-                        { fecha: '2026-09-24T17:05:00', estadoAnterior: 'pendiente', estadoNuevo: 'asignado', usuario: 'Administrador', detalle: 'Asignado a Diana Morales' }
+                        { fecha: '2026-09-24T17:05:00', estadoAnterior: 'pendiente', estadoNuevo: 'asignado', usuario: 'Administrador', detalle: 'Asignado a Kevin Stiven Mora' }
                     ]
                 },
                 {
@@ -123,9 +120,21 @@ const RepositorioDomicilios = (function () {
     function guardar() {
         try {
             localStorage.setItem(CLAVE, JSON.stringify(enMemoria));
+            // Entregar o devolver un pedido cambia stock: se guarda junto con el pedido
+            RepositorioInventario.guardarCambios();
         } catch (error) {
             // Sin almacenamiento disponible: los cambios quedan solo en esta página
         }
+    }
+
+    // Un usuario de RepositorioUsuarios con la forma que ya usan las pantallas de Domicilios:
+    // { id, nombre, activo }. Así ninguna pantalla tuvo que cambiar.
+    function comoDomiciliario(usuario) {
+        return {
+            id: usuario.idUsuario,
+            nombre: usuario.nombres + ' ' + usuario.apellidos,
+            activo: usuario.estado === 'activo'
+        };
     }
 
     // Lo que se devuelve es la "interfaz" del repositorio: lo único visible desde afuera
@@ -137,10 +146,10 @@ const RepositorioDomicilios = (function () {
             return leer().pedidos.find(function (p) { return p.id === id; });
         },
         obtenerProductos: function () {
-            return leer().productos;
+            return RepositorioInventario.obtenerProductos();
         },
         obtenerProductoPorCodigo: function (codigo) {
-            return leer().productos.find(function (p) { return p.codigo === codigo; });
+            return RepositorioInventario.obtenerProducto(codigo);
         },
         obtenerClientePorId: function (id) {
             return leer().clientes.find(function (c) { return c.id === id; });
@@ -151,11 +160,16 @@ const RepositorioDomicilios = (function () {
         obtenerMetodoPago: function (id) {
             return leer().metodosPago.find(function (m) { return m.id === id; });
         },
+        // SELECT ... FROM usuarios WHERE id_rol = 3 (se piden a Usuarios: una sola fuente)
         obtenerDomiciliarios: function () {
-            return leer().domiciliarios;
+            return RepositorioUsuarios.obtenerUsuarios()
+                .filter(function (u) { return u.idRol === ROL_DOMICILIARIO; })
+                .map(comoDomiciliario);
         },
+        // Solo si ese usuario es domiciliario: un id de cajero no debe aparecer como domiciliario
         obtenerDomiciliarioPorId: function (id) {
-            return leer().domiciliarios.find(function (d) { return d.id === id; });
+            const usuario = RepositorioUsuarios.obtenerUsuario(id);
+            return usuario && usuario.idRol === ROL_DOMICILIARIO ? comoDomiciliario(usuario) : undefined;
         },
         // INSERT INTO clientes: el id sigue la secuencia, como un AUTO_INCREMENT
         agregarCliente: function (cliente) {
@@ -211,6 +225,8 @@ const RepositorioDomicilios = (function () {
         // Olvida la copia en memoria para leer de nuevo lo guardado (otra página pudo cambiarlo)
         recargar: function () {
             enMemoria = null;
+            RepositorioInventario.recargar();
+            RepositorioUsuarios.recargar();
         },
         // Vuelve a los datos de ejemplo (útil para repetir la demostración ante el instructor)
         restablecer: function () {

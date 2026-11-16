@@ -1,6 +1,9 @@
 // Módulo 3 – Ventas y Caja · Patrón SERVICE
 // Reglas de negocio del módulo. Las pantallas no las repiten: llaman a ServicioVentas.*
-// Depende de: ventas_datos.js
+// Depende de: inventario_datos.js, ventas_datos.js
+
+// Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
+if (typeof RepositorioVentas === 'undefined') throw new Error('ventas_servicio.js: falta cargar antes ventas_datos.js');
 
 const ServicioVentas = (function () {
 
@@ -33,7 +36,7 @@ const ServicioVentas = (function () {
 
     // HU01: sin inactivos, sin stock 0 y sin superar el stock. Devuelve null o el mensaje.
     function validarCantidad(producto, cantidad) {
-        if (!producto.activo) return producto.nombre + ' está inactivo.';
+        if (producto.estado !== 'activo') return producto.nombre + ' está inactivo.';
         if (producto.stock === 0) return producto.nombre + ' no tiene stock.';
         if (cantidad > producto.stock) return 'Stock insuficiente, solo hay ' + producto.stock + ' unidades';
         return null;
