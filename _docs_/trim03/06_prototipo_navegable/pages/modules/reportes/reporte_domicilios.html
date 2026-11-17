@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de domicilios - Control Store</title>
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <!-- Tema visual del diseño: va de último para que mande sobre los demás estilos -->
+    <link rel="stylesheet" href="../../../assets/css/tema_control_store.css">
+</head>
+
+<!-- RF30 Reporte de domicilios (solo administrador).
+     RF30.1 Consultar BD de domicilios: pedidos, estados, domiciliarios y barrios (RepositorioDomicilios).
+     RF30.2 Enviar estado de pedido: cada fila abre el detalle del pedido, donde se notifica al cliente.
+     Lo dibuja reporte_domicilios.js; Imprimir / PDF y Excel (CSV). -->
+<body class="content-body">
+
+    <nav aria-label="breadcrumb" class="d-print-none">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Reportes</li>
+            <li class="breadcrumb-item active" aria-current="page">Reporte de domicilios</li>
+        </ol>
+    </nav>
+
+    <ul class="nav nav-pills mb-3 d-print-none">
+        <li class="nav-item"><a class="nav-link" href="reporte_grafico_ventas.html">Ventas</a></li>
+        <li class="nav-item"><a class="nav-link" href="reporte_rotacion_inventario.html">Inventario</a></li>
+        <li class="nav-item"><a class="nav-link" href="reporte_grafico_usuarios.html">Usuarios</a></li>
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="reporte_domicilios.html">Domicilios</a></li>
+    </ul>
+
+    <!-- Filtros: fechas, estado, domiciliario y barrio. Las opciones las pone el JS -->
+    <form class="card card-body mb-3 d-print-none" id="formFiltros">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroDesde" class="form-label small">Desde</label>
+                <input type="date" class="form-control" id="filtroDesde">
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label for="filtroHasta" class="form-label small">Hasta</label>
+                <input type="date" class="form-control" id="filtroHasta">
+            </div>
+            <div class="col-sm-4 col-lg-2">
+                <label for="filtroEstado" class="form-label small">Estado</label>
+                <select class="form-select" id="filtroEstado">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="col-sm-4 col-lg-3">
+                <label for="filtroDomiciliario" class="form-label small">Domiciliario</label>
+                <select class="form-select" id="filtroDomiciliario">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="col-sm-4 col-lg-3">
+                <label for="filtroBarrio" class="form-label small">Barrio</label>
+                <select class="form-select" id="filtroBarrio">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-success" id="botonExcel"><i class="bi bi-file-earmark-excel"></i> Excel</button>
+                <button type="button" class="btn btn-primary" id="botonImprimir"><i class="bi bi-printer"></i> Imprimir / PDF</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="alert alert-secondary d-none" role="alert" id="sinDatos">No hay pedidos a domicilio en el periodo seleccionado</div>
+
+    <div id="contenido">
+        <!-- Indicadores del periodo -->
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-lg-3">
+                <div class="card card-body">
+                    <span class="small text-body-secondary">Pedidos</span>
+                    <span class="fs-3 fw-bold" id="totalPedidos">0</span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="card card-body">
+                    <span class="small text-body-secondary">Entregados</span>
+                    <span class="fs-3 fw-bold text-success" id="totalEntregados">0</span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="card card-body">
+                    <span class="small text-body-secondary">Tiempo promedio de entrega</span>
+                    <span class="fs-3 fw-bold" id="tiempoPromedio">—</span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="card card-body">
+                    <span class="small text-body-secondary">Cobrado en envíos</span>
+                    <span class="fs-3 fw-bold" id="totalEnvios">$0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3 d-print-none">
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">Pedidos por estado</div>
+                    <div class="card-body" id="graficoEstados"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">Entregas por domiciliario</div>
+                    <div class="card-body" id="graficoDomiciliarios"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">Pedidos por barrio</div>
+                    <div class="card-body" id="graficoBarrios"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hoja del reporte: es lo único que sale al imprimir (además de los indicadores) -->
+        <article class="card">
+            <div class="card-body p-4">
+                <header class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+                    <div>
+                        <h1 class="h5 mb-0">Autoservicio Ayuelal</h1>
+                        <p class="small text-body-secondary mb-0">NIT 900.123.456-7</p>
+                    </div>
+                    <div class="text-end">
+                        <h2 class="h6 mb-0">Reporte de domicilios</h2>
+                        <p class="small text-body-secondary mb-0">Periodo: <span data-reporte="periodo"></span></p>
+                        <p class="small text-body-secondary mb-0">Generado: <span data-reporte="generado"></span></p>
+                    </div>
+                </header>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle small">
+                        <thead>
+                            <tr>
+                                <th>Pedido</th><th>Fecha</th><th>Cliente</th><th>Barrio</th><th>Domiciliario</th>
+                                <th>Estado</th><th class="text-end">Productos</th><th class="text-end">Envío</th>
+                                <th class="d-print-none"><span class="visually-hidden">Acciones</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpoPedidos"></tbody>
+                    </table>
+                </div>
+
+                <dl class="row small mb-3 ms-auto" style="max-width: 340px">
+                    <dt class="col-8">En curso (pendiente, asignado, en camino)</dt><dd class="col-4 text-end mb-1" id="totalEnCurso">0</dd>
+                    <dt class="col-8">Cancelados</dt><dd class="col-4 text-end mb-1" id="totalCancelados">0</dd>
+                    <dt class="col-8">Productos entregados</dt><dd class="col-4 text-end mb-1" id="valorProductos">$0</dd>
+                    <dt class="col-8 fs-6">Total entregado (con envío)</dt><dd class="col-4 text-end fs-6 fw-bold mb-0" id="valorTotal">$0</dd>
+                </dl>
+
+                <footer class="border-top pt-2 mt-4 d-flex justify-content-between small text-body-secondary">
+                    <span>Generado por: <span data-reporte="usuario"></span></span>
+                    <span><span data-reporte="generado"></span> · Página 1 de 1</span>
+                </footer>
+            </div>
+        </article>
+    </div>
+
+    <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/auditoria/auditoria_datos.js"></script>
+    <script src="../../../assets/js/usuarios/usuarios_datos.js"></script>
+    <script src="../../../assets/js/inventario/inventario_datos.js"></script>
+    <script src="../../../assets/js/catalogos/catalogos_datos.js"></script>
+    <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
+    <script src="../../../assets/js/reportes/reportes_servicio.js"></script>
+    <script src="../../../assets/js/reportes/reportes_graficos.js"></script>
+    <script src="../../../assets/js/reportes/reporte_domicilios.js"></script>
+</body>
+
+</html>

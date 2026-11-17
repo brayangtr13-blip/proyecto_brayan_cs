@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../../assets/css/fonts.css">
     <link rel="stylesheet" href="../../assets/css/dashboard.css">
+    <!-- Tema visual del diseño: va de último para que mande sobre los demás estilos -->
+    <link rel="stylesheet" href="../../assets/css/tema_control_store.css">
 </head>
 
 <body>
@@ -35,6 +37,15 @@
                 </a>
                 <a href="../modules/ventas/cierre_caja.html" target="area_trabajo" class="sidebar-link">
                     <i class="bi bi-safe"></i> Cierre de caja
+                </a>
+
+                <!-- RF26 y RF28: la matriz de requisitos también se los da al cajero -->
+                <div class="sidebar-label">Reportes</div>
+                <a href="../modules/reportes/reporte_grafico_ventas.html" target="area_trabajo" class="sidebar-link">
+                    <i class="bi bi-bar-chart-line"></i> Gráfico de ventas
+                </a>
+                <a href="../modules/reportes/reporte_rotacion_inventario.html" target="area_trabajo" class="sidebar-link">
+                    <i class="bi bi-arrow-repeat"></i> Rotación de inventario
                 </a>
             </nav>
         </aside>

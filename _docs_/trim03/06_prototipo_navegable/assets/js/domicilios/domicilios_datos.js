@@ -210,14 +210,13 @@ const RepositorioDomicilios = (function () {
         },
         // INSERT INTO movimientos_inventario (tipo "salida" al entregar, "entrada" si se devuelve).
         // El stock del producto ya viene modificado por el Service; aquí se deja constancia y se guarda.
+        // El kárdex es uno solo: se guarda en RepositorioInventario
         registrarMovimientoInventario: function (movimiento) {
-            const datos = leer();
-            datos.movimientos = datos.movimientos || [];
-            datos.movimientos.push(movimiento);
+            RepositorioInventario.registrarMovimientos([movimiento]);
             guardar();
         },
         obtenerMovimientosInventario: function () {
-            return leer().movimientos || [];
+            return RepositorioInventario.obtenerMovimientos();
         },
         obtenerClientes: function () {
             return RepositorioCatalogos.obtenerClientes().map(comoCliente);

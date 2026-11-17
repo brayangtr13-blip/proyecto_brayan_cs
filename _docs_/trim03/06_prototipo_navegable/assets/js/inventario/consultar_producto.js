@@ -1,4 +1,5 @@
 // Consultar producto (CS-14). Solo conecta la pantalla con RepositorioInventario y ServicioInventario.
+// RF10.2: el historial de movimientos (kárdex) del producto lo calcula ServicioReportes.kardex.
 
 // IIFE: las variables de esta pantalla no quedan globales ni chocan con otros scripts
 (function () {
@@ -67,7 +68,32 @@
             badgeStock.textContent = '';
         }
 
+        mostrarMovimientos(producto.codigo);
         detalleProducto.classList.remove('d-none');
+    }
+
+    // RF10.2: los 10 movimientos más recientes, del más nuevo al más viejo
+    const TIPOS = { entrada: ['Entrada', 'success'], salida: ['Salida', 'danger'], ajuste: ['Ajuste', 'warning'], reverso: ['Reverso', 'info'] };
+    function mostrarMovimientos(codigo) {
+        const movimientos = ServicioReportes.kardex({ codigo: codigo }).reverse().slice(0, 10);
+        const cuerpo = document.getElementById('cuerpoMovimientos');
+        cuerpo.replaceChildren();
+        document.getElementById('sinMovimientos').classList.toggle('d-none', movimientos.length > 0);
+        document.getElementById('tablaMovimientos').classList.toggle('d-none', movimientos.length === 0);
+        document.getElementById('enlaceKardexCompleto').href = '../reportes/reporte_movimientos_inventario.html?codigo=' + codigo;
+        movimientos.forEach(function (m) {
+            const fila = cuerpo.insertRow();
+            const tipo = TIPOS[m.tipo];
+            const badge = document.createElement('span');
+            badge.className = 'badge text-bg-' + tipo[1];
+            badge.textContent = tipo[0];
+            [ServicioReportes.formatearFecha(m.fecha), badge, (m.cantidad > 0 ? '+' : '') + m.cantidad,
+                m.anterior, m.resultante, m.usuario, m.observacion].forEach(function (valor, i) {
+                const celda = fila.insertCell();
+                if (valor instanceof Node) celda.appendChild(valor); else celda.textContent = valor;
+                if (i >= 2 && i <= 4) celda.className = 'text-end';
+            });
+        });
     }
 
     // Delegacion de eventos: las filas se crean y se destruyen con cada busqueda,

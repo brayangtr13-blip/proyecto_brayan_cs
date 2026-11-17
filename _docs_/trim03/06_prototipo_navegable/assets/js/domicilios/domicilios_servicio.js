@@ -295,6 +295,8 @@ const ServicioDomicilios = (function () {
                 codigoProducto: item.codigo,
                 tipo: descontar ? 'salida' : 'entrada',
                 cantidad: item.cantidad,
+                // movimientos_inventario.id_usuario: quien entregó (el domiciliario del pedido)
+                idUsuario: pedido.idDomiciliario,
                 usuario: evento.usuario,
                 observacion: (descontar ? 'Entrega' : 'Cancelación') + ' del pedido a domicilio #' + pedido.id,
                 fecha: new Date().toISOString()

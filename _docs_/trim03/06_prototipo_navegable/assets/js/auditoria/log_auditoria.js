@@ -23,7 +23,9 @@ if (typeof RepositorioAuditoria === 'undefined') throw new Error('log_auditoria.
         anular: ['Anular', 'text-bg-danger'],
         asignar: ['Asignar', 'text-bg-primary'],
         cancelar: ['Cancelar', 'text-bg-danger'],
-        cerrar_caja: ['Cierre de caja', 'text-bg-dark']
+        cerrar_caja: ['Cierre de caja', 'text-bg-dark'],
+        imprimir: ['Imprimir', 'text-bg-light border'],
+        exportar: ['Exportar', 'text-bg-light border']
     };
 
     const filtros = {

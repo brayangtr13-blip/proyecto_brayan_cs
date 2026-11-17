@@ -9,10 +9,13 @@
     <link rel="stylesheet" href="../../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../../../assets/css/fonts.css">
     <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <!-- Tema visual del diseño: va de último para que mande sobre los demás estilos -->
+    <link rel="stylesheet" href="../../../assets/css/tema_control_store.css">
 </head>
 
-<!-- CS-23 · MOD_05_HU01 Reporte gráfico de ventas. Solo HTML + Bootstrap:
-     las barras son progress bars con los datos de la BD (ventas #2, #3 y #4). -->
+<!-- CS-23 · MOD_05_HU01 · RF26 Reporte gráfico de ventas (administrador y cajero).
+     Los datos los calcula ServicioReportes desde RepositorioVentas; esta página solo los dibuja
+     (reporte_grafico_ventas.js). Las barras son progress bars de Bootstrap. -->
 <body class="content-body">
 
     <nav aria-label="breadcrumb">
@@ -22,33 +25,34 @@
         </ol>
     </nav>
 
-    <!-- Pestañas del módulo. Docs: https://getbootstrap.com/docs/5.3/components/navs-tabs/#pills -->
+    <!-- Pestañas de los reportes gráficos. Docs: https://getbootstrap.com/docs/5.3/components/navs-tabs/#pills -->
     <ul class="nav nav-pills mb-3">
         <li class="nav-item"><a class="nav-link active" aria-current="page" href="reporte_grafico_ventas.html">Ventas</a></li>
-        <li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Inventario</a></li>
-        <li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Usuarios</a></li>
+        <li class="nav-item"><a class="nav-link" href="reporte_rotacion_inventario.html">Inventario</a></li>
+        <li class="nav-item"><a class="nav-link" href="reporte_grafico_usuarios.html">Usuarios</a></li>
+        <li class="nav-item"><a class="nav-link" href="reporte_domicilios.html">Domicilios</a></li>
     </ul>
 
     <!-- Filtros: rango de fechas y agrupación. Docs: https://getbootstrap.com/docs/5.3/forms/layout/#gutters -->
-    <form class="card card-body mb-3">
+    <form class="card card-body mb-3" id="formFiltros">
         <div class="row g-2 align-items-end">
             <div class="col-sm-6 col-lg-3">
                 <label for="filtroDesde" class="form-label small">Desde</label>
-                <input type="date" class="form-control" id="filtroDesde" value="2026-09-01">
+                <input type="date" class="form-control" id="filtroDesde">
             </div>
             <div class="col-sm-6 col-lg-3">
                 <label for="filtroHasta" class="form-label small">Hasta</label>
-                <input type="date" class="form-control" id="filtroHasta" value="2026-09-30">
+                <input type="date" class="form-control" id="filtroHasta">
             </div>
             <!-- Grupo de botones tipo radio. Docs: https://getbootstrap.com/docs/5.3/forms/checks-radios/#radio-toggle-buttons -->
             <div class="col-sm-8 col-lg-4">
                 <span class="form-label small d-block">Agrupar por</span>
                 <div class="btn-group w-100" role="group" aria-label="Agrupación">
-                    <input type="radio" class="btn-check" name="agrupacion" id="agruparDia" checked>
+                    <input type="radio" class="btn-check" name="agrupacion" id="agruparDia" value="dia" checked>
                     <label class="btn btn-outline-primary" for="agruparDia">Diaria</label>
-                    <input type="radio" class="btn-check" name="agrupacion" id="agruparSemana">
+                    <input type="radio" class="btn-check" name="agrupacion" id="agruparSemana" value="semana">
                     <label class="btn btn-outline-primary" for="agruparSemana">Semanal</label>
-                    <input type="radio" class="btn-check" name="agrupacion" id="agruparMes">
+                    <input type="radio" class="btn-check" name="agrupacion" id="agruparMes" value="mes">
                     <label class="btn btn-outline-primary" for="agruparMes">Mensual</label>
                 </div>
             </div>
@@ -58,129 +62,71 @@
         </div>
     </form>
 
-    <!-- Sin datos en el rango (se mostrará con JS) -->
-    <div class="alert alert-secondary d-none" role="alert">No hay ventas registradas en el periodo</div>
+    <!-- Sin datos en el rango: lo muestra el JS -->
+    <div class="alert alert-secondary d-none" role="alert" id="sinDatos">No hay ventas registradas en el periodo</div>
 
-    <!-- Resumen numérico sin ventas anuladas -->
-    <div class="row g-3 mb-3">
-        <div class="col-md-4">
-            <div class="card card-body">
-                <span class="small text-body-secondary">Total vendido</span>
-                <span class="fs-3 fw-bold">$62.050</span>
+    <div id="contenido">
+        <!-- Resumen numérico sin ventas anuladas -->
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <div class="card card-body">
+                    <span class="small text-body-secondary">Total vendido</span>
+                    <span class="fs-3 fw-bold" id="totalVendido">$0</span>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-body">
-                <span class="small text-body-secondary">Número de ventas</span>
-                <span class="fs-3 fw-bold">3</span>
+            <div class="col-md-4">
+                <div class="card card-body">
+                    <span class="small text-body-secondary">Número de ventas</span>
+                    <span class="fs-3 fw-bold" id="numeroVentas">0</span>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-body">
-                <span class="small text-body-secondary">Ticket promedio</span>
-                <span class="fs-3 fw-bold">$20.683</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-3">
-        <!-- Ventas por periodo: barras horizontales; title = valor exacto al pasar el cursor.
-             Docs: https://getbootstrap.com/docs/5.3/components/progress/ -->
-        <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-header">Total de ventas por día</div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between small"><span>23/09/2026</span><span>$62.050</span></div>
-                    <div class="progress mb-2" role="progressbar" aria-label="23/09/2026" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" title="23/09/2026: $62.050">
-                        <div class="progress-bar" style="width: 100%"></div>
-                    </div>
-                    <div class="d-flex justify-content-between small"><span>24/09/2026</span><span>$0</span></div>
-                    <div class="progress mb-2" role="progressbar" aria-label="24/09/2026" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" title="24/09/2026: $0">
-                        <div class="progress-bar" style="width: 0%"></div>
-                    </div>
-                    <div class="d-flex justify-content-between small"><span>25/09/2026</span><span>$0</span></div>
-                    <div class="progress" role="progressbar" aria-label="25/09/2026" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" title="25/09/2026: $0">
-                        <div class="progress-bar" style="width: 0%"></div>
-                    </div>
-                    <p class="small text-body-secondary mt-3 mb-0">Eje: fecha · Valor: total en COP</p>
+            <div class="col-md-4">
+                <div class="card card-body">
+                    <span class="small text-body-secondary">Ticket promedio</span>
+                    <span class="fs-3 fw-bold" id="ticketPromedio">$0</span>
                 </div>
             </div>
         </div>
 
-        <!-- Distribución por método de pago: barra apilada en lugar de torta.
-             Docs: https://getbootstrap.com/docs/5.3/components/progress/#multiple-bars -->
-        <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-header">Ventas por método de pago</div>
-                <div class="card-body">
-                    <div class="progress-stacked mb-3" style="height: 24px">
-                        <div class="progress" role="progressbar" aria-label="Efectivo" aria-valuenow="48" aria-valuemin="0" aria-valuemax="100" style="width: 48%" title="Efectivo: $29.750 (48 %)">
-                            <div class="progress-bar bg-success">48 %</div>
-                        </div>
-                        <div class="progress" role="progressbar" aria-label="Nequi" aria-valuenow="52" aria-valuemin="0" aria-valuemax="100" style="width: 52%" title="Nequi: $32.300 (52 %)">
-                            <div class="progress-bar">52 %</div>
-                        </div>
+        <div class="row g-3">
+            <!-- Ventas por periodo: barras horizontales; title = valor exacto al pasar el cursor -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header" id="tituloPeriodo">Total de ventas por día</div>
+                    <div class="card-body">
+                        <div id="graficoPeriodo"></div>
+                        <p class="small text-body-secondary mt-3 mb-0">Eje: fecha · Valor: total en COP, sin anuladas</p>
                     </div>
-                    <ul class="list-unstyled small mb-0">
-                        <li><i class="bi bi-square-fill text-success"></i> Efectivo · 2 ventas · $29.750</li>
-                        <li><i class="bi bi-square-fill text-primary"></i> Nequi · 1 venta · $32.300</li>
-                        <li class="text-body-secondary"><i class="bi bi-square"></i> Transferencia · 0 ventas · $0</li>
-                        <li class="text-body-secondary"><i class="bi bi-square"></i> Tarjeta · 0 ventas · $0</li>
-                    </ul>
                 </div>
             </div>
-        </div>
 
-        <!-- Top 10 de productos por unidades vendidas (la BD tiene 4 con ventas) -->
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">Top 10 productos más vendidos</div>
-                <div class="card-body">
-                    <div class="row small fw-semibold text-body-secondary mb-1">
-                        <div class="col-4">Producto</div><div class="col-6">Unidades</div><div class="col-2 text-end">Total</div>
-                    </div>
-                    <div class="row align-items-center mb-2">
-                        <div class="col-4 small">Leche Entera 1L</div>
-                        <div class="col-6">
-                            <div class="progress" role="progressbar" aria-label="Leche Entera 1L" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5" title="Leche Entera 1L: 5 und. · $14.250">
-                                <div class="progress-bar" style="width: 100%">5</div>
-                            </div>
-                        </div>
-                        <div class="col-2 text-end small">$14.250</div>
-                    </div>
-                    <div class="row align-items-center mb-2">
-                        <div class="col-4 small">Arroz Blanco 5kg</div>
-                        <div class="col-6">
-                            <div class="progress" role="progressbar" aria-label="Arroz Blanco 5kg" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" title="Arroz Blanco 5kg: 2 und. · $25.000">
-                                <div class="progress-bar" style="width: 40%">2</div>
-                            </div>
-                        </div>
-                        <div class="col-2 text-end small">$25.000</div>
-                    </div>
-                    <div class="row align-items-center mb-2">
-                        <div class="col-4 small">Café Molido 250g</div>
-                        <div class="col-6">
-                            <div class="progress" role="progressbar" aria-label="Café Molido 250g" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" title="Café Molido 250g: 2 und. · $19.800">
-                                <div class="progress-bar" style="width: 40%">2</div>
-                            </div>
-                        </div>
-                        <div class="col-2 text-end small">$19.800</div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-4 small">Pan Tajado</div>
-                        <div class="col-6">
-                            <div class="progress" role="progressbar" aria-label="Pan Tajado" aria-valuenow="1" aria-valuemin="0" aria-valuemax="5" title="Pan Tajado: 1 und. · $3.000">
-                                <div class="progress-bar" style="width: 20%">1</div>
-                            </div>
-                        </div>
-                        <div class="col-2 text-end small">$3.000</div>
-                    </div>
+            <!-- Distribución por método de pago: barra apilada en lugar de torta -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">Ventas por método de pago</div>
+                    <div class="card-body" id="graficoMetodos"></div>
+                </div>
+            </div>
+
+            <!-- Top 10 de productos por unidades vendidas -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">Top 10 productos más vendidos</div>
+                    <div class="card-body" id="graficoProductos"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../assets/js/auditoria/auditoria_datos.js"></script>
+    <script src="../../../assets/js/usuarios/usuarios_datos.js"></script>
+    <script src="../../../assets/js/inventario/inventario_datos.js"></script>
+    <script src="../../../assets/js/catalogos/catalogos_datos.js"></script>
+    <script src="../../../assets/js/ventas/ventas_datos.js"></script>
+    <script src="../../../assets/js/reportes/reportes_servicio.js"></script>
+    <script src="../../../assets/js/reportes/reportes_graficos.js"></script>
+    <script src="../../../assets/js/reportes/reporte_grafico_ventas.js"></script>
 </body>
 
 </html>

@@ -10,6 +10,8 @@
     <!-- Fuente Inter descargada (no CDN): ver assets/vendor/fonts/inter/ -->
     <link rel="stylesheet" href="../../../assets/css/fonts.css">
     <link rel="stylesheet" href="../../../assets/css/dashboard.css">
+    <!-- Tema visual del diseño: va de último para que mande sobre los demás estilos -->
+    <link rel="stylesheet" href="../../../assets/css/tema_control_store.css">
 </head>
 <body class="content-body">
 
@@ -92,10 +94,9 @@
     <!-- Paginacion visual: con 4 productos de ejemplo no hay nada que paginar todavia,
          queda lista para cuando existan datos reales -->
     <nav aria-label="Paginación de productos">
-        <ul class="pagination justify-content-center">
-            <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item disabled"><a class="page-link" href="#">Siguiente</a></li>
+        <!-- Paginación real: la arma listar_productos.js (10 productos por página) -->
+        <p class="small text-muted text-center mb-2" id="resumenPaginas"></p>
+        <ul class="pagination justify-content-center" id="paginacionProductos">
         </ul>
     </nav>
 

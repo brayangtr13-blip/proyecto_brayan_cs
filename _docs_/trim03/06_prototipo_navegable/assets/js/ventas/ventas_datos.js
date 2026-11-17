@@ -35,7 +35,7 @@ const RepositorioVentas = (function () {
                 { id: 4, idUsuario: 2, idArqueo: 2, idCliente: 2, idMetodoPago: 1, fecha: '2026-09-23T11:10:30', total: 21050, estado: 'pagada',
                   detalle: [{ codigo: '7702001001', cantidad: 3, precio: 2850 }, { codigo: '7702001002', cantidad: 1, precio: 12500 }] }
             ],
-            movimientos: []    // movimientos_inventario (log_auditoria vive en RepositorioAuditoria)
+            // movimientos_inventario vive en RepositorioInventario y log_auditoria en RepositorioAuditoria
         };
     }
 
@@ -110,13 +110,13 @@ const RepositorioVentas = (function () {
             const datos = leer();
             venta.id = siguienteId(datos.ventas);
             datos.ventas.push(venta);
-            movimientos.forEach(function (m) { datos.movimientos.push(m); });
+            RepositorioInventario.registrarMovimientos(movimientos);   // el kárdex es de Inventario
             guardar();
             return venta;
         },
         // INSERT INTO movimientos_inventario (entradas al anular)
         agregarMovimientos: function (lista) {
-            lista.forEach(function (m) { leer().movimientos.push(m); });
+            RepositorioInventario.registrarMovimientos(lista);
         },
         // El log es uno solo para todo el sistema: Ventas escribe y lee sus eventos (módulo 3).
         // Anular y cerrar caja cambian la venta o el turno justo antes de auditar: por eso aquí
