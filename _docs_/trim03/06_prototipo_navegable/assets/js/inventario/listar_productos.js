@@ -16,34 +16,10 @@
     let paginaActual = 1;
     let ultimaLista = [];
 
-    function dibujarPaginacion(total) {
-        const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
-        paginaActual = Math.min(paginaActual, paginas);
-        const desde = total === 0 ? 0 : (paginaActual - 1) * POR_PAGINA + 1;
-        document.getElementById('resumenPaginas').textContent =
-            'Mostrando ' + desde + '–' + Math.min(paginaActual * POR_PAGINA, total) + ' de ' + total + ' productos';
-        const ul = document.getElementById('paginacionProductos');
-        ul.replaceChildren();
-        function boton(texto, destino, activo, deshabilitado) {
-            const li = document.createElement('li');
-            li.className = 'page-item' + (activo ? ' active' : '') + (deshabilitado ? ' disabled' : '');
-            const b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'page-link';
-            b.textContent = texto;
-            if (activo) b.setAttribute('aria-current', 'page');
-            b.addEventListener('click', function () { paginaActual = destino; mostrarPagina(); });
-            li.appendChild(b);
-            ul.appendChild(li);
-        }
-        boton('Anterior', paginaActual - 1, false, paginaActual === 1);
-        for (let n = 1; n <= paginas; n++) boton(String(n), n, n === paginaActual, false);
-        boton('Siguiente', paginaActual + 1, false, paginaActual === paginas);
-    }
-
-    // Dibuja solo los productos de la página actual
+    // Dibuja solo los productos de la página actual (la paginación es la compartida de utilidades.js)
     function mostrarPagina() {
-        dibujarPaginacion(ultimaLista.length);
+        paginaActual = Paginacion.dibujar(document.getElementById('paginacionProductos'), document.getElementById('resumenPaginas'),
+            ultimaLista.length, paginaActual, POR_PAGINA, 'productos', function (n) { paginaActual = n; mostrarPagina(); });
         renderizarProductos(ultimaLista.slice((paginaActual - 1) * POR_PAGINA, paginaActual * POR_PAGINA), ultimaLista.length);
     }
 
@@ -62,6 +38,9 @@
             // La regla de alerta vive en el Service (la misma para alertas_stock.js y consultar_producto.js)
             const stockBajo = ServicioInventario.tieneStockBajo(producto);
             const activo = producto.estado === 'activo';
+            // Lo que escribe el usuario (código, nombre) se escapa antes de meterlo en innerHTML
+            const codigo = Formato.escaparHtml(producto.codigo);
+            const nombre = Formato.escaparHtml(producto.nombre);
             const fila = document.createElement('tr');
             if (stockBajo) {
                 fila.classList.add('table-danger');
@@ -72,24 +51,24 @@
             const botonBaja = activo
                 ? '<button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" ' +
                     'data-bs-toggle="modal" data-bs-target="#modalEliminarProducto" ' +
-                    'data-codigo="' + producto.codigo + '" data-nombre="' + producto.nombre + '" ' +
+                    'data-codigo="' + codigo + '" data-nombre="' + nombre + '" ' +
                     'data-stock="' + producto.stock + '">' +
                     '<i class="bi bi-trash"></i></button>'
                 : '<button type="button" class="btn btn-sm btn-outline-success btn-reactivar" title="Reactivar" ' +
-                    'data-codigo="' + producto.codigo + '">' +
+                    'data-codigo="' + codigo + '">' +
                     '<i class="bi bi-arrow-counterclockwise"></i></button>';
 
             fila.innerHTML =
-                '<td>' + producto.codigo + '</td>' +
-                '<td>' + producto.nombre + '</td>' +
-                '<td>' + ServicioInventario.textoCategoria(producto.categoria) + '</td>' +
+                '<td>' + codigo + '</td>' +
+                '<td>' + nombre + '</td>' +
+                '<td>' + Formato.escaparHtml(ServicioInventario.textoCategoria(producto.categoria)) + '</td>' +
                 '<td>' + ServicioInventario.formatearPrecio(producto.precio) + '</td>' +
                 '<td>' + producto.stock + (stockBajo ? ' <i class="bi bi-exclamation-triangle-fill text-danger" title="Stock bajo el mínimo"></i>' : '') + '</td>' +
                 '<td><span class="badge text-bg-' + (activo ? 'success' : 'secondary') + '">' +
                     (activo ? 'Activo' : 'Inactivo') + '</span></td>' +
                 '<td>' +
-                    '<a href="consultar_producto.html?codigo=' + producto.codigo + '" class="btn btn-sm btn-outline-secondary" title="Ver"><i class="bi bi-eye"></i></a> ' +
-                    '<a href="editar_producto.html?codigo=' + producto.codigo + '" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a> ' +
+                    '<a href="consultar_producto.html?codigo=' + encodeURIComponent(producto.codigo) + '" class="btn btn-sm btn-outline-secondary" title="Ver"><i class="bi bi-eye"></i></a> ' +
+                    '<a href="editar_producto.html?codigo=' + encodeURIComponent(producto.codigo) + '" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a> ' +
                     botonBaja +
                 '</td>';
 
@@ -169,7 +148,8 @@
         const stock = Number(boton.dataset.stock);
 
         // Texto exacto que pide CS-16, mas la advertencia extra si todavia hay stock
-        let texto = '¿Desea eliminar el producto "' + boton.dataset.nombre + '"?';
+        // dataset devuelve el nombre ya sin escapar: se escapa de nuevo para el innerHTML
+        let texto = '¿Desea eliminar el producto "' + Formato.escaparHtml(boton.dataset.nombre) + '"?';
         if (stock > 0) {
             texto += '<br><span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> ' +
                 'Este producto aún tiene ' + stock + ' unidades en stock, ¿desea continuar?</span>';

@@ -35,8 +35,9 @@ const Sesion = (function () {
 
         // RNF04: los intentos fallidos también quedan en el log (así se detecta quien prueba cuentas)
         if (!usuario) {
+            // No se guarda lo que se escribió: podría ser una contraseña tecleada en el campo equivocado
             RepositorioAuditoria.registrar({ idUsuario: null, idModulo: RepositorioAuditoria.MODULO.USUARIOS,
-                accion: 'login_fallido', detalle: 'Intento de acceso con un usuario que no existe: ' + texto });
+                accion: 'login_fallido', detalle: 'Intento de acceso con un usuario o correo que no existe' });
             return { ok: false, error: 'Usuario o contraseña incorrectos' };
         }
         if (usuario.estado !== 'activo') {
@@ -63,8 +64,13 @@ const Sesion = (function () {
 
     // RF02: cerrar sesión = olvidar quién entró
     function cerrar() {
-        RepositorioAuditoria.registrar({ idUsuario: actual().idUsuario, idModulo: RepositorioAuditoria.MODULO.USUARIOS,
-            accion: 'logout', detalle: 'Cerró sesión' });
+        // Solo se registra si de verdad había una sesión (actual() inventaría al administrador)
+        let guardada = null;
+        try { guardada = JSON.parse(sessionStorage.getItem(CLAVE)); } catch (e) { /* sin almacenamiento */ }
+        if (guardada) {
+            RepositorioAuditoria.registrar({ idUsuario: guardada.idUsuario, idModulo: RepositorioAuditoria.MODULO.USUARIOS,
+                accion: 'logout', detalle: 'Cerró sesión' });
+        }
         try { sessionStorage.removeItem(CLAVE); } catch (e) { /* sin almacenamiento */ }
     }
 

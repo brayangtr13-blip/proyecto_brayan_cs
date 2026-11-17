@@ -21,26 +21,11 @@ const ServicioReportes = (function () {
 
     // ---------------- Utilidades de formato y fechas ----------------
 
-    function formatearPrecio(valor) {
-        return (valor < 0 ? '-' : '') + '$' + Math.abs(Math.round(valor)).toLocaleString('es-CO');
-    }
-
-    function formatearFecha(texto) {
-        const f = new Date(texto);
-        return f.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' +
-            f.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
-    }
-
-    function formatearDia(aaaammdd) {
-        const p = aaaammdd.split('-');
-        return p[2] + '/' + p[1] + '/' + p[0];
-    }
-
-    // Fecha local AAAA-MM-DD (la de los <input type="date">)
-    function fechaLocal(texto) {
-        const f = new Date(texto);
-        return f.getFullYear() + '-' + String(f.getMonth() + 1).padStart(2, '0') + '-' + String(f.getDate()).padStart(2, '0');
-    }
+    // El formato vive en utilidades.js (una sola copia para todo el sistema)
+    const formatearPrecio = Formato.precio;
+    const formatearFecha = Formato.fecha;
+    const formatearDia = Formato.dia;
+    const fechaLocal = Formato.fechaLocal;
 
     // Rango vacío = sin límite por ese lado
     function enRango(texto, desde, hasta) {
@@ -100,8 +85,9 @@ const ServicioReportes = (function () {
                 (!f.idUsuario || v.idUsuario === f.idUsuario) &&
                 (!f.idMetodoPago || v.idMetodoPago === f.idMetodoPago);
         }).sort(function (a, b) { return new Date(a.fecha) - new Date(b.fecha); });
+        // Solo se cuentan las pagadas: los domicilios pendientes todavía no son plata recibida
         return {
-            pagadas: ventas.filter(function (v) { return v.estado !== 'anulada'; }),
+            pagadas: ventas.filter(function (v) { return v.estado === 'pagada'; }),
             anuladas: ventas.filter(function (v) { return v.estado === 'anulada'; })
         };
     }
@@ -118,9 +104,15 @@ const ServicioReportes = (function () {
         });
     }
 
-    // Todos los métodos de pago salen, aunque tengan $0 (así se ve cuáles no se usaron)
+    // Salen los métodos activos (aunque tengan $0, así se ve cuáles no se usaron) y también los
+    // inactivos que tengan ventas en el periodo: si no, esas ventas desaparecerían del gráfico
     function ventasPorMetodo(pagadas) {
-        return requiere('RepositorioVentas').obtenerMetodosPago().map(function (m) {
+        const repo = requiere('RepositorioVentas');
+        const metodos = repo.obtenerMetodosPago().slice();
+        pagadas.forEach(function (v) {
+            if (!metodos.some(function (m) { return m.id === v.idMetodoPago; })) metodos.push(repo.obtenerMetodoPago(v.idMetodoPago));
+        });
+        return metodos.map(function (m) {
             const delMetodo = pagadas.filter(function (v) { return v.idMetodoPago === m.id; });
             return { id: m.id, etiqueta: m.nombre, valor: sumar(delMetodo, 'total'), cantidad: delMetodo.length };
         });
@@ -157,7 +149,8 @@ const ServicioReportes = (function () {
 
     // Kárdex con stock anterior y resultante. Se calcula hacia atrás desde el stock actual:
     // stock antes del primer movimiento = stock actual - suma de todos los movimientos.
-    function kardex(f) {
+    // Se calcula UNA vez por dibujo (kardexCompleto) y cada gráfico filtra esa misma lista.
+    function kardexCompleto() {
         const inv = requiere('RepositorioInventario');
         const todos = inv.obtenerMovimientos().slice().sort(function (a, b) {
             return (new Date(a.fecha) - new Date(b.fecha)) || (a.id - b.id);
@@ -167,7 +160,7 @@ const ServicioReportes = (function () {
             const suyos = todos.filter(function (m) { return m.codigoProducto === p.codigo; });
             saldo[p.codigo] = p.stock - sumar(suyos, signo);
         });
-        const renglones = todos.map(function (m) {
+        return todos.map(function (m) {
             const producto = inv.obtenerProducto(m.codigoProducto) || { nombre: m.codigoProducto, categoria: '' };
             const anterior = saldo[m.codigoProducto] || 0;
             saldo[m.codigoProducto] = anterior + signo(m);
@@ -177,7 +170,11 @@ const ServicioReportes = (function () {
                 resultante: saldo[m.codigoProducto], usuario: nombreUsuario(m.idUsuario), observacion: m.observacion || ''
             };
         });
-        return renglones.filter(function (r) {
+    }
+
+    // base = un kardexCompleto() ya calculado (opcional): así varios gráficos no lo repiten
+    function kardex(f, base) {
+        return (base || kardexCompleto()).filter(function (r) {
             return enRango(r.fecha, f.desde, f.hasta) && (!f.codigo || r.codigo === f.codigo) &&
                 (!f.categoria || r.categoria === f.categoria) &&
                 (!f.tipo || r.tipo === f.tipo || (f.tipo === 'entrada' && r.tipo === 'reverso'));
@@ -191,9 +188,9 @@ const ServicioReportes = (function () {
     }
 
     // Rotación = unidades que salieron por ventas o entregas, menos las que volvieron (reversos)
-    function rotacion(f) {
+    function rotacion(f, base) {
         const inv = requiere('RepositorioInventario');
-        const renglones = kardex({ desde: f.desde, hasta: f.hasta });
+        const renglones = kardex({ desde: f.desde, hasta: f.hasta }, base);
         return inv.obtenerProductos().filter(function (p) {
             return p.estado === 'activo' && (!f.categoria || p.categoria === f.categoria);
         }).map(function (p) {
@@ -205,8 +202,8 @@ const ServicioReportes = (function () {
     }
 
     // Unidades totales en inventario: al inicio del periodo y al final de cada día con movimientos
-    function evolucionStock(f) {
-        const todos = kardex({ categoria: f.categoria });   // todo el kárdex, sin cortar por fechas
+    function evolucionStock(f, base) {
+        const todos = kardex({ categoria: f.categoria }, base);   // todo el kárdex, sin cortar por fechas
         const saldo = {};
         requiere('RepositorioInventario').obtenerProductos().forEach(function (p) {
             if (f.categoria && p.categoria !== f.categoria) return;
@@ -226,8 +223,8 @@ const ServicioReportes = (function () {
         return puntos;
     }
 
-    function entradasYSalidasPorDia(f) {
-        return agrupar(kardex(f), function (r) { return llaveGrupo(r.fecha, 'dia'); }).map(function (g) {
+    function entradasYSalidasPorDia(f, base) {
+        return agrupar(kardex(f, base), function (r) { return llaveGrupo(r.fecha, 'dia'); }).map(function (g) {
             return { etiqueta: g.etiqueta, entradas: sumar(g.items.filter(function (r) { return r.tipo === 'entrada'; }), 'cantidad'),
                 salidas: -sumar(g.items.filter(function (r) { return r.tipo === 'salida'; }), 'cantidad') };
         });
@@ -325,7 +322,7 @@ const ServicioReportes = (function () {
         fechaLocal: fechaLocal, rangoInicial: rangoInicial, nombreUsuario: nombreUsuario,
         ventasDelPeriodo: ventasDelPeriodo, resumenVentas: resumenVentas, ventasPorPeriodo: ventasPorPeriodo,
         ventasPorMetodo: ventasPorMetodo, productosVendidos: productosVendidos,
-        kardex: kardex, resumenKardex: resumenKardex, rotacion: rotacion, evolucionStock: evolucionStock,
+        kardexCompleto: kardexCompleto, kardex: kardex, resumenKardex: resumenKardex, rotacion: rotacion, evolucionStock: evolucionStock,
         entradasYSalidasPorDia: entradasYSalidasPorDia,
         ventasPorVendedor: ventasPorVendedor, usuariosPorRol: usuariosPorRol,
         TEXTO_ESTADO: TEXTO_ESTADO, pedidosDelPeriodo: pedidosDelPeriodo, resumenDomicilios: resumenDomicilios,

@@ -41,17 +41,9 @@ if (typeof RepositorioAuditoria === 'undefined') throw new Error('log_auditoria.
     const paginacion = document.getElementById('paginacion');
     let pagina = 1;
 
-    // Fecha local AAAA-MM-DD (la que usan los <input type="date">)
-    function fechaLocal(texto) {
-        const f = new Date(texto);
-        return f.getFullYear() + '-' + String(f.getMonth() + 1).padStart(2, '0') + '-' + String(f.getDate()).padStart(2, '0');
-    }
-
-    function formatearFecha(texto) {
-        const f = new Date(texto);
-        return f.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' +
-            f.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
-    }
+    // El formato y la paginación vienen de utilidades.js
+    const fechaLocal = Formato.fechaLocal;
+    const formatearFecha = Formato.fecha;
 
     function datosUsuario(idUsuario) {
         const u = idUsuario ? RepositorioUsuarios.obtenerUsuario(idUsuario) : null;
@@ -114,34 +106,11 @@ if (typeof RepositorioAuditoria === 'undefined') throw new Error('log_auditoria.
         caja.classList.toggle('text-danger', fallidos > 0);
     }
 
-    function dibujarPaginacion(total) {
-        const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
-        pagina = Math.min(pagina, paginas);
-        const inicio = total === 0 ? 0 : (pagina - 1) * POR_PAGINA + 1;
-        resumenPaginas.textContent = 'Mostrando ' + inicio + '–' + Math.min(pagina * POR_PAGINA, total) + ' de ' + total + ' eventos';
-
-        paginacion.replaceChildren();
-        function boton(texto, destino, activo, deshabilitado) {
-            const li = document.createElement('li');
-            li.className = 'page-item' + (activo ? ' active' : '') + (deshabilitado ? ' disabled' : '');
-            const b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'page-link';
-            b.textContent = texto;
-            if (activo) b.setAttribute('aria-current', 'page');
-            b.addEventListener('click', function () { pagina = destino; dibujar(); });
-            li.appendChild(b);
-            paginacion.appendChild(li);
-        }
-        boton('Anterior', pagina - 1, false, pagina === 1);
-        for (let n = 1; n <= paginas; n++) boton(String(n), n, n === pagina, false);
-        boton('Siguiente', pagina + 1, false, pagina === paginas);
-    }
-
     function dibujar() {
         const eventos = filtrar();
         dibujarResumen(eventos);
-        dibujarPaginacion(eventos.length);
+        pagina = Paginacion.dibujar(paginacion, resumenPaginas, eventos.length, pagina, POR_PAGINA, 'eventos',
+            function (n) { pagina = n; dibujar(); });
         sinEventos.classList.toggle('d-none', eventos.length > 0);
 
         cuerpo.replaceChildren();

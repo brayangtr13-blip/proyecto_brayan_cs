@@ -19,14 +19,16 @@
 if (typeof RepositorioInventario === 'undefined') throw new Error('domicilios_datos.js: falta cargar antes inventario/inventario_datos.js');
 if (typeof RepositorioUsuarios === 'undefined') throw new Error('domicilios_datos.js: falta cargar antes usuarios/usuarios_datos.js');
 if (typeof RepositorioCatalogos === 'undefined') throw new Error('domicilios_datos.js: falta cargar antes catalogos/catalogos_datos.js');
+if (typeof RepositorioVentas === 'undefined') throw new Error('domicilios_datos.js: falta cargar antes ventas/ventas_datos.js');
 
 const RepositorioDomicilios = (function () {
     // v2: los pedidos ahora traen historial y stockDescontado (CS-37).
     // v3: el pedido #3 pasa de Diana Morales (no existe en la BD) a Kevin Mora (usuario 6).
     // v4: clientes y métodos de pago salen a RepositorioCatalogos; el barrio deja de ser texto
     //     y pasa a idBarrio + costoEnvio, como domicilios.id_barrio y domicilios.costo_envio.
+    // v5: el pedido #2 (venta #4) ya tenía su stock descontado en el kárdex; y el número de venta lo da Ventas.
     // Cambiar la versión hace que los navegadores con datos viejos arranquen con los de ejemplo.
-    const CLAVE = 'controlstore_domicilios_v4';
+    const CLAVE = 'controlstore_domicilios_v5';
 
     // id del rol domiciliario en la tabla roles
     const ROL_DOMICILIARIO = 3;
@@ -63,6 +65,9 @@ const RepositorioDomicilios = (function () {
                     total: 21050, direccionEntrega: 'Carrera 7 # 15-02', idBarrio: 2, costoEnvio: 3000, telefonoContacto: '3109876543',
                     estado: 'en_camino', idDomiciliario: 3,
                     fechaAsignacion: '2026-09-23T11:20:00', fechaEntrega: null, observacion: '',
+                    // La venta #4 se cobró en caja y su stock ya salió (kárdex: "Ventas #3 y #4"):
+                    // al entregarlo NO se descuenta otra vez
+                    stockDescontado: true,
                     historial: [
                         { fecha: '2026-09-23T11:10:30', estadoAnterior: null, estadoNuevo: 'pendiente', usuario: 'Administrador', detalle: 'Pedido registrado por teléfono' },
                         { fecha: '2026-09-23T11:20:00', estadoAnterior: 'pendiente', estadoNuevo: 'asignado', usuario: 'Administrador', detalle: 'Asignado a Luis Pérez' },
@@ -195,11 +200,19 @@ const RepositorioDomicilios = (function () {
         agregarCliente: function (cliente) {
             return comoCliente(RepositorioCatalogos.agregarCliente(cliente));
         },
+        // UPDATE clientes: el cliente cambió de dirección o de barrio
+        actualizarCliente: function (id, cambios) {
+            return comoCliente(RepositorioCatalogos.actualizarCliente(id, cambios));
+        },
         // INSERT INTO ventas + detalle_venta + domicilios (en el backend irá en una transacción)
         agregarPedido: function (pedido) {
             const datos = leer();
             pedido.id = Math.max.apply(null, datos.pedidos.map(function (p) { return p.id; })) + 1;
-            pedido.idVenta = Math.max.apply(null, datos.pedidos.map(function (p) { return p.idVenta; })) + 1;
+            // INSERT INTO ventas (en RepositorioVentas): el número de venta es único en todo el sistema
+            pedido.idVenta = RepositorioVentas.registrarVentaDomicilio({
+                idUsuario: RepositorioAuditoria.idUsuarioActual(), idCliente: pedido.idCliente, idMetodoPago: pedido.idMetodoPago,
+                fecha: pedido.fechaVenta, total: pedido.total, items: pedido.items
+            }).id;
             datos.pedidos.push(pedido);
             guardar();
             return pedido;

@@ -12,14 +12,9 @@ const ServicioInventario = (function () {
     const CATEGORIAS = { lacteos: 'Lácteos', abarrotes: 'Abarrotes', bebidas: 'Bebidas', panaderia: 'Panadería', aseo: 'Aseo' };
     const UNIDADES = { unidad: 'Unidad', kilogramo: 'Kilogramo', litro: 'Litro', paquete: 'Paquete' };
 
-    function formatearPrecio(valor) {
-        return '$' + valor.toLocaleString('es-CO');
-    }
-
-    // Sin tildes y en minúscula: "cafe" encuentra "Café"
-    function normalizar(texto) {
-        return texto.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
-    }
+    // El formato vive en utilidades.js (una sola copia para todo el sistema)
+    const formatearPrecio = Formato.precio;
+    const normalizar = Formato.normalizar;
 
     function textoCategoria(categoria) { return CATEGORIAS[categoria] || categoria; }
     function textoUnidad(unidad) { return UNIDADES[unidad] || unidad; }

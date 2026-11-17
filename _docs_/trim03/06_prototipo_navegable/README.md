@@ -142,6 +142,7 @@ Repository (RepositorioVentas)     → único acceso a los datos (hoy localStora
 │   ├── css/                   styles.css, dashboard.css, un CSS por módulo y tema_control_store.css (va de último)
 │   ├── img/                   Imágenes (con CREDITOS.txt)
 │   ├── js/
+│   │   ├── utilidades.js      Formato (precio, fecha, HTML seguro) y Paginacion, compartidos por todos
 │   │   ├── sesion.js          Sesión simulada
 │   │   ├── login.js, registro.js, dashboard.js, ...
 │   │   ├── auditoria/         auditoria_datos.js (log_auditoria, solo agregar) · log_auditoria.js (pantalla)

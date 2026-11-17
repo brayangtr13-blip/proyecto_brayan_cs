@@ -39,15 +39,9 @@ const ServicioDomicilios = (function () {
         cancelado: 'w-100'
     };
 
-    function formatearPrecio(valor) {
-        return '$' + valor.toLocaleString('es-CO');
-    }
-
-    function formatearFecha(textoFecha) {
-        const fecha = new Date(textoFecha);
-        return fecha.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
-            ' ' + fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
-    }
+    // El formato vive en utilidades.js (una sola copia para todo el sistema)
+    const formatearPrecio = Formato.precio;
+    const formatearFecha = Formato.fecha;
 
     // HU06: "se debe mostrar el tiempo transcurrido desde que se recibió el pedido"
     function tiempoTranscurrido(textoFecha) {
@@ -61,9 +55,7 @@ const ServicioDomicilios = (function () {
     }
 
     // Quita tildes para comparar ("cafe" encuentra "Café"); mismo criterio que Inventario
-    function normalizar(texto) {
-        return texto.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
-    }
+    const normalizar = Formato.normalizar;
 
     // Busca un producto por código exacto, por "código · nombre" (lo que devuelve el datalist)
     // o por coincidencia de nombre
@@ -119,6 +111,10 @@ const ServicioDomicilios = (function () {
         let cliente = RepositorioDomicilios.buscarClientePorTelefono(datos.cliente.telefono);
         if (!cliente) {
             cliente = RepositorioDomicilios.agregarCliente(datos.cliente);
+        } else if (cliente.direccion !== datos.cliente.direccion || cliente.idBarrio !== datos.cliente.idBarrio) {
+            // La pantalla dice "puedes corregirlos si cambiaron": se guarda la dirección o el barrio nuevos
+            cliente = RepositorioDomicilios.actualizarCliente(cliente.id,
+                { direccion: datos.cliente.direccion, idBarrio: datos.cliente.idBarrio });
         }
 
         const pedido = RepositorioDomicilios.agregarPedido({
@@ -261,6 +257,10 @@ const ServicioDomicilios = (function () {
             .filter(Boolean).join(' · ');
         const cambio = registrarHistorial(pedido, estadoAnterior, nuevoEstado, quien.nombre, detalle);
         RepositorioDomicilios.actualizarPedido();
+        // La venta del pedido sigue su estado: entregado = pagada (contra entrega), cancelado = anulada
+        if (nuevoEstado === 'entregado' || nuevoEstado === 'cancelado') {
+            RepositorioVentas.cambiarEstadoVenta(pedido.idVenta, nuevoEstado === 'entregado' ? 'pagada' : 'anulada');
+        }
         RepositorioAuditoria.registrar({ idUsuario: quien.idUsuario, idModulo: RepositorioAuditoria.MODULO.DOMICILIOS,
             accion: nuevoEstado === 'cancelado' ? 'cancelar' : 'actualizar',
             detalle: 'Pedido #' + pedido.id + ': ' + TEXTO_ESTADO[estadoAnterior] + ' → ' + TEXTO_ESTADO[nuevoEstado] +

@@ -12,7 +12,9 @@ if (typeof RepositorioCatalogos === 'undefined') throw new Error('ventas_datos.j
 if (typeof RepositorioAuditoria === 'undefined') throw new Error('ventas_datos.js: falta cargar antes auditoria/auditoria_datos.js');
 
 const RepositorioVentas = (function () {
-    const CLAVE = 'controlstore_ventas_v1';
+    // v2: las ventas de los pedidos a domicilio también viven aquí (antes Domicilios inventaba su propio
+    //     número de venta y chocaba con el punto de venta). Cambiar la versión reinicia los datos de ejemplo.
+    const CLAVE = 'controlstore_ventas_v2';
 
     // Datos del volcado de controlstore_sena: el turno #2 (arqueo_caja)
     // y las ventas #2, #3 y #4 con su detalle_venta.
@@ -33,7 +35,13 @@ const RepositorioVentas = (function () {
                 { id: 3, idUsuario: 2, idArqueo: 2, idCliente: 1, idMetodoPago: 2, fecha: '2026-09-23T10:10:30', total: 32300, estado: 'pagada',
                   detalle: [{ codigo: '7702001002', cantidad: 1, precio: 12500 }, { codigo: '7702001003', cantidad: 2, precio: 9900 }] },
                 { id: 4, idUsuario: 2, idArqueo: 2, idCliente: 2, idMetodoPago: 1, fecha: '2026-09-23T11:10:30', total: 21050, estado: 'pagada',
-                  detalle: [{ codigo: '7702001001', cantidad: 3, precio: 2850 }, { codigo: '7702001002', cantidad: 1, precio: 12500 }] }
+                  detalle: [{ codigo: '7702001001', cantidad: 3, precio: 2850 }, { codigo: '7702001002', cantidad: 1, precio: 12500 }] },
+                // Ventas de los pedidos a domicilio #3 y #4: quedan 'pendiente' hasta que se entregan (pago
+                // contra entrega). canal 'domicilio' = se manejan desde Domicilios, no desde el punto de venta.
+                { id: 5, idUsuario: 1, idArqueo: null, idCliente: 1, idMetodoPago: 2, fecha: '2026-09-24T16:50:00', total: 12900, estado: 'pendiente', canal: 'domicilio',
+                  detalle: [{ codigo: '7702001003', cantidad: 1, precio: 9900 }, { codigo: '7702001005', cantidad: 1, precio: 3000 }] },
+                { id: 6, idUsuario: 1, idArqueo: null, idCliente: 3, idMetodoPago: 3, fecha: '2026-09-24T17:15:00', total: 8850, estado: 'pendiente', canal: 'domicilio',
+                  detalle: [{ codigo: '7702001005', cantidad: 2, precio: 3000 }, { codigo: '7702001001', cantidad: 1, precio: 2850 }] }
             ],
             // movimientos_inventario vive en RepositorioInventario y log_auditoria en RepositorioAuditoria
         };
@@ -112,6 +120,25 @@ const RepositorioVentas = (function () {
             datos.ventas.push(venta);
             RepositorioInventario.registrarMovimientos(movimientos);   // el kárdex es de Inventario
             guardar();
+            return venta;
+        },
+        // INSERT INTO ventas de un pedido a domicilio: nace 'pendiente' y SIN movimiento de inventario
+        // (el stock sale cuando se entrega). Así el número de venta es único en todo el sistema.
+        registrarVentaDomicilio: function (datos) {
+            const lista = leer().ventas;
+            const venta = {
+                id: siguienteId(lista), idUsuario: datos.idUsuario, idArqueo: null, idCliente: datos.idCliente,
+                idMetodoPago: datos.idMetodoPago, fecha: datos.fecha, total: datos.total, estado: 'pendiente', canal: 'domicilio',
+                detalle: datos.items.map(function (i) { return { codigo: i.codigo, cantidad: i.cantidad, precio: i.precio }; })
+            };
+            lista.push(venta);
+            guardar();
+            return venta;
+        },
+        // UPDATE ventas SET estado: un pedido entregado queda 'pagada'; uno cancelado, 'anulada'
+        cambiarEstadoVenta: function (id, estado) {
+            const venta = leer().ventas.find(function (v) { return v.id === id; });
+            if (venta) { venta.estado = estado; guardar(); }
             return venta;
         },
         // INSERT INTO movimientos_inventario (entradas al anular)
