@@ -102,7 +102,7 @@ Son los usuarios 1 a 7 de `controlstore_sena`, con los mismos id, documentos y c
 | RF29 | Reporte impreso de productos | `pages/modules/reportes/reporte_movimientos_inventario.html` | 🟡 |
 | RF30 | Reporte de domicilios | — | ⬜ |
 | — | Reportes de usuarios (CS-27, CS-28) | `pages/modules/reportes/reporte_grafico_usuarios.html`, `reporte_impreso_usuarios.html` | 🟡 |
-| RNF04 | Log de auditoría | `pages/modules/seguridad/log_auditoria.html` | 🟡 |
+| RNF04 | Log de auditoría (logins, fallidos, usuarios, inventario, ventas y domicilios) | `pages/modules/seguridad/log_auditoria.html` | ✅ |
 
 ---
 
@@ -121,8 +121,9 @@ Service  (ServicioVentas)          → reglas del negocio: validar, calcular, de
 Repository (RepositorioVentas)     → único acceso a los datos (hoy localStorage; mañana la API)
 ```
 
-- **Una sola fuente por tabla:** `RepositorioInventario` es dueño de los productos y `RepositorioUsuarios`
-  de los usuarios y roles. Ventas y Domicilios les piden los datos; no guardan copias.
+- **Una sola fuente por tabla:** `RepositorioInventario` es dueño de los productos, `RepositorioUsuarios`
+  de los usuarios y roles, y `RepositorioCatalogos` de clientes, barrios y métodos de pago.
+  Ventas y Domicilios les piden los datos; no guardan copias.
 - **Sesión:** `sesion.js` guarda en `sessionStorage` quién entró (id, nombre y rol). Se borra al cerrar sesión
   o la pestaña.
 - **Patrones de diseño usados:** Repository, Service, Module (IIFE), State (estados del pedido),
@@ -143,6 +144,8 @@ Repository (RepositorioVentas)     → único acceso a los datos (hoy localStora
 │   ├── js/
 │   │   ├── sesion.js          Sesión simulada
 │   │   ├── login.js, registro.js, dashboard.js, ...
+│   │   ├── auditoria/         auditoria_datos.js (log_auditoria, solo agregar) · log_auditoria.js (pantalla)
+│   │   ├── catalogos/         catalogos_datos.js: clientes, barrios y métodos de pago (compartidos)
 │   │   ├── usuarios/          usuarios_datos.js (Repository) · usuarios_servicio.js (Service) · pantallas
 │   │   ├── inventario/        inventario_datos.js · inventario_servicio.js · pantallas
 │   │   ├── ventas/            ventas_datos.js · ventas_servicio.js · comprobante_venta.js · pantallas
@@ -176,8 +179,8 @@ Repository (RepositorioVentas)     → único acceso a los datos (hoy localStora
 
 **Fase 1 · Completar el prototipo** (ver el detalle en [REFACTOR.md](REFACTOR.md))
 - [x] Una sola fuente de usuarios, login contra los usuarios y reglas de rol
-- [ ] Catálogos únicos: métodos de pago y clientes (hoy copiados en Ventas y Domicilios)
-- [ ] Log de auditoría con JS (RNF04)
+- [x] Catálogos únicos: clientes, barrios y métodos de pago en `catalogos_datos.js` (los usan Ventas y Domicilios)
+- [x] Log de auditoría con JS (RNF04): un solo log para todos los módulos, de solo agregar
 - [ ] Reportes con datos reales y reporte de domicilios (RF26–RF30)
 - [ ] Historial de movimientos en consultar producto (RF10.2) y paginación real
 - [ ] Revisión responsive y visual

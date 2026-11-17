@@ -51,7 +51,7 @@
         });
 
         campo('cliente').textContent = cliente.nombre + ' · ' + pedido.telefonoContacto;
-        campo('direccion').textContent = pedido.direccionEntrega + ' · ' + pedido.barrio;
+        campo('direccion').textContent = pedido.direccionEntrega + ' · ' + RepositorioDomicilios.nombreBarrio(pedido.idBarrio);
         campo('pago').textContent = metodo.nombre + ' · ' + ServicioDomicilios.formatearPrecio(pedido.total);
         campo('domiciliario').textContent = domiciliario ? domiciliario.nombre : 'Sin asignar';
         campo('fechaAsignacion').textContent = pedido.fechaAsignacion ? ServicioDomicilios.formatearFecha(pedido.fechaAsignacion) : '—';

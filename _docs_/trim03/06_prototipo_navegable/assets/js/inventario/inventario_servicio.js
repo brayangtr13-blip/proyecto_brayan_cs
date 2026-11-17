@@ -1,9 +1,10 @@
 // Módulo 2 – Inventario · Patrón SERVICE
 // Reglas de negocio del módulo. Las pantallas no las repiten: llaman a ServicioInventario.*
-// Depende de: inventario_datos.js
+// Depende de: inventario_datos.js, auditoria/auditoria_datos.js (RNF04)
 
 // Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
 if (typeof RepositorioInventario === 'undefined') throw new Error('inventario_servicio.js: falta cargar antes inventario_datos.js');
+if (typeof RepositorioAuditoria === 'undefined') throw new Error('inventario_servicio.js: falta cargar antes auditoria/auditoria_datos.js');
 
 const ServicioInventario = (function () {
 
@@ -58,23 +59,41 @@ const ServicioInventario = (function () {
             });
     }
 
+    // RNF04: toda acción sobre productos queda en log_auditoria (módulo Inventario)
+    function auditar(accion, detalle) {
+        RepositorioAuditoria.registrar({ idModulo: RepositorioAuditoria.MODULO.INVENTARIO, accion: accion, detalle: detalle });
+    }
+
     // CS-12: no se registra dos veces el mismo código de barras
     function registrarProducto(producto) {
         if (RepositorioInventario.obtenerProducto(producto.codigo)) {
             return { ok: false, error: 'duplicado' };
         }
-        return { ok: true, producto: RepositorioInventario.agregarProducto(producto) };
+        const nuevo = RepositorioInventario.agregarProducto(producto);
+        auditar('registrar', 'Registró el producto ' + nuevo.nombre + ' (' + nuevo.codigo + ')');
+        return { ok: true, producto: nuevo };
     }
 
-    // CS-15: el código no se edita, es la llave del producto
+    // CS-15: el código no se edita, es la llave del producto.
+    // Si cambia el stock, el log dice cuánto: es lo que más se audita en una tienda.
     function editarProducto(codigo, cambios) {
+        const antes = RepositorioInventario.obtenerProducto(codigo);
+        const stockAntes = antes ? antes.stock : null;
         const producto = RepositorioInventario.actualizarProducto(codigo, cambios);
-        return producto ? { ok: true, producto: producto } : { ok: false, error: 'No existe el producto.' };
+        if (!producto) return { ok: false, error: 'No existe el producto.' };
+        const cambioStock = stockAntes !== null && producto.stock !== stockAntes
+            ? ' · stock ' + stockAntes + ' → ' + producto.stock : '';
+        auditar('actualizar', 'Editó el producto ' + producto.nombre + cambioStock);
+        return { ok: true, producto: producto };
     }
 
     // CS-16: borrado LÓGICO; el producto se conserva con estado inactivo
     function cambiarEstado(codigo, estado) {
-        return editarProducto(codigo, { estado: estado });
+        const producto = RepositorioInventario.actualizarProducto(codigo, { estado: estado });
+        if (!producto) return { ok: false, error: 'No existe el producto.' };
+        auditar(estado === 'activo' ? 'activar' : 'eliminar',
+            (estado === 'activo' ? 'Reactivó' : 'Eliminó (borrado lógico)') + ' el producto ' + producto.nombre);
+        return { ok: true, producto: producto };
     }
 
     return {

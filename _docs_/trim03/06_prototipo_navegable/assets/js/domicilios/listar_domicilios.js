@@ -30,7 +30,7 @@
         estado.classList.add('estado-' + pedido.estado);
 
         campo('cliente').textContent = cliente.nombre + ' · ' + pedido.telefonoContacto;
-        campo('direccion').textContent = pedido.direccionEntrega + ' · ' + pedido.barrio;
+        campo('direccion').textContent = pedido.direccionEntrega + ' · ' + RepositorioDomicilios.nombreBarrio(pedido.idBarrio);
         campo('metodo').textContent = metodo.nombre;
         campo('total').textContent = ServicioDomicilios.formatearPrecio(pedido.total);
 
@@ -135,7 +135,7 @@
         pedidoAAsignar = RepositorioDomicilios.obtenerPedidoPorId(Number(evento.relatedTarget.dataset.id));
         const cliente = RepositorioDomicilios.obtenerClientePorId(pedidoAAsignar.idCliente);
         document.getElementById('resumenPedidoAsignar').textContent =
-            'Pedido #' + pedidoAAsignar.id + ' · ' + cliente.nombre + ' · ' + pedidoAAsignar.barrio;
+            'Pedido #' + pedidoAAsignar.id + ' · ' + cliente.nombre + ' · ' + RepositorioDomicilios.nombreBarrio(pedidoAAsignar.idBarrio);
         errorAsignar.classList.add('d-none');
 
         listaDomiciliarios.replaceChildren();

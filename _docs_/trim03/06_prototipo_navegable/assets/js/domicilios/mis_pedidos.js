@@ -35,7 +35,7 @@
         campo('telefono').textContent = pedido.telefonoContacto;
         campo('telefono').href = 'tel:' + pedido.telefonoContacto;
         campo('direccion').textContent = pedido.direccionEntrega;
-        campo('barrio').textContent = pedido.barrio;
+        campo('barrio').textContent = RepositorioDomicilios.nombreBarrio(pedido.idBarrio);
         campo('total').textContent = ServicioDomicilios.formatearPrecio(pedido.total);
         campo('metodo').textContent = metodo.nombre;
         if (pedido.observacion) {
@@ -77,7 +77,7 @@
             const fila = plantillaEntregado.content.cloneNode(true);
             const cliente = RepositorioDomicilios.obtenerClientePorId(pedido.idCliente);
             fila.querySelector('[data-campo="resumen"]').textContent =
-                'Pedido #' + pedido.id + ' · ' + cliente.nombre + ' · ' + pedido.barrio;
+                'Pedido #' + pedido.id + ' · ' + cliente.nombre + ' · ' + RepositorioDomicilios.nombreBarrio(pedido.idBarrio);
             pedidosEntregados.appendChild(fila);
         });
         document.getElementById('sinEntregados').classList.toggle('d-none', entregados.length > 0);

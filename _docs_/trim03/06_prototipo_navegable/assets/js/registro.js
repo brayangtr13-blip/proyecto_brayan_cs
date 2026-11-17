@@ -54,7 +54,7 @@
             telefono: document.getElementById('telefono').value.trim() || null,
             idRol: Number(campoRol.value),
             estado: 'inactivo'
-        });
+        }, true);   // true = autoregistro: en el log queda a nombre de la persona que se registró
         if (!resultado.ok) {
             // Mensaje según el motivo que devuelve el Service
             registroError.textContent = resultado.error === 'administrador'

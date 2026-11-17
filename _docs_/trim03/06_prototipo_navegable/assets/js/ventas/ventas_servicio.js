@@ -178,7 +178,9 @@ const ServicioVentas = (function () {
         venta.estado = 'anulada';   // no se borra: queda en el historial (HU04)
         RepositorioVentas.registrarAuditoria({
             idUsuario: usuario.idUsuario, accion: 'anular', modulo: 'ventas', idVenta: venta.id, fecha: fecha,
-            motivo: (tipo === 'devolucion' ? 'Devolución: ' : '') + texto
+            motivo: (tipo === 'devolucion' ? 'Devolución: ' : '') + texto,
+            detalle: 'Anuló la venta #' + venta.id + ' por ' + formatearPrecio(venta.total) + '. Motivo: ' +
+                (tipo === 'devolucion' ? 'Devolución: ' : '') + texto
         });
         return { ok: true, venta: venta };
     }

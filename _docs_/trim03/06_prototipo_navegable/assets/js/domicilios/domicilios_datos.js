@@ -6,6 +6,7 @@
 // nunca leen localStorage ni arreglos directamente.
 // Los productos NO viven aquí: se piden a RepositorioInventario (inventario_datos.js).
 // Los domiciliarios tampoco: son los usuarios con rol domiciliario de RepositorioUsuarios.
+// Clientes, barrios y métodos de pago son catálogos compartidos: viven en RepositorioCatalogos.
 //
 // Hoy los datos se guardan en localStorage del navegador, porque el flujo del
 // módulo cruza varias páginas (el admin registra y asigna, el domiciliario
@@ -17,40 +18,33 @@
 // Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
 if (typeof RepositorioInventario === 'undefined') throw new Error('domicilios_datos.js: falta cargar antes inventario/inventario_datos.js');
 if (typeof RepositorioUsuarios === 'undefined') throw new Error('domicilios_datos.js: falta cargar antes usuarios/usuarios_datos.js');
+if (typeof RepositorioCatalogos === 'undefined') throw new Error('domicilios_datos.js: falta cargar antes catalogos/catalogos_datos.js');
 
 const RepositorioDomicilios = (function () {
     // v2: los pedidos ahora traen historial y stockDescontado (CS-37).
     // v3: el pedido #3 pasa de Diana Morales (no existe en la BD) a Kevin Mora (usuario 6).
+    // v4: clientes y métodos de pago salen a RepositorioCatalogos; el barrio deja de ser texto
+    //     y pasa a idBarrio + costoEnvio, como domicilios.id_barrio y domicilios.costo_envio.
     // Cambiar la versión hace que los navegadores con datos viejos arranquen con los de ejemplo.
-    const CLAVE = 'controlstore_domicilios_v3';
+    const CLAVE = 'controlstore_domicilios_v4';
 
     // id del rol domiciliario en la tabla roles
     const ROL_DOMICILIARIO = 3;
 
     // Datos de ejemplo basados en controlstore_sena (MySQL 8.4):
-    //  - clientes 1 y 2, venta #3 y domicilio #1: registros reales del volcado SQL
+    //  - venta #3 y domicilio #1: registros reales del volcado SQL (clientes en RepositorioCatalogos)
+    //  - costoEnvio: la tarifa del barrio el día del pedido (si la tarifa cambia, el pedido viejo no)
     //  - domiciliarios: Luis Perez (usuario 3), Kevin Mora (6) y Yeison Castro (7) de RepositorioUsuarios.
     //    El caso "inactivo" (HU05) se prueba inactivando a uno desde la pantalla de Usuarios.
     function datosDeEjemplo() {
         return {
-            clientes: [
-                { id: 1, nombre: 'Maria Restrepo', telefono: '3011234567', direccion: 'Calle 12 # 4-30', barrio: 'Centro' },
-                { id: 2, nombre: 'Carlos Ruiz', telefono: '3109876543', direccion: 'Carrera 7 # 15-02', barrio: 'La Playa' },
-                { id: 3, nombre: 'Paola Díaz', telefono: '3124567890', direccion: 'Calle 45 # 12-30', barrio: 'El Prado' }
-            ],
-            metodosPago: [
-                { id: 1, nombre: 'Efectivo' },
-                { id: 2, nombre: 'Nequi' },
-                { id: 3, nombre: 'Transferencia' },
-                { id: 4, nombre: 'Tarjeta' }
-            ],
             // Un pedido = una venta (ventas + detalle_venta) + su domicilio (domicilios).
             // historial = los registros de log_auditoria del módulo domicilios para ese pedido.
             pedidos: [
                 {
                     id: 1, idVenta: 3, idCliente: 1, idMetodoPago: 2, fechaVenta: '2026-09-23T10:10:30',
                     items: [{ codigo: '7702001002', cantidad: 1, precio: 12500 }, { codigo: '7702001003', cantidad: 2, precio: 9900 }],
-                    total: 32300, direccionEntrega: 'Calle 12 # 4-30', barrio: 'Centro', telefonoContacto: '3011234567',
+                    total: 32300, direccionEntrega: 'Calle 12 # 4-30', idBarrio: 1, costoEnvio: 2000, telefonoContacto: '3011234567',
                     estado: 'entregado', idDomiciliario: 3,
                     fechaAsignacion: '2026-09-23T10:20:30', fechaEntrega: '2026-09-23T11:00:30',
                     observacion: 'Entregado en porteria',
@@ -66,7 +60,7 @@ const RepositorioDomicilios = (function () {
                 {
                     id: 2, idVenta: 4, idCliente: 2, idMetodoPago: 1, fechaVenta: '2026-09-23T11:10:30',
                     items: [{ codigo: '7702001001', cantidad: 3, precio: 2850 }, { codigo: '7702001002', cantidad: 1, precio: 12500 }],
-                    total: 21050, direccionEntrega: 'Carrera 7 # 15-02', barrio: 'La Playa', telefonoContacto: '3109876543',
+                    total: 21050, direccionEntrega: 'Carrera 7 # 15-02', idBarrio: 2, costoEnvio: 3000, telefonoContacto: '3109876543',
                     estado: 'en_camino', idDomiciliario: 3,
                     fechaAsignacion: '2026-09-23T11:20:00', fechaEntrega: null, observacion: '',
                     historial: [
@@ -78,7 +72,7 @@ const RepositorioDomicilios = (function () {
                 {
                     id: 3, idVenta: 5, idCliente: 1, idMetodoPago: 2, fechaVenta: '2026-09-24T16:50:00',
                     items: [{ codigo: '7702001003', cantidad: 1, precio: 9900 }, { codigo: '7702001005', cantidad: 1, precio: 3000 }],
-                    total: 12900, direccionEntrega: 'Calle 12 # 4-30', barrio: 'Centro', telefonoContacto: '3011234567',
+                    total: 12900, direccionEntrega: 'Calle 12 # 4-30', idBarrio: 1, costoEnvio: 2000, telefonoContacto: '3011234567',
                     estado: 'asignado', idDomiciliario: 6,
                     fechaAsignacion: '2026-09-24T17:05:00', fechaEntrega: null, observacion: '',
                     historial: [
@@ -89,7 +83,7 @@ const RepositorioDomicilios = (function () {
                 {
                     id: 4, idVenta: 6, idCliente: 3, idMetodoPago: 3, fechaVenta: '2026-09-24T17:15:00',
                     items: [{ codigo: '7702001005', cantidad: 2, precio: 3000 }, { codigo: '7702001001', cantidad: 1, precio: 2850 }],
-                    total: 8850, direccionEntrega: 'Calle 45 # 12-30', barrio: 'El Prado', telefonoContacto: '3124567890',
+                    total: 8850, direccionEntrega: 'Calle 45 # 12-30', idBarrio: 3, costoEnvio: 3500, telefonoContacto: '3124567890',
                     estado: 'pendiente', idDomiciliario: null,
                     fechaAsignacion: null, fechaEntrega: null, observacion: 'Llamar antes de llegar',
                     historial: [
@@ -137,6 +131,17 @@ const RepositorioDomicilios = (function () {
         };
     }
 
+    // Un cliente de RepositorioCatalogos con lo que usan las pantallas de Domicilios:
+    // nombre = nombre completo (para mostrar); nombres y apellido por separado (para el formulario).
+    // Es una copia: las pantallas no modifican el catálogo por accidente.
+    function comoCliente(c) {
+        if (!c) return undefined;
+        return {
+            id: c.id, nombre: RepositorioCatalogos.nombreCompleto(c), nombres: c.nombre, apellido: c.apellido,
+            telefono: c.telefono, direccion: c.direccion, idBarrio: c.idBarrio
+        };
+    }
+
     // Lo que se devuelve es la "interfaz" del repositorio: lo único visible desde afuera
     return {
         obtenerPedidos: function () {
@@ -152,13 +157,28 @@ const RepositorioDomicilios = (function () {
             return RepositorioInventario.obtenerProducto(codigo);
         },
         obtenerClientePorId: function (id) {
-            return leer().clientes.find(function (c) { return c.id === id; });
+            return comoCliente(RepositorioCatalogos.obtenerCliente(id));
         },
         buscarClientePorTelefono: function (telefono) {
-            return leer().clientes.find(function (c) { return c.telefono === telefono; });
+            return comoCliente(RepositorioCatalogos.buscarClientePorTelefono(telefono));
+        },
+        obtenerMetodosPago: function () {
+            return RepositorioCatalogos.obtenerMetodosPago();
         },
         obtenerMetodoPago: function (id) {
-            return leer().metodosPago.find(function (m) { return m.id === id; });
+            return RepositorioCatalogos.obtenerMetodoPago(id);
+        },
+        // Barrios con cobertura (tabla barrios): el formulario los ofrece en una lista
+        obtenerBarrios: function () {
+            return RepositorioCatalogos.obtenerBarrios();
+        },
+        obtenerBarrio: function (id) {
+            return RepositorioCatalogos.obtenerBarrio(id);
+        },
+        // Lo que se muestra en pantalla: "Centro" (el pedido guarda solo el id, como la FK)
+        nombreBarrio: function (id) {
+            const barrio = RepositorioCatalogos.obtenerBarrio(id);
+            return barrio ? barrio.nombre : 'Sin barrio';
         },
         // SELECT ... FROM usuarios WHERE id_rol = 3 (se piden a Usuarios: una sola fuente)
         obtenerDomiciliarios: function () {
@@ -173,11 +193,7 @@ const RepositorioDomicilios = (function () {
         },
         // INSERT INTO clientes: el id sigue la secuencia, como un AUTO_INCREMENT
         agregarCliente: function (cliente) {
-            const datos = leer();
-            cliente.id = Math.max.apply(null, datos.clientes.map(function (c) { return c.id; })) + 1;
-            datos.clientes.push(cliente);
-            guardar();
-            return cliente;
+            return comoCliente(RepositorioCatalogos.agregarCliente(cliente));
         },
         // INSERT INTO ventas + detalle_venta + domicilios (en el backend irá en una transacción)
         agregarPedido: function (pedido) {
@@ -204,7 +220,7 @@ const RepositorioDomicilios = (function () {
             return leer().movimientos || [];
         },
         obtenerClientes: function () {
-            return leer().clientes;
+            return RepositorioCatalogos.obtenerClientes().map(comoCliente);
         },
         // Avisos para el domiciliario (CU039 "Notificar al domiciliario"): los muestra la campana de su panel
         agregarAvisoDomiciliario: function (aviso) {
@@ -227,6 +243,7 @@ const RepositorioDomicilios = (function () {
             enMemoria = null;
             RepositorioInventario.recargar();
             RepositorioUsuarios.recargar();
+            RepositorioCatalogos.recargar();
         },
         // Vuelve a los datos de ejemplo (útil para repetir la demostración ante el instructor)
         restablecer: function () {

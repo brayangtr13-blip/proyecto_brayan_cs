@@ -12,6 +12,7 @@
         buscarTelefono: document.getElementById('buscarTelefono'),
         ayudaBuscar: document.getElementById('ayudaBuscarTelefono'),
         nombre: document.getElementById('clienteNombre'),
+        apellido: document.getElementById('clienteApellido'),
         telefono: document.getElementById('clienteTelefono'),
         direccion: document.getElementById('clienteDireccion'),
         barrio: document.getElementById('clienteBarrio'),
@@ -41,19 +42,32 @@
         document.getElementById('catalogoProductos').appendChild(opcion);
     });
 
+    // ---------- Listas que vienen de los catálogos (barrios y métodos de pago) ----------
+    // Así nadie escribe "centro", "Centro " o "El centro": se elige un barrio de la tabla barrios
+    RepositorioDomicilios.obtenerBarrios().forEach(function (b) {
+        const texto = b.nombre + ' · ' + ServicioDomicilios.formatearPrecio(b.costoDomicilio);
+        campos.barrio.appendChild(new Option(texto, b.id));
+        campos.barrioEntrega.appendChild(new Option(texto, b.id));
+    });
+    RepositorioDomicilios.obtenerMetodosPago().forEach(function (m) {
+        campos.metodoPago.appendChild(new Option(m.nombre, m.id));
+    });
+
     // ---------- Cliente ----------
     function buscarCliente() {
         const telefono = campos.buscarTelefono.value.trim();
         const cliente = RepositorioDomicilios.buscarClientePorTelefono(telefono);
         if (cliente) {
-            campos.nombre.value = cliente.nombre;
+            campos.nombre.value = cliente.nombres;
+            campos.apellido.value = cliente.apellido;
             campos.telefono.value = cliente.telefono;
             campos.direccion.value = cliente.direccion;
-            campos.barrio.value = cliente.barrio;
+            campos.barrio.value = cliente.idBarrio || '';
             campos.ayudaBuscar.textContent = 'Cliente encontrado: se cargaron sus datos. Puedes corregirlos si cambiaron.';
         } else {
             // Cliente nuevo: se deja el teléfono escrito para no pedirlo dos veces
             campos.nombre.value = '';
+            campos.apellido.value = '';
             campos.telefono.value = telefono;
             campos.direccion.value = '';
             campos.barrio.value = '';
@@ -76,9 +90,11 @@
         // readonly: el usuario ve el valor copiado pero no lo edita. Ojo: un campo readonly
         // no entra en la validación HTML; aquí no importa porque copia campos del cliente
         // que sí son required. Al apagar el switch vuelven a ser editables y se validan.
-        [campos.direccionEntrega, campos.barrioEntrega, campos.telefonoContacto].forEach(function (c) {
+        [campos.direccionEntrega, campos.telefonoContacto].forEach(function (c) {
             c.readOnly = copiar;
         });
+        // Un <select> no tiene readonly: se bloquea con disabled (el valor se sigue leyendo desde JS)
+        campos.barrioEntrega.disabled = copiar;
         if (copiar) {
             campos.direccionEntrega.value = campos.direccion.value;
             campos.barrioEntrega.value = campos.barrio.value;
@@ -87,7 +103,8 @@
     }
 
     campos.usarDireccion.addEventListener('change', copiarDireccionSiCorresponde);
-    [campos.telefono, campos.direccion, campos.barrio].forEach(function (c) {
+    campos.barrio.addEventListener('change', copiarDireccionSiCorresponde);
+    [campos.telefono, campos.direccion].forEach(function (c) {
         c.addEventListener('input', copiarDireccionSiCorresponde);
     });
 
@@ -204,14 +221,15 @@
         const resultado = ServicioDomicilios.registrarPedido({
             cliente: {
                 nombre: campos.nombre.value.trim(),
+                apellido: campos.apellido.value.trim(),
                 telefono: campos.telefono.value.trim(),
                 direccion: campos.direccion.value.trim(),
-                barrio: campos.barrio.value.trim()
+                idBarrio: parseInt(campos.barrio.value, 10)
             },
             items: carrito,
             idMetodoPago: parseInt(campos.metodoPago.value, 10),
             direccionEntrega: campos.direccionEntrega.value.trim(),
-            barrio: campos.barrioEntrega.value.trim(),
+            idBarrio: parseInt(campos.barrioEntrega.value, 10),
             telefonoContacto: campos.telefonoContacto.value.trim(),
             observacion: campos.observacion.value.trim()
         });

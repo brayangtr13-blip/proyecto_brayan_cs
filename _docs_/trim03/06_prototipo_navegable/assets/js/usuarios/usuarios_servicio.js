@@ -1,9 +1,10 @@
 // Módulo 1 – Usuarios · Patrón SERVICE
 // Reglas de negocio del módulo. Las pantallas no las repiten: llaman a ServicioUsuarios.*
-// Depende de: usuarios_datos.js
+// Depende de: usuarios_datos.js, auditoria/auditoria_datos.js (RNF04)
 
 // Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
 if (typeof RepositorioUsuarios === 'undefined') throw new Error('usuarios_servicio.js: falta cargar antes usuarios_datos.js');
+if (typeof RepositorioAuditoria === 'undefined') throw new Error('usuarios_servicio.js: falta cargar antes auditoria/auditoria_datos.js');
 
 const ServicioUsuarios = (function () {
 
@@ -27,9 +28,17 @@ const ServicioUsuarios = (function () {
         return usuario.nombres + ' ' + usuario.apellidos;
     }
 
+    // RNF04: toda acción sobre usuarios queda en log_auditoria (módulo Usuarios)
+    function auditar(accion, detalle, idUsuario) {
+        const evento = { idModulo: RepositorioAuditoria.MODULO.USUARIOS, accion: accion, detalle: detalle };
+        if (idUsuario !== undefined) evento.idUsuario = idUsuario;
+        RepositorioAuditoria.registrar(evento);
+    }
+
     // CS-75 / RF04.2: no se registra dos veces el mismo documento ni el mismo correo
     // (en la BD los dos son UNIQUE)
-    function registrarUsuario(usuario) {
+    // autoregistro = true cuando la cuenta la crea la misma persona desde «Regístrate» (no hay sesión)
+    function registrarUsuario(usuario, autoregistro) {
         if (RepositorioUsuarios.obtenerPorDocumento(usuario.documento) ||
             RepositorioUsuarios.obtenerPorCorreo(usuario.correo)) {
             return { ok: false, error: 'duplicado' };
@@ -38,12 +47,19 @@ const ServicioUsuarios = (function () {
         if (usuario.idRol === ROL_ADMINISTRADOR && hayAdministrador()) {
             return { ok: false, error: 'administrador' };
         }
-        return { ok: true, usuario: RepositorioUsuarios.agregarUsuario(usuario) };
+        const nuevo = RepositorioUsuarios.agregarUsuario(usuario);
+        if (autoregistro) {
+            auditar('registrar', 'Solicitó una cuenta de ' + textoRol(nuevo.idRol).toLowerCase() + ' (queda inactiva)', nuevo.idUsuario);
+        } else {
+            auditar('registrar', 'Registró al usuario ' + nombreCompleto(nuevo) + ' (' + textoRol(nuevo.idRol) + ')');
+        }
+        return { ok: true, usuario: nuevo };
     }
 
     // El id y el documento no se editan: son la llave y la identidad del usuario.
     // Si cambia el correo, tampoco puede quedar repetido con el de otro usuario.
-    function editarUsuario(idUsuario, cambios) {
+    // detalleAuditoria: lo que se escribe en el log (si no llega, "Actualizó los datos de ...")
+    function editarUsuario(idUsuario, cambios, accion, detalleAuditoria) {
         if (cambios.correo) {
             const dueno = RepositorioUsuarios.obtenerPorCorreo(cambios.correo);
             if (dueno && dueno.idUsuario !== idUsuario) return { ok: false, error: 'duplicado' };
@@ -54,7 +70,9 @@ const ServicioUsuarios = (function () {
             return { ok: false, error: 'administrador' };
         }
         const usuario = RepositorioUsuarios.actualizarUsuario(idUsuario, cambios);
-        return usuario ? { ok: true, usuario: usuario } : { ok: false, error: 'No existe el usuario.' };
+        if (!usuario) return { ok: false, error: 'No existe el usuario.' };
+        auditar(accion || 'actualizar', detalleAuditoria || 'Actualizó los datos de ' + nombreCompleto(usuario));
+        return { ok: true, usuario: usuario };
     }
 
     // CS-83: activar/inactivar en vez de borrar
@@ -65,7 +83,10 @@ const ServicioUsuarios = (function () {
         if (usuario.idRol === ROL_ADMINISTRADOR && usuario.estado === 'activo') {
             return { ok: false, error: 'No se puede inactivar al administrador: el sistema se quedaría sin quien active cuentas.' };
         }
-        return editarUsuario(idUsuario, { estado: usuario.estado === 'activo' ? 'inactivo' : 'activo' });
+        const nuevoEstado = usuario.estado === 'activo' ? 'inactivo' : 'activo';
+        const accion = nuevoEstado === 'activo' ? 'activar' : 'inactivar';
+        return editarUsuario(idUsuario, { estado: nuevoEstado }, accion,
+            (accion === 'activar' ? 'Activó' : 'Inactivó') + ' la cuenta de ' + nombreCompleto(usuario));
     }
 
     return {
