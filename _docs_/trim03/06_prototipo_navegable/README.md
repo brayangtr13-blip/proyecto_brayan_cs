@@ -36,7 +36,7 @@ valida porque no la guarda (en la BD va cifrada y la validará el backend).
 | Alias | Correo | Rol | Panel |
 |---|---|---|---|
 | `admin` | admin@controlstore.com | Administrador | Todos los módulos |
-| `juan` | juan.perez@controlstore.com | Cajero | Punto de venta, historial y cierre de caja |
+| `juan` | juan.perez@controlstore.com | Cajero | Punto de venta, historial y 2 reportes (abre caja; la cierra el administrador) |
 | `luis` | luis.p@controlstore.com | Domiciliario | Mis pedidos |
 | — | kevin.mora@controlstore.com | Domiciliario | Mis pedidos (tiene el pedido #3) |
 | — | diego.rojas@controlstore.com | Cajero **inactivo** | No entra: sirve para probar RF01.3 |
@@ -82,7 +82,7 @@ Son los usuarios 1 a 7 de `controlstore_sena`, con los mismos id, documentos y c
 | RF15 | Listar ventas | `pages/modules/ventas/listar_ventas.html` | ✅ |
 | RF16 | Consultar venta | `pages/modules/ventas/consultar_venta.html` | ✅ |
 | RF17 | Anular venta (devuelve stock) | `pages/modules/ventas/listar_ventas.html` | ✅ |
-| RF18 | Cierre de caja | `pages/modules/ventas/cierre_caja.html` | ✅ |
+| RF18 | Cierre de caja (solo el administrador: cierra el turno abierto de cualquier cajero) | `pages/modules/ventas/cierre_caja.html` | ✅ |
 
 ### Domicilios
 | RF | Funcionalidad | Pantalla | Estado |

@@ -31,11 +31,22 @@
         <li class="nav-item"><a class="nav-link active" aria-current="page" href="cierre_caja.html">Cierre de caja</a></li>
     </ul>
 
+    <!-- RF18: solo el administrador cierra la caja. Si un cajero llega a esta pantalla, solo ve este aviso -->
+    <div id="sinPermiso" class="alert alert-warning d-none" role="alert">
+        El cierre de caja lo hace el administrador. Cuando termines tu turno, avísale para que cuente el efectivo y cierre la caja.
+    </div>
+
     <div id="cierreExito" class="alert alert-success d-none" role="alert"></div>
 
-    <!-- Sin turno abierto no hay nada que cerrar -->
+    <!-- Sin turnos abiertos no hay nada que cerrar -->
     <div id="sinTurno" class="alert alert-secondary d-none" role="status">
-        No tienes un turno abierto. <a href="registrar_venta.html" class="alert-link">Abre la caja en el Punto de venta</a>.
+        No hay turnos abiertos: ningún cajero tiene la caja abierta en este momento.
+    </div>
+
+    <!-- El administrador elige qué turno cerrar (uno por cajero con la caja abierta) -->
+    <div class="card card-body mb-3" id="seccionTurnos">
+        <label for="turnoACerrar" class="form-label">Turno que vas a cerrar</label>
+        <select class="form-select" id="turnoACerrar"></select>
     </div>
 
     <div class="row g-4 mb-4" id="seccionCierre">
