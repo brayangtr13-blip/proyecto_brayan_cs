@@ -1,0 +1,241 @@
+/* =====================================================================
+   TEMA CONTROL STORE · aspecto del diseño "control-store_def"
+   Se carga de ÚLTIMO en cada página: solo cambia cómo se ve (colores, fuentes,
+   bordes, sombras). No toca la estructura ni los id que usa el JavaScript.
+   Quitar el <link> de este archivo devuelve el aspecto anterior.
+
+   Patrón: ITCSS (Inverted Triangle CSS). Las reglas van en capas, de lo más
+   general a lo más específico; cada capa solo puede apoyarse en las de arriba:
+     1. Ajustes     → fuentes y variables (no pintan nada todavía)
+     2. Bootstrap   → se le dan los valores del diseño a sus variables --bs-*
+     3. Base        → etiquetas sueltas: body, títulos
+     4. Esqueleto   → el panel: menú lateral y barra superior
+     5. Componentes → tarjetas, botones, campos, tablas, badges, etc.
+     6. Páginas     → portada y login
+     7. Utilidades  → celular e impresión
+   Docs Bootstrap: https://getbootstrap.com/docs/5.3/customize/css-variables/
+   ===================================================================== */
+
+
+/* ========== 1. AJUSTES ========== */
+
+/* Fuentes locales (licencia SIL OFL 1.1): Oswald = texto, Russo One = subtítulos, Bungee = títulos */
+@font-face { font-family: "Oswald"; src: url("../vendor/fonts/oswald/oswald-300.woff2"); font-weight: 300; font-display: swap; }
+@font-face { font-family: "Oswald"; src: url("../vendor/fonts/oswald/oswald-400.woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Oswald"; src: url("../vendor/fonts/oswald/oswald-500.woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Oswald"; src: url("../vendor/fonts/oswald/oswald-600.woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Oswald"; src: url("../vendor/fonts/oswald/oswald-700.woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Russo One"; src: url("../vendor/fonts/russo-one/russo-400.woff2"); font-display: swap; }
+@font-face { font-family: "Bungee"; src: url("../vendor/fonts/bungee/bungee-400.woff2"); font-display: swap; }
+
+/* Paleta del diseño: el único lugar donde se escriben colores */
+:root {
+    --cs-nav: #16213d;      --cs-nav-2: #0e1730;                         /* menú */
+    --cs-pri: #1f4e8f;      --cs-pri-d: #163a64;  --cs-pri-l: #eaeff7;  --cs-pri-ll: #cfdcee;   /* azul principal */
+    --cs-acc: #2f6fd0;      --cs-acc-d: #1f56ad;  --cs-acc-l: #e6eefb;  /* azul de acento */
+    --cs-bg: #f3f5f9;       --cs-card: #ffffff;   --cs-border: #e7eaf1; --cs-border-2: #d8deea;
+    --cs-t1: #1a2138;       --cs-t2: #5a6377;     --cs-t3: #969db0;     /* textos */
+    --cs-ok: #1e9e6a;       --cs-ok-l: #e3f6ee;   --cs-ok-d: #15784f;
+    --cs-warn: #d9892b;     --cs-warn-l: #f9efdc; --cs-warn-d: #a9670f;
+    --cs-err: #dc2f4a;      --cs-err-l: #fdeaee;  --cs-err-d: #b5263c;
+    --cs-r: 16px;
+    --cs-sombra: 0 1px 2px rgba(22, 33, 61, .05), 0 4px 16px rgba(22, 33, 61, .05);
+    --cs-sombra-lg: 0 16px 48px rgba(22, 33, 61, .16);
+    --cs-texto: "Oswald", system-ui, sans-serif;
+    --cs-subtitulo: "Russo One", "Oswald", sans-serif;
+    --cs-titulo: "Bungee", "Russo One", sans-serif;
+}
+
+
+/* ========== 2. BOOTSTRAP: sus variables toman la paleta ========== */
+
+:root {
+    --bs-body-font-family: var(--cs-texto);
+    --bs-body-font-size: .95rem;
+    --bs-body-color: var(--cs-t1);
+    --bs-body-bg: var(--cs-card);           /* fondo de tarjetas y campos; el gris va solo en la página */
+    --bs-secondary-color: var(--cs-t2);
+    --bs-border-color: var(--cs-border);
+    --bs-border-radius: 12px;
+    --bs-border-radius-sm: 10px;
+    --bs-border-radius-lg: var(--cs-r);
+    --bs-primary: #1f4e8f;  --bs-primary-rgb: 31, 78, 143;
+    --bs-success: #1e9e6a;  --bs-success-rgb: 30, 158, 106;
+    --bs-danger: #dc2f4a;   --bs-danger-rgb: 220, 47, 74;
+    --bs-warning: #d9892b;  --bs-warning-rgb: 217, 137, 43;
+    --bs-info: #2f6fd0;     --bs-info-rgb: 47, 111, 208;
+    --bs-dark-rgb: 22, 33, 61;
+    --bs-link-color: var(--cs-pri);  --bs-link-color-rgb: 31, 78, 143;  --bs-link-hover-color: var(--cs-acc);
+    --bs-focus-ring-color: rgba(31, 78, 143, .25);
+
+    /* Variables propias del prototipo (dashboard.css y styles.css) apuntadas a la misma paleta */
+    --color-marca: var(--cs-pri);       --color-marca-oscuro: var(--cs-nav);  --color-marca-tenue: var(--cs-pri-l);
+    --color-texto: var(--cs-t1);        --color-texto-suave: var(--cs-t2);
+    --color-fondo: var(--cs-bg);        --color-borde: var(--cs-border);
+    --color-inventario: var(--cs-acc);  --color-inventario-tenue: var(--cs-acc-l);
+    --color-ventas: var(--cs-pri);      --color-ventas-tenue: var(--cs-pri-l);
+    --cs-primary: var(--cs-pri);        --cs-dark: var(--cs-pri-d);
+}
+
+
+/* ========== 3. BASE ========== */
+
+body, .content-body {
+    font-family: var(--cs-texto);
+    color: var(--cs-t1);
+    background-color: var(--cs-bg);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Fondo de las pantallas del iframe: gris con dos brillos azules suaves */
+.content-body {
+    min-height: 100vh;
+    background-image:
+        radial-gradient(820px 420px at 100% -6%, rgba(31, 78, 143, .08), transparent 60%),
+        radial-gradient(680px 360px at -8% 108%, rgba(47, 111, 208, .07), transparent 55%);
+}
+
+/* Títulos de pantalla en Bungee; subtítulos, encabezados y cifras en Russo One */
+.content-body h1, .content-body .h4 { font-family: var(--cs-titulo); font-weight: 400; color: var(--cs-nav); letter-spacing: 0; }
+.content-body h1.h4, .content-body .h4 { font-size: 1.35rem; }
+h2, h3, h5, h6, .h5, .h6, .card-header, .modal-title, .fs-3, .fs-4 {
+    font-family: var(--cs-subtitulo);
+    font-weight: 400;
+    letter-spacing: -.01em;
+}
+.text-muted, .text-body-secondary { color: var(--cs-t2) !important; }
+
+
+/* ========== 4. ESQUELETO DEL PANEL (menú lateral y barra superior) ========== */
+
+.sidebar { background-color: var(--cs-nav); border-right: 1px solid var(--cs-nav-2); }
+.sidebar-brand { border-bottom-color: rgba(255, 255, 255, .09); }
+.sidebar-brand i { background-color: var(--cs-acc); border-radius: 13px; }
+.sidebar-brand-name { font-family: var(--cs-titulo); font-weight: 400; }
+.sidebar-brand-sub { color: rgba(255, 255, 255, .45); letter-spacing: .5px; }
+.sidebar-label { color: rgba(255, 255, 255, .35); font-weight: 700; letter-spacing: 1.4px; }
+.sidebar-link { border-radius: 12px; color: rgba(255, 255, 255, .62); font-weight: 500; transition: .15s; }
+.sidebar-link:hover { background-color: rgba(255, 255, 255, .07); color: #ffffff; }
+.sidebar-link.active { background-color: var(--cs-pri); color: #ffffff; }
+
+.dashboard-main { background-color: var(--cs-bg); }
+.topbar { background-color: rgba(245, 246, 249, .85); backdrop-filter: blur(12px); border-bottom-color: var(--cs-border); }
+.topbar-search { border: 1.5px solid var(--cs-border-2); border-radius: 12px; background-color: var(--cs-card); }
+.topbar-icon-btn { border-radius: 13px; }
+.topbar-icon-btn:hover { color: var(--cs-pri); }
+
+
+/* ========== 5. COMPONENTES ========== */
+
+/* Tarjetas */
+.card {
+    --bs-card-border-color: var(--cs-border);
+    --bs-card-border-radius: var(--cs-r);
+    --bs-card-inner-border-radius: calc(var(--cs-r) - 1px);
+    --bs-card-cap-bg: transparent;
+    --bs-card-cap-padding-y: .9rem;
+    box-shadow: var(--cs-sombra);
+}
+.card-header { color: var(--cs-nav); }
+.modulo-card:has(.stretched-link):hover { transform: translateY(-3px); box-shadow: var(--cs-sombra-lg); border-color: var(--cs-pri-ll); }
+
+/* Botones: todos redondeados y en Oswald; cada color cambia solo sus variables */
+.btn { --bs-btn-font-family: var(--cs-texto); --bs-btn-font-weight: 600; --bs-btn-border-radius: 12px; --bs-btn-padding-x: 1rem; letter-spacing: .2px; }
+.btn-sm { --bs-btn-border-radius: 10px; }
+.btn-primary {
+    --bs-btn-bg: var(--cs-pri);         --bs-btn-border-color: var(--cs-pri);
+    --bs-btn-hover-bg: var(--cs-pri-d); --bs-btn-hover-border-color: var(--cs-pri-d);
+    --bs-btn-active-bg: var(--cs-pri-d); --bs-btn-disabled-bg: var(--cs-pri); --bs-btn-disabled-border-color: var(--cs-pri);
+    /* styles.css fija colores directos: esto los devuelve a las variables */
+    background-color: var(--bs-btn-bg);
+    border-color: var(--bs-btn-border-color);
+}
+.btn-primary:hover { background-color: var(--bs-btn-hover-bg); border-color: var(--bs-btn-hover-border-color); box-shadow: 0 6px 18px rgba(31, 78, 143, .28); }
+.btn-outline-primary, .btn-outline-secondary {
+    --bs-btn-bg: var(--cs-card);        --bs-btn-border-color: var(--cs-border-2);
+    --bs-btn-hover-bg: var(--cs-pri-l); --bs-btn-hover-color: var(--cs-pri); --bs-btn-hover-border-color: var(--cs-pri);
+    border-width: 1.5px;
+}
+.btn-outline-primary { --bs-btn-color: var(--cs-pri); --bs-btn-active-bg: var(--cs-pri); --bs-btn-active-border-color: var(--cs-pri); }
+.btn-outline-secondary { --bs-btn-color: var(--cs-t2); }
+.btn-check:checked + .btn-outline-primary { background-color: var(--cs-pri); border-color: var(--cs-pri); color: #ffffff; }   /* Diaria / Semanal / Mensual */
+.btn-success, .btn-outline-success { --bs-btn-bg: var(--cs-ok); --bs-btn-border-color: var(--cs-ok); --bs-btn-hover-bg: var(--cs-ok-d); --bs-btn-hover-border-color: var(--cs-ok-d); }
+.btn-danger, .btn-outline-danger { --bs-btn-bg: var(--cs-err); --bs-btn-border-color: var(--cs-err); --bs-btn-hover-bg: var(--cs-err-d); --bs-btn-hover-border-color: var(--cs-err-d); }
+.btn-outline-success { --bs-btn-bg: transparent; --bs-btn-color: var(--cs-ok); }
+.btn-outline-danger { --bs-btn-bg: transparent; --bs-btn-color: var(--cs-err); }
+
+/* Campos de formulario: borde de 1.5px y halo azul al escribir */
+.form-control, .form-select { border: 1.5px solid var(--cs-border-2); border-radius: 12px; }
+.form-control:focus, .form-select:focus, .topbar-search:focus-within { border-color: var(--cs-pri); box-shadow: 0 0 0 4px var(--cs-pri-ll); }
+.form-label, .form-floating > label { color: var(--cs-t2); }
+.form-check-input:checked { background-color: var(--cs-pri); border-color: var(--cs-pri); }
+
+/* Tablas: encabezado en mayúsculas grises; la fila de stock bajo en rojo suave */
+.table { --bs-table-hover-bg: #fafbfe; --bs-table-striped-bg: #f8f9fc; --bs-table-border-color: var(--cs-border); }
+.table > thead th { font-size: .74rem; font-weight: 700; color: var(--cs-t3); text-transform: uppercase; letter-spacing: .6px; white-space: nowrap; }
+.table-danger { --bs-table-bg: var(--cs-err-l); --bs-table-striped-bg: var(--cs-err-l); --bs-table-hover-bg: #fbdde3; --bs-table-color: var(--cs-t1); }
+
+/* Badges: fondo claro y texto oscuro del mismo color (Bootstrap usa !important, por eso se repite) */
+.badge { border-radius: 8px; font-weight: 600; letter-spacing: .2px; padding: .38em .75em; }
+.badge.text-bg-success   { background-color: var(--cs-ok-l) !important;   color: var(--cs-ok-d) !important; }
+.badge.text-bg-danger    { background-color: var(--cs-err-l) !important;  color: var(--cs-err-d) !important; }
+.badge.text-bg-warning   { background-color: var(--cs-warn-l) !important; color: var(--cs-warn-d) !important; }
+.badge.text-bg-primary   { background-color: var(--cs-pri-l) !important;  color: var(--cs-pri-d) !important; }
+.badge.text-bg-info      { background-color: var(--cs-acc-l) !important;  color: var(--cs-acc-d) !important; }
+.badge.text-bg-secondary { background-color: #eef0f5 !important;          color: var(--cs-t2) !important; }
+
+/* Alertas: mismo juego de fondo claro y texto oscuro */
+.alert { --bs-alert-border-radius: 14px; }
+.alert-primary, .alert-info { --bs-alert-bg: var(--cs-acc-l);  --bs-alert-color: var(--cs-acc-d);  --bs-alert-border-color: var(--cs-pri-ll); }
+.alert-success { --bs-alert-bg: var(--cs-ok-l);   --bs-alert-color: var(--cs-ok-d);   --bs-alert-border-color: #c4ead8; }
+.alert-danger  { --bs-alert-bg: var(--cs-err-l);  --bs-alert-color: var(--cs-err-d);  --bs-alert-border-color: #f6cbd3; }
+.alert-warning { --bs-alert-bg: var(--cs-warn-l); --bs-alert-color: var(--cs-warn-d); --bs-alert-border-color: #f1dcb4; }
+
+/* Pestañas tipo píldora, migas de pan, paginación, barras de los reportes y modales */
+.nav-pills { --bs-nav-pills-border-radius: 30px; --bs-nav-pills-link-active-bg: var(--cs-pri); gap: .4rem; }
+.nav-pills .nav-link { border: 1.5px solid var(--cs-border-2); background-color: var(--cs-card); color: var(--cs-t2); font-weight: 600; }
+.nav-pills .nav-link:hover { border-color: var(--cs-pri-ll); color: var(--cs-pri); }
+.nav-pills .nav-link.active { border-color: var(--cs-pri); background-color: var(--cs-pri); color: #ffffff; }
+.breadcrumb { --bs-breadcrumb-item-active-color: var(--cs-t2); font-size: .85rem; text-transform: uppercase; letter-spacing: .5px; }
+.pagination { --bs-pagination-color: var(--cs-pri); --bs-pagination-active-bg: var(--cs-pri); --bs-pagination-active-border-color: var(--cs-pri); --bs-pagination-hover-bg: var(--cs-pri-l); gap: .3rem; }
+.pagination .page-link { border-radius: 10px !important; }
+.progress, .progress-stacked { --bs-progress-bg: var(--cs-bg); --bs-progress-border-radius: 10px; --bs-progress-bar-bg: var(--cs-pri); }
+.modal { --bs-modal-border-radius: 20px; --bs-modal-box-shadow: var(--cs-sombra-lg); }
+
+
+/* ========== 6. PÁGINAS ========== */
+
+/* Portada (index.html): hero con el degradado azul oscuro del diseño y texto claro */
+.navbar-brand, .hero h1, .login-card h1, .login-card .h3, .login-card .h4 { font-family: var(--cs-titulo); font-weight: 400; }
+.navbar-brand, .login-card h1, .login-card .h3, .login-card .h4 { color: var(--cs-nav); }
+.hero {
+    background: radial-gradient(900px 500px at 110% 10%, rgba(47, 111, 208, .35), transparent 60%),
+                linear-gradient(135deg, var(--cs-nav-2) 0%, var(--cs-nav) 55%, var(--cs-pri) 130%);
+    color: #ffffff;
+}
+.hero h1 { line-height: 1.18; }
+.hero .text-primary, .hero-icon { color: #5b9bf0 !important; }
+.hero p, .hero .text-muted { color: rgba(255, 255, 255, .72) !important; }
+.hero .btn-primary { --bs-btn-bg: var(--cs-acc); --bs-btn-border-color: var(--cs-acc); }
+
+/* Login, registro y contraseñas: degradado azul de fondo y tarjeta blanca encima */
+body:has(.login-card) { background: linear-gradient(160deg, var(--cs-nav) 0%, var(--cs-pri) 70%, #3a63a8 100%); padding-top: 0; }
+body:has(.login-card) .bg-light:has(> .login-card) { background-color: transparent !important; }   /* el contenedor trae bg-light */
+.login-card { border: none; border-radius: 20px; box-shadow: var(--cs-sombra-lg); }
+
+
+/* ========== 7. UTILIDADES: celular e impresión ========== */
+
+/* Celular: menú solo con íconos. font-size: 0 esconde el texto a la vista,
+   pero los lectores de pantalla lo siguen leyendo (los enlaces no tienen <span>) */
+@media (max-width: 768px) {
+    .sidebar-link { font-size: 0; justify-content: center; padding: 11px 0; }
+    .sidebar-link i { font-size: 1.2rem; }
+    .sidebar-brand { justify-content: center; padding: 16px 0; }
+}
+
+/* Impresión: papel blanco y sin sombras */
+@media print {
+    .content-body { background: #ffffff; min-height: 0; }
+    .card { box-shadow: none; }
+}

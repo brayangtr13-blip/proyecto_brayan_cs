@@ -139,7 +139,7 @@ Repository (RepositorioVentas)     → único acceso a los datos (hoy localStora
 ├── README.md                  Este archivo
 ├── REFACTOR.md                Bitácora técnica de los cambios
 ├── assets/
-│   ├── css/                   styles.css, dashboard.css y un CSS por módulo
+│   ├── css/                   styles.css, dashboard.css, un CSS por módulo y tema_control_store.css (va de último)
 │   ├── img/                   Imágenes (con CREDITOS.txt)
 │   ├── js/
 │   │   ├── sesion.js          Sesión simulada
@@ -151,7 +151,7 @@ Repository (RepositorioVentas)     → único acceso a los datos (hoy localStora
 │   │   ├── inventario/        inventario_datos.js · inventario_servicio.js · pantallas
 │   │   ├── ventas/            ventas_datos.js · ventas_servicio.js · comprobante_venta.js · pantallas
 │   │   └── domicilios/        domicilios_datos.js · domicilios_servicio.js · estados · eventos · pantallas
-│   └── vendor/                Bootstrap, Bootstrap Icons, Font Awesome y fuente Inter (locales, sin CDN)
+│   └── vendor/                Bootstrap, Bootstrap Icons, Font Awesome y fuentes Inter, Oswald, Russo One y Bungee (locales, sin CDN)
 └── pages/
     ├── company/               login, registro, recuperar y actualizar contraseña
     ├── roles/                 admin.html, cajero.html, domiciliario.html (paneles)
@@ -162,7 +162,7 @@ Repository (RepositorioVentas)     → único acceso a los datos (hoy localStora
 
 | Tecnología | Versión | Uso |
 |---|---|---|
-| HTML5 + CSS3 | — | Estructura semántica y estilos propios |
+| HTML5 + CSS3 | — | Estructura semántica y estilos propios; el aspecto final lo da `tema_control_store.css` |
 | Bootstrap | 5.3.3 | Rejilla, componentes y validación de formularios (local en `assets/vendor/`) |
 | Bootstrap Icons · Font Awesome | locales | Íconos |
 | JavaScript | ES5/ES6 sin compilar | Scripts clásicos con IIFE (abre sin servidor de compilación) |
@@ -186,7 +186,7 @@ Repository (RepositorioVentas)     → único acceso a los datos (hoy localStora
 - [x] Un solo kárdex (`movimientos_inventario`) en `RepositorioInventario`, con el stock de la BD
 - [x] Historial de movimientos en consultar producto (RF10.2) y paginación real
 - [x] Registrar un producto con stock o editar su stock deja su movimiento en el kárdex (entrada o ajuste)
-- [ ] Revisión responsive y visual
+- [x] Estilo del diseño Control Store en `tema_control_store.css` (paleta azul, Oswald, Russo One y Bungee) y menú de íconos en celular
 
 **Fase 2 · API falsa** (CS-189)
 - [ ] JSON Server con un `db.json` igual a las tablas de `controlstore_sena`
