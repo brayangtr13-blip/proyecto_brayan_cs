@@ -70,15 +70,25 @@
                              El placeholder es obligatorio para que la etiqueta flote (lo pide la documentación).
                              Docs: https://getbootstrap.com/docs/5.3/forms/floating-labels/ -->
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            <!-- Nombre y apellido por separado, como las columnas clientes.nombre y clientes.apellido
+                                 (migración 05: un campo con el nombre completo rompía la 1FN) -->
+                            <div class="col-md-4">
                                 <div class="form-floating">
                                     <!-- maxlength 100 = clientes.nombre varchar(100) -->
                                     <input type="text" class="form-control" id="clienteNombre" placeholder="Nombre" maxlength="100" required>
-                                    <label for="clienteNombre">Nombre completo</label>
+                                    <label for="clienteNombre">Nombre</label>
                                     <div class="invalid-feedback">Escribe el nombre del cliente</div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <!-- maxlength 100 = clientes.apellido varchar(100) -->
+                                    <input type="text" class="form-control" id="clienteApellido" placeholder="Apellido" maxlength="100" required>
+                                    <label for="clienteApellido">Apellido</label>
+                                    <div class="invalid-feedback">Escribe el apellido del cliente</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-floating">
                                     <!-- pattern [0-9]{10}: celular colombiano de 10 dígitos (HU04 / HU01) -->
                                     <input type="tel" class="form-control" id="clienteTelefono" placeholder="Teléfono"
@@ -97,10 +107,12 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-floating">
-                                    <!-- maxlength 50 = clientes.barrio varchar(50) -->
-                                    <input type="text" class="form-control" id="clienteBarrio" placeholder="Barrio" maxlength="50" required>
+                                    <!-- clientes.id_barrio: FK a barrios. Las opciones las pone el JS desde el catálogo -->
+                                    <select class="form-select" id="clienteBarrio" required>
+                                        <option value="" selected disabled>Elige el barrio</option>
+                                    </select>
                                     <label for="clienteBarrio">Barrio</label>
-                                    <div class="invalid-feedback">Escribe el barrio</div>
+                                    <div class="invalid-feedback">Elige el barrio</div>
                                 </div>
                             </div>
                         </div>
@@ -176,9 +188,12 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="barrioEntrega" placeholder="Barrio" maxlength="50" required>
-                                    <label for="barrioEntrega">Barrio</label>
-                                    <div class="invalid-feedback">Escribe el barrio</div>
+                                    <!-- domicilios.id_barrio: de aquí sale la tarifa (costo_envio) -->
+                                    <select class="form-select" id="barrioEntrega" required>
+                                        <option value="" selected disabled>Elige el barrio</option>
+                                    </select>
+                                    <label for="barrioEntrega">Barrio y tarifa</label>
+                                    <div class="invalid-feedback">Elige el barrio de entrega</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -214,11 +229,8 @@
                             <!-- Los 4 métodos de la tabla metodos_pago (Jira nombra solo 2; se respeta la BD) -->
                             <label for="metodoPago" class="form-label">Método de pago</label>
                             <select class="form-select" id="metodoPago" required>
+                                <!-- Las opciones salen de la tabla metodos_pago (RepositorioCatalogos) -->
                                 <option value="" selected disabled>Selecciona un método</option>
-                                <option value="1">Efectivo</option>
-                                <option value="2">Nequi</option>
-                                <option value="3">Transferencia</option>
-                                <option value="4">Tarjeta</option>
                             </select>
                             <div class="invalid-feedback">Selecciona cómo paga el cliente</div>
                         </div>
@@ -285,6 +297,7 @@
     <script src="../../../assets/js/usuarios/usuarios_datos.js"></script>
     <script src="../../../assets/js/sesion.js"></script>
     <script src="../../../assets/js/inventario/inventario_datos.js"></script>
+    <script src="../../../assets/js/catalogos/catalogos_datos.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_datos.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_estados.js"></script>
     <script src="../../../assets/js/domicilios/domicilios_eventos.js"></script>

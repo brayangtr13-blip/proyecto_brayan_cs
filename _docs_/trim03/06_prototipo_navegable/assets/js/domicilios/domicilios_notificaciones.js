@@ -134,7 +134,7 @@ const NotificacionesDomicilios = (function () {
         }
         RepositorioDomicilios.agregarAvisoDomiciliario({
             idDomiciliario: pedido.idDomiciliario,
-            texto: 'Te asignaron el pedido #' + pedido.id + ' · ' + pedido.barrio,
+            texto: 'Te asignaron el pedido #' + pedido.id + ' · ' + RepositorioDomicilios.nombreBarrio(pedido.idBarrio),
             fecha: new Date().toISOString(),
             leido: false
         });

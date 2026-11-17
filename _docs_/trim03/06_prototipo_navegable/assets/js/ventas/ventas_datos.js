@@ -2,25 +2,22 @@
 // Único acceso a los datos del módulo. Hoy: localStorage. Con Django: fetch a la API.
 // Depende de: inventario/inventario_datos.js (los productos son de Inventario)
 //             usuarios/usuarios_datos.js (los cajeros son de Usuarios)
+//             catalogos/catalogos_datos.js (métodos de pago y clientes)
 
 // Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
 if (typeof RepositorioInventario === 'undefined') throw new Error('ventas_datos.js: falta cargar antes inventario/inventario_datos.js');
 if (typeof RepositorioUsuarios === 'undefined') throw new Error('ventas_datos.js: falta cargar antes usuarios/usuarios_datos.js');
+if (typeof RepositorioCatalogos === 'undefined') throw new Error('ventas_datos.js: falta cargar antes catalogos/catalogos_datos.js');
 
 const RepositorioVentas = (function () {
     const CLAVE = 'controlstore_ventas_v1';
 
-    // Datos del volcado de controlstore_sena: métodos de pago,
-    // el turno #2 (arqueo_caja) y las ventas #2, #3 y #4 con su detalle_venta.
-    // Los usuarios ya no se copian aquí: se piden a RepositorioUsuarios.
+    // Datos del volcado de controlstore_sena: el turno #2 (arqueo_caja)
+    // y las ventas #2, #3 y #4 con su detalle_venta.
+    // Los usuarios, los métodos de pago y los clientes no se copian aquí:
+    // se piden a RepositorioUsuarios y a RepositorioCatalogos (una sola fuente).
     function datosDeEjemplo() {
         return {
-            metodosPago: [
-                { id: 1, nombre: 'Efectivo' },
-                { id: 2, nombre: 'Nequi' },
-                { id: 3, nombre: 'Transferencia' },
-                { id: 4, nombre: 'Tarjeta' }
-            ],
             arqueos: [
                 {
                     id: 2, idUsuario: 2, fechaApertura: '2026-09-23T08:40:30', fechaCierre: '2026-09-23T11:40:30',
@@ -78,8 +75,10 @@ const RepositorioVentas = (function () {
         // Los productos no se copian aquí: se piden al Repository de Inventario
         obtenerProductos: function () { return RepositorioInventario.obtenerProductos(); },
         obtenerProducto: function (codigo) { return RepositorioInventario.obtenerProducto(codigo); },
-        obtenerMetodosPago: function () { return leer().metodosPago; },
-        obtenerMetodoPago: function (id) { return leer().metodosPago.find(function (m) { return m.id === id; }); },
+        // Los métodos de pago y los clientes son catálogos compartidos con Domicilios
+        obtenerMetodosPago: function () { return RepositorioCatalogos.obtenerMetodosPago(); },
+        obtenerMetodoPago: function (id) { return RepositorioCatalogos.obtenerMetodoPago(id); },
+        obtenerCliente: function (id) { return RepositorioCatalogos.obtenerCliente(id); },
         // Los usuarios tampoco se copian: se piden al Repository de Usuarios (una sola fuente)
         obtenerUsuarios: function () {
             return RepositorioUsuarios.obtenerUsuarios().filter(puedeVender).map(comoCajero);

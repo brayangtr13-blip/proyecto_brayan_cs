@@ -109,6 +109,11 @@ const ServicioDomicilios = (function () {
             if (error) return { ok: false, error: error };
         }
 
+        const barrio = RepositorioDomicilios.obtenerBarrio(datos.idBarrio);
+        if (!barrio || !barrio.activo) {
+            return { ok: false, error: 'Elige un barrio dentro de la cobertura de domicilios.' };
+        }
+
         // Cliente existente (buscado por teléfono) o cliente nuevo -> INSERT INTO clientes
         let cliente = RepositorioDomicilios.buscarClientePorTelefono(datos.cliente.telefono);
         if (!cliente) {
@@ -122,7 +127,9 @@ const ServicioDomicilios = (function () {
             items: datos.items,
             total: calcularTotales(datos.items).total,
             direccionEntrega: datos.direccionEntrega,
-            barrio: datos.barrio,
+            idBarrio: barrio.id,
+            // domicilios.costo_envio: se copia la tarifa de hoy; si mañana sube, este pedido no cambia
+            costoEnvio: barrio.costoDomicilio,
             telefonoContacto: datos.telefonoContacto,
             // CU041 / wireframe 22.2: todo pedido nuevo arranca en "pendiente" (DEFAULT de la columna)
             estado: 'pendiente',
