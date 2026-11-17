@@ -15,6 +15,7 @@
 
 // Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
 if (typeof RepositorioDomicilios === 'undefined') throw new Error('domicilios_servicio.js: falta cargar antes domicilios_datos.js');
+if (typeof RepositorioAuditoria === 'undefined') throw new Error('domicilios_servicio.js: falta cargar antes auditoria/auditoria_datos.js');
 if (typeof EstadosPedido === 'undefined') throw new Error('domicilios_servicio.js: falta cargar antes domicilios_estados.js');
 if (typeof EventosDomicilios === 'undefined') throw new Error('domicilios_servicio.js: falta cargar antes domicilios_eventos.js');
 
@@ -221,6 +222,8 @@ const ServicioDomicilios = (function () {
             anterior ? 'Reasignado de ' + anterior.nombre + ' a ' + domiciliario.nombre
                 : 'Asignado a ' + domiciliario.nombre);
         RepositorioDomicilios.actualizarPedido();
+        RepositorioAuditoria.registrar({ idModulo: RepositorioAuditoria.MODULO.DOMICILIOS, accion: 'asignar',
+            detalle: 'Pedido #' + pedido.id + ': ' + cambio.detalle });
         EventosDomicilios.publicar('estadoCambiado', {
             pedido: pedido, estadoAnterior: estadoAnterior, estadoNuevo: pedido.estado, usuario: usuario, cambio: cambio
         });
@@ -258,6 +261,10 @@ const ServicioDomicilios = (function () {
             .filter(Boolean).join(' · ');
         const cambio = registrarHistorial(pedido, estadoAnterior, nuevoEstado, quien.nombre, detalle);
         RepositorioDomicilios.actualizarPedido();
+        RepositorioAuditoria.registrar({ idUsuario: quien.idUsuario, idModulo: RepositorioAuditoria.MODULO.DOMICILIOS,
+            accion: nuevoEstado === 'cancelado' ? 'cancelar' : 'actualizar',
+            detalle: 'Pedido #' + pedido.id + ': ' + TEXTO_ESTADO[estadoAnterior] + ' → ' + TEXTO_ESTADO[nuevoEstado] +
+                (detalle ? ' · ' + detalle : '') });
 
         // Patrón Observer: los interesados (inventario ahora, notificaciones en CS-38) reaccionan solos
         EventosDomicilios.publicar('estadoCambiado', {

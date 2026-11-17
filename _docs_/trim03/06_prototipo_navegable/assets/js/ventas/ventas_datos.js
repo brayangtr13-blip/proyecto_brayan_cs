@@ -3,11 +3,13 @@
 // Depende de: inventario/inventario_datos.js (los productos son de Inventario)
 //             usuarios/usuarios_datos.js (los cajeros son de Usuarios)
 //             catalogos/catalogos_datos.js (métodos de pago y clientes)
+//             auditoria/auditoria_datos.js (log_auditoria, compartido por todos los módulos)
 
 // Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
 if (typeof RepositorioInventario === 'undefined') throw new Error('ventas_datos.js: falta cargar antes inventario/inventario_datos.js');
 if (typeof RepositorioUsuarios === 'undefined') throw new Error('ventas_datos.js: falta cargar antes usuarios/usuarios_datos.js');
 if (typeof RepositorioCatalogos === 'undefined') throw new Error('ventas_datos.js: falta cargar antes catalogos/catalogos_datos.js');
+if (typeof RepositorioAuditoria === 'undefined') throw new Error('ventas_datos.js: falta cargar antes auditoria/auditoria_datos.js');
 
 const RepositorioVentas = (function () {
     const CLAVE = 'controlstore_ventas_v1';
@@ -33,8 +35,7 @@ const RepositorioVentas = (function () {
                 { id: 4, idUsuario: 2, idArqueo: 2, idCliente: 2, idMetodoPago: 1, fecha: '2026-09-23T11:10:30', total: 21050, estado: 'pagada',
                   detalle: [{ codigo: '7702001001', cantidad: 3, precio: 2850 }, { codigo: '7702001002', cantidad: 1, precio: 12500 }] }
             ],
-            movimientos: [],   // movimientos_inventario
-            auditoria: []      // log_auditoria
+            movimientos: []    // movimientos_inventario (log_auditoria vive en RepositorioAuditoria)
         };
     }
 
@@ -117,11 +118,20 @@ const RepositorioVentas = (function () {
         agregarMovimientos: function (lista) {
             lista.forEach(function (m) { leer().movimientos.push(m); });
         },
+        // El log es uno solo para todo el sistema: Ventas escribe y lee sus eventos (módulo 3).
+        // Anular y cerrar caja cambian la venta o el turno justo antes de auditar: por eso aquí
+        // también se guardan los datos de Ventas (el cambio y su registro quedan juntos).
         registrarAuditoria: function (evento) {
-            leer().auditoria.push(evento);
+            const registro = Object.assign({ idModulo: RepositorioAuditoria.MODULO.VENTAS }, evento);
+            delete registro.modulo;
             guardar();
+            return RepositorioAuditoria.registrar(registro);
         },
-        obtenerAuditoria: function () { return leer().auditoria; },
+        obtenerAuditoria: function () {
+            return RepositorioAuditoria.obtenerEventos().filter(function (e) {
+                return e.idModulo === RepositorioAuditoria.MODULO.VENTAS;
+            });
+        },
         guardarCambios: function () { guardar(); },
         restablecer: function () { enMemoria = datosDeEjemplo(); guardar(); }
     };

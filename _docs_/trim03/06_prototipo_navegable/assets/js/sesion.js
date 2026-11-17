@@ -5,6 +5,7 @@
 
 // Falla rápido si el HTML no cargó antes las dependencias (orden de <script>)
 if (typeof RepositorioUsuarios === 'undefined') throw new Error('sesion.js: falta cargar antes usuarios/usuarios_datos.js');
+if (typeof RepositorioAuditoria === 'undefined') throw new Error('sesion.js: falta cargar antes auditoria/auditoria_datos.js');
 
 const Sesion = (function () {
     const CLAVE = 'controlstore_sesion';
@@ -32,10 +33,21 @@ const Sesion = (function () {
             ? RepositorioUsuarios.obtenerUsuario(ALIAS[texto])
             : RepositorioUsuarios.obtenerPorCorreo(texto);
 
-        if (!usuario) return { ok: false, error: 'Usuario o contraseña incorrectos' };
-        if (usuario.estado !== 'activo') return { ok: false, error: 'Usuario inactivo. Comunícate con el administrador.' };
+        // RNF04: los intentos fallidos también quedan en el log (así se detecta quien prueba cuentas)
+        if (!usuario) {
+            RepositorioAuditoria.registrar({ idUsuario: null, idModulo: RepositorioAuditoria.MODULO.USUARIOS,
+                accion: 'login_fallido', detalle: 'Intento de acceso con un usuario que no existe: ' + texto });
+            return { ok: false, error: 'Usuario o contraseña incorrectos' };
+        }
+        if (usuario.estado !== 'activo') {
+            RepositorioAuditoria.registrar({ idUsuario: usuario.idUsuario, idModulo: RepositorioAuditoria.MODULO.USUARIOS,
+                accion: 'login_fallido', detalle: 'Intento de acceso con una cuenta inactiva' });
+            return { ok: false, error: 'Usuario inactivo. Comunícate con el administrador.' };
+        }
         const sesion = datosDeSesion(usuario);
         try { sessionStorage.setItem(CLAVE, JSON.stringify(sesion)); } catch (e) { /* sin almacenamiento */ }
+        RepositorioAuditoria.registrar({ idUsuario: usuario.idUsuario, idModulo: RepositorioAuditoria.MODULO.USUARIOS,
+            accion: 'login', detalle: 'Inicio de sesión exitoso' });
         return { ok: true, usuario: sesion };
     }
 
@@ -51,6 +63,8 @@ const Sesion = (function () {
 
     // RF02: cerrar sesión = olvidar quién entró
     function cerrar() {
+        RepositorioAuditoria.registrar({ idUsuario: actual().idUsuario, idModulo: RepositorioAuditoria.MODULO.USUARIOS,
+            accion: 'logout', detalle: 'Cerró sesión' });
         try { sessionStorage.removeItem(CLAVE); } catch (e) { /* sin almacenamiento */ }
     }
 
