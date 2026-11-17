@@ -18,8 +18,12 @@
 -- |||        trg_usuarios_bloqueo_bu  : bloquea 15 minutos tras 3 intentos fallidos              |||
 -- |||    06. Trigger AFTER UPDATE (auditoría)                                                     |||
 -- |||        trg_productos_precio_au  : deja en log_auditoria cada cambio de precio              |||
--- |||    07. Ver y eliminar triggers ... SHOW TRIGGERS ; DROP TRIGGER IF EXISTS ____ ;             |||
--- |||    08. Pruebas (dentro de una transacción con ROLLBACK: no cambian los datos)               |||
+-- |||    07. Reglas del administrador (el sistema no puede quedarse sin él)                       |||
+-- |||        trg_usuarios_admin_bi    : no deja crear un segundo administrador                   |||
+-- |||        trg_usuarios_admin_bu    : no deja inactivarlo, quitarle el rol ni dárselo a otro    |||
+-- |||        trg_usuarios_admin_bd    : BEFORE DELETE, no deja borrarlo                           |||
+-- |||    08. Ver y eliminar triggers ... SHOW TRIGGERS ; DROP TRIGGER IF EXISTS ____ ;             |||
+-- |||    09. Pruebas (dentro de una transacción con ROLLBACK: no cambian los datos)               |||
 -- |||                                                                                             |||
 -- |||  NEW = la fila nueva (INSERT y UPDATE) · OLD = la fila anterior (UPDATE y DELETE)           |||
 -- |||  SIGNAL SQLSTATE '45000' = el trigger rechaza la operación con un mensaje propio            |||
@@ -40,6 +44,9 @@ DROP TRIGGER IF EXISTS trg_productos_precio_bu;
 DROP TRIGGER IF EXISTS trg_productos_precio_au;
 DROP TRIGGER IF EXISTS trg_domicilios_costo_bi;
 DROP TRIGGER IF EXISTS trg_usuarios_bloqueo_bu;
+DROP TRIGGER IF EXISTS trg_usuarios_admin_bi;
+DROP TRIGGER IF EXISTS trg_usuarios_admin_bu;
+DROP TRIGGER IF EXISTS trg_usuarios_admin_bd;
 
 DELIMITER $$
 
@@ -154,38 +161,100 @@ BEGIN
   END IF;
 END$$
 
+-- ---------------------------------------------------------------------------------------------------
+-- 07. REGLAS DEL ADMINISTRADOR · el sistema tiene UN solo administrador y no puede quedarse sin él
+--     (en el diagrama de clases: Autoservicio 1 ◆── 1 RolAdministrador; en el prototipo:
+--     usuarios_servicio.js). El rol se busca por nombre para no depender de que su id sea 1.
+-- ---------------------------------------------------------------------------------------------------
+
+-- No se puede crear un segundo administrador
+CREATE TRIGGER trg_usuarios_admin_bi
+BEFORE INSERT ON usuarios
+FOR EACH ROW
+BEGIN
+  DECLARE v_rol_admin INT;
+  SELECT id_rol INTO v_rol_admin FROM roles WHERE nombre = 'administrador';
+  IF NEW.id_rol = v_rol_admin
+     AND EXISTS (SELECT 1 FROM usuarios WHERE id_rol = v_rol_admin) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ya existe un administrador: el sistema solo admite uno';
+  END IF;
+END$$
+
+-- No se puede inactivar al administrador, quitarle el rol, ni convertir a otro usuario en administrador
+CREATE TRIGGER trg_usuarios_admin_bu
+BEFORE UPDATE ON usuarios
+FOR EACH ROW
+FOLLOWS trg_usuarios_bloqueo_bu
+BEGIN
+  DECLARE v_rol_admin INT;
+  SELECT id_rol INTO v_rol_admin FROM roles WHERE nombre = 'administrador';
+  IF OLD.id_rol = v_rol_admin AND NEW.activo = 0 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede inactivar al administrador: nadie podría activar cuentas';
+  END IF;
+  IF OLD.id_rol = v_rol_admin AND NEW.id_rol <> v_rol_admin THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede quitar el rol al administrador';
+  END IF;
+  IF OLD.id_rol <> v_rol_admin AND NEW.id_rol = v_rol_admin THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ya existe un administrador: el sistema solo admite uno';
+  END IF;
+END$$
+
+-- BEFORE DELETE · no se puede borrar al administrador
+CREATE TRIGGER trg_usuarios_admin_bd
+BEFORE DELETE ON usuarios
+FOR EACH ROW
+BEGIN
+  IF OLD.id_rol = (SELECT id_rol FROM roles WHERE nombre = 'administrador') THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede eliminar al administrador del sistema';
+  END IF;
+END$$
+
 DELIMITER ;
 
 
 -- ---------------------------------------------------------------------------------------------------
--- 07. VER Y ELIMINAR TRIGGERS ................ SHOW TRIGGERS ; DROP TRIGGER IF EXISTS ____ ;
+-- 08. VER Y ELIMINAR TRIGGERS ................ SHOW TRIGGERS ; DROP TRIGGER IF EXISTS ____ ;
 -- ---------------------------------------------------------------------------------------------------
-SHOW TRIGGERS FROM controlstore_sena;                -- deben salir 8
+SHOW TRIGGERS FROM controlstore_sena;                -- deben salir 11
 -- DROP TRIGGER IF EXISTS trg_productos_precio_au;   -- así se elimina uno (quitar el -- para probar)
 
 
 -- ---------------------------------------------------------------------------------------------------
--- 08. PRUEBAS · todo dentro de una transacción que termina en ROLLBACK: los datos no cambian
+-- 09. PRUEBAS · todo dentro de una transacción que termina en ROLLBACK: los datos no cambian
 -- ---------------------------------------------------------------------------------------------------
 START TRANSACTION;
 
--- 08.01. Agregar un renglón a la venta #2 recalcula su total ($8.700 -> $14.500)
+-- 09.01. Agregar un renglón a la venta #2 recalcula su total ($8.700 -> $14.500)
 SELECT id_venta, total AS total_antes FROM ventas WHERE id_venta = 2;
 INSERT INTO detalle_venta (id_venta, codigo_producto, cantidad, precio_venta) VALUES (2, '7702001004', 1, 5800);
 SELECT id_venta, total AS total_despues FROM ventas WHERE id_venta = 2;
 
--- 08.02. Cambiar un precio deja el registro en la bitácora
+-- 09.02. Cambiar un precio deja el registro en la bitácora
 SET @id_usuario_app = 1;
 UPDATE productos SET precio_unitario = 3000 WHERE codigo_producto = '7702001001';
 SELECT id_log, id_usuario, accion, detalle FROM log_auditoria ORDER BY id_log DESC LIMIT 1;
 
--- 08.03. Tercer intento fallido: la cuenta queda bloqueada 15 minutos
+-- 09.03. Tercer intento fallido: la cuenta queda bloqueada 15 minutos
 UPDATE usuarios SET intentos_fallidos = 3 WHERE id_usuario = 4;
 SELECT id_usuario, intentos_fallidos, bloqueado_hasta FROM usuarios WHERE id_usuario = 4;
 
+-- 09.04. Un cajero sí se puede inactivar: el sistema sigue funcionando sin él
+UPDATE usuarios SET activo = 0 WHERE id_usuario = 4;
+SELECT id_usuario, activo FROM usuarios WHERE id_usuario = 4;
+
 ROLLBACK;
 
--- 08.04. Pruebas que deben FALLAR (quitar el -- de la línea para ver el error):
+-- 09.05. Pruebas que deben FALLAR (quitar el -- de la línea para ver el error):
+-- UPDATE usuarios SET activo = 0 WHERE id_usuario = 1;
+--   -> ERROR 1644: No se puede inactivar al administrador: nadie podría activar cuentas
+-- UPDATE usuarios SET id_rol = 2 WHERE id_usuario = 1;
+--   -> ERROR 1644: No se puede quitar el rol al administrador
+-- UPDATE usuarios SET id_rol = 1 WHERE id_usuario = 4;
+--   -> ERROR 1644: Ya existe un administrador: el sistema solo admite uno
+-- DELETE FROM usuarios WHERE id_usuario = 1;
+--   -> ERROR 1644: No se puede eliminar al administrador del sistema
+-- INSERT INTO usuarios (documento, nombre, apellido, email, id_rol, contrasena_hash) VALUES ('99', 'Otro', 'Admin', 'otro@controlstore.com', 1, 'x');
+--   -> ERROR 1644: Ya existe un administrador: el sistema solo admite uno
 -- UPDATE productos SET precio_unitario = 1000 WHERE codigo_producto = '7702001001';
 --   -> ERROR 1644: El precio de venta no puede ser menor que el precio de compra
 -- INSERT INTO domicilios (id_venta, id_barrio, direccion_entrega, telefono_contacto) VALUES (2, 10, 'Calle 1', '3000000000');
