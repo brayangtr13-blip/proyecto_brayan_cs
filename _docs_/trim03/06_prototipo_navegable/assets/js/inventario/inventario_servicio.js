@@ -70,6 +70,11 @@ const ServicioInventario = (function () {
             return { ok: false, error: 'duplicado' };
         }
         const nuevo = RepositorioInventario.agregarProducto(producto);
+        // El stock con el que nace el producto también entra al kárdex (si no, el kárdex no cuadra)
+        if (nuevo.stock > 0) {
+            RepositorioInventario.registrarMovimientos([{ codigoProducto: nuevo.codigo, idUsuario: RepositorioAuditoria.idUsuarioActual(),
+                tipo: 'entrada', cantidad: nuevo.stock, observacion: 'Stock inicial al registrar el producto' }]);
+        }
         auditar('registrar', 'Registró el producto ' + nuevo.nombre + ' (' + nuevo.codigo + ')');
         return { ok: true, producto: nuevo };
     }
@@ -83,6 +88,11 @@ const ServicioInventario = (function () {
         if (!producto) return { ok: false, error: 'No existe el producto.' };
         const cambioStock = stockAntes !== null && producto.stock !== stockAntes
             ? ' · stock ' + stockAntes + ' → ' + producto.stock : '';
+        // Cambiar el stock a mano es un AJUSTE: queda en el kárdex con la diferencia (positiva o negativa)
+        if (cambioStock) {
+            RepositorioInventario.registrarMovimientos([{ codigoProducto: codigo, idUsuario: RepositorioAuditoria.idUsuarioActual(),
+                tipo: 'ajuste', cantidad: producto.stock - stockAntes, observacion: 'Ajuste manual al editar el producto' }]);
+        }
         auditar('actualizar', 'Editó el producto ' + producto.nombre + cambioStock);
         return { ok: true, producto: producto };
     }

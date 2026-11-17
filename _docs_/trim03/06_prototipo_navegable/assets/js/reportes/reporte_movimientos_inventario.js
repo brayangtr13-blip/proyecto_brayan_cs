@@ -17,6 +17,9 @@
     const rango = ServicioReportes.rangoInicial(RepositorioInventario.obtenerMovimientos().map(function (m) { return m.fecha; }));
     el('filtroDesde').value = rango.desde;
     el('filtroHasta').value = rango.hasta;
+    // Desde "Kárdex completo" en consultar producto llega ?codigo=...: el reporte abre filtrado
+    const codigoUrl = new URLSearchParams(location.search).get('codigo');
+    if (codigoUrl && RepositorioInventario.obtenerProducto(codigoUrl)) el('filtroProducto').value = codigoUrl;
 
     function celdas(tr, valores, derecha) {
         valores.forEach(function (v, i) {

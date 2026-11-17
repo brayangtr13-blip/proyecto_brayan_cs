@@ -90,6 +90,9 @@ const RepositorioAuditoria = (function () {
             return MODULOS.find(function (m) { return m.id === id; });
         },
 
+        // id del usuario en sesión (también lo usa Inventario para firmar los movimientos del kárdex)
+        idUsuarioActual: usuarioDeLaSesion,
+
         recargar: function () { enMemoria = null; },
         restablecer: function () { enMemoria = datosDeEjemplo(); guardar(); }
     };

@@ -69,8 +69,8 @@ Son los usuarios 1 a 7 de `controlstore_sena`, con los mismos id, documentos y c
 | RF | Funcionalidad | Pantalla | Estado |
 |---|---|---|---|
 | RF08 | Registrar producto (código duplicado) | `pages/modules/inventario/registrar_producto.html` | ✅ |
-| RF09 | Listar productos | `pages/modules/inventario/listar_productos.html` | ✅ (paginación pendiente) |
-| RF10 | Consultar producto | `pages/modules/inventario/consultar_producto.html` | ✅ (historial de movimientos pendiente) |
+| RF09 | Listar productos | `pages/modules/inventario/listar_productos.html` | ✅ (10 por página) |
+| RF10 | Consultar producto | `pages/modules/inventario/consultar_producto.html` | ✅ (con historial de movimientos) |
 | RF11 | Editar producto | `pages/modules/inventario/editar_producto.html` | ✅ |
 | RF12 | Eliminar producto (borrado lógico) | `pages/modules/inventario/listar_productos.html` | ✅ |
 | RF13 | Alerta de stock mínimo | `pages/modules/inventario/alertas_stock.html` | ✅ (vencimiento: la BD no tiene la columna) |
@@ -184,7 +184,8 @@ Repository (RepositorioVentas)     → único acceso a los datos (hoy localStora
 - [x] Log de auditoría con JS (RNF04): un solo log para todos los módulos, de solo agregar
 - [x] Reportes con datos reales y reporte de domicilios (RF26–RF30): cálculos en `reportes_servicio.js`
 - [x] Un solo kárdex (`movimientos_inventario`) en `RepositorioInventario`, con el stock de la BD
-- [ ] Historial de movimientos en consultar producto (RF10.2) y paginación real
+- [x] Historial de movimientos en consultar producto (RF10.2) y paginación real
+- [x] Registrar un producto con stock o editar su stock deja su movimiento en el kárdex (entrada o ajuste)
 - [ ] Revisión responsive y visual
 
 **Fase 2 · API falsa** (CS-189)

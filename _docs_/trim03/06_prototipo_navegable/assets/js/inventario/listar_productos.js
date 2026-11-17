@@ -11,12 +11,48 @@
     // Recuerda por cual columna se esta ordenando y en que direccion (1 = asc, -1 = desc)
     const ordenActual = { clave: null, direccion: 1 };
 
+    // Paginación: 10 productos por página. Al buscar, filtrar u ordenar se vuelve a la página 1
+    const POR_PAGINA = 10;
+    let paginaActual = 1;
+    let ultimaLista = [];
+
+    function dibujarPaginacion(total) {
+        const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+        paginaActual = Math.min(paginaActual, paginas);
+        const desde = total === 0 ? 0 : (paginaActual - 1) * POR_PAGINA + 1;
+        document.getElementById('resumenPaginas').textContent =
+            'Mostrando ' + desde + '–' + Math.min(paginaActual * POR_PAGINA, total) + ' de ' + total + ' productos';
+        const ul = document.getElementById('paginacionProductos');
+        ul.replaceChildren();
+        function boton(texto, destino, activo, deshabilitado) {
+            const li = document.createElement('li');
+            li.className = 'page-item' + (activo ? ' active' : '') + (deshabilitado ? ' disabled' : '');
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'page-link';
+            b.textContent = texto;
+            if (activo) b.setAttribute('aria-current', 'page');
+            b.addEventListener('click', function () { paginaActual = destino; mostrarPagina(); });
+            li.appendChild(b);
+            ul.appendChild(li);
+        }
+        boton('Anterior', paginaActual - 1, false, paginaActual === 1);
+        for (let n = 1; n <= paginas; n++) boton(String(n), n, n === paginaActual, false);
+        boton('Siguiente', paginaActual + 1, false, paginaActual === paginas);
+    }
+
+    // Dibuja solo los productos de la página actual
+    function mostrarPagina() {
+        dibujarPaginacion(ultimaLista.length);
+        renderizarProductos(ultimaLista.slice((paginaActual - 1) * POR_PAGINA, paginaActual * POR_PAGINA), ultimaLista.length);
+    }
+
     // Dibuja el <tbody> completo a partir de la lista recibida.
     // No se llama sola: aplicarFiltros() es quien decide que lista mostrar.
-    function renderizarProductos(lista) {
+    function renderizarProductos(lista, total) {
         cuerpoProductos.innerHTML = '';
 
-        if (lista.length === 0) {
+        if (total === 0) {
             sinProductos.classList.remove('d-none');
             return;
         }
@@ -81,7 +117,8 @@
             });
         }
 
-        renderizarProductos(resultado);
+        ultimaLista = resultado;
+        mostrarPagina();
     }
 
     // Guarda el temporizador activo para poder cancelarlo si llega un segundo aviso
@@ -101,8 +138,8 @@
     }
 
     // "input" (no "change"): dispara con cada tecla, que es lo que pide CS-13 ("mientras se escribe")
-    buscarProducto.addEventListener('input', aplicarFiltros);
-    filtroCategoria.addEventListener('change', aplicarFiltros);
+    buscarProducto.addEventListener('input', function () { paginaActual = 1; aplicarFiltros(); });
+    filtroCategoria.addEventListener('change', function () { paginaActual = 1; aplicarFiltros(); });
 
     // Clic en un encabezado ordenable: si ya se estaba ordenando por esa columna, invierte la direccion.
     // El cursor de mano no se pone aqui: lo da la clase .sortable en dashboard.css (el JS no escribe estilos).
