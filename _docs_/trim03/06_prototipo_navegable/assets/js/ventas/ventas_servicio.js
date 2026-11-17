@@ -8,20 +8,10 @@ if (typeof RepositorioVentas === 'undefined') throw new Error('ventas_servicio.j
 const ServicioVentas = (function () {
 
     // El signo va antes del $ ("-$700"), como se escribe un faltante
-    function formatearPrecio(valor) {
-        return (valor < 0 ? '-' : '') + '$' + Math.abs(Math.round(valor)).toLocaleString('es-CO');
-    }
-
-    function formatearFecha(texto) {
-        const f = new Date(texto);
-        return f.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' +
-            f.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
-    }
-
-    // Sin tildes y en minúscula: "cafe" encuentra "Café"
-    function normalizar(texto) {
-        return texto.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
-    }
+    // El formato vive en utilidades.js (una sola copia para todo el sistema)
+    const formatearPrecio = Formato.precio;
+    const formatearFecha = Formato.fecha;
+    const normalizar = Formato.normalizar;
 
     // Código exacto (lector de barras), "código · nombre" (datalist) o parte del nombre
     function buscarProducto(texto) {
@@ -127,9 +117,9 @@ const ServicioVentas = (function () {
         }).sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
     }
 
-    // HU04: las anuladas no suman en reportes ni en el cierre
+    // HU04: solo suman las ventas pagadas: ni las anuladas ni los domicilios pendientes de entregar
     function totalSinAnuladas(ventas) {
-        return ventas.reduce(function (suma, v) { return v.estado === 'anulada' ? suma : suma + v.total; }, 0);
+        return ventas.reduce(function (suma, v) { return v.estado === 'pagada' ? suma + v.total : suma; }, 0);
     }
 
     // HU03: una venta por número. El cajero solo consulta las suyas (misma regla que HU02).
@@ -151,6 +141,8 @@ const ServicioVentas = (function () {
     // HU04: quién puede anular. Admin: cualquier venta. Cajero: solo las de su turno abierto.
     function puedeAnular(usuario, venta) {
         if (venta.estado === 'anulada') return { ok: false, razon: 'La venta ya está anulada.' };
+        // Una venta de domicilio se cancela desde Domicilios: ahí se devuelve el stock solo si ya se entregó
+        if (venta.canal === 'domicilio') return { ok: false, razon: 'Es un pedido a domicilio: se cancela desde Domicilios.' };
         if (usuario.rol === 'administrador') return { ok: true };
         const turno = RepositorioVentas.obtenerTurnoAbierto(usuario.idUsuario);
         if (venta.idUsuario !== usuario.idUsuario || !turno || venta.idArqueo !== turno.id) {

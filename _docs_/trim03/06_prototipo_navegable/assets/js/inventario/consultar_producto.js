@@ -30,8 +30,8 @@
             fila.classList.add('fila-clickeable');
             fila.dataset.codigo = producto.codigo;
             fila.innerHTML =
-                '<td>' + producto.codigo + '</td>' +
-                '<td>' + producto.nombre + '</td>' +
+                '<td>' + Formato.escaparHtml(producto.codigo) + '</td>' +
+                '<td>' + Formato.escaparHtml(producto.nombre) + '</td>' +
                 '<td>' + ServicioInventario.formatearPrecio(producto.precio) + '</td>' +
                 '<td class="text-end"><i class="bi bi-chevron-right text-muted"></i></td>';
             cuerpoResultados.appendChild(fila);

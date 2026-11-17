@@ -17,22 +17,23 @@
 
     function dibujar() {
         const f = { desde: el('filtroDesde').value, hasta: el('filtroHasta').value, categoria: el('filtroCategoria').value };
-        const hay = ServicioReportes.kardex(f).length > 0;
+        const base = ServicioReportes.kardexCompleto();   // una sola vez para los cuatro gráficos
+        const hay = ServicioReportes.kardex(f, base).length > 0;
         el('sinDatos').classList.toggle('d-none', hay);
         el('contenido').classList.toggle('d-none', !hay);
         if (!hay) return;
 
-        const rotacion = ServicioReportes.rotacion(f);
+        const rotacion = ServicioReportes.rotacion(f, base);
         const maximo = Math.max.apply(null, rotacion.map(function (r) { return r.valor; })) || 1;
         GraficosReportes.barras(el('graficoMayor'), rotacion.slice().sort(function (a, b) { return b.valor - a.valor; }).slice(0, 5),
             { formato: unidades, color: 'bg-success', maximo: maximo });
         GraficosReportes.barras(el('graficoMenor'), rotacion.slice().sort(function (a, b) { return a.valor - b.valor; }).slice(0, 5),
             { formato: unidades, color: 'bg-danger', maximo: maximo });
 
-        GraficosReportes.barras(el('graficoEvolucion'), ServicioReportes.evolucionStock(f), { formato: unidades });
+        GraficosReportes.barras(el('graficoEvolucion'), ServicioReportes.evolucionStock(f, base), { formato: unidades });
 
         // Dos barras por día (entradas en verde, salidas en rojo) con la misma escala
-        const dias = ServicioReportes.entradasYSalidasPorDia(f);
+        const dias = ServicioReportes.entradasYSalidasPorDia(f, base);
         const tope = Math.max.apply(null, dias.map(function (d) { return Math.max(d.entradas, d.salidas); })) || 1;
         el('graficoEntradasSalidas').replaceChildren();
         dias.forEach(function (d) {
