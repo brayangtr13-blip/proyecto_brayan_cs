@@ -9,7 +9,7 @@ Siguen la estructura del repositorio del instructor (05_ddl, 06_dml, 07_avan, 08
 |---|---|---|
 | `01_base_datos` | `01_db_estructura.sql` | **Borra y crea** la base con las 18 tablas, 24 llaves foráneas y los CHECK |
 | `03_sentencias_dml` | `01_db_dml_datos.sql` | Carga datos de prueba coherentes (10 o más filas por tabla y un kárdex que cuadra con el stock) |
-| `04_programacion_db` | `01_triggers.sql` | 8 triggers: total de la venta, precio mayor o igual al costo, tarifa del barrio, bloqueo tras 3 intentos y auditoría de precios |
+| `04_programacion_db` | `01_triggers.sql` | 11 triggers: total de la venta, precio mayor o igual al costo, tarifa del barrio, bloqueo tras 3 intentos, auditoría de precios y reglas del administrador (uno solo, que no se puede borrar ni inactivar) |
 | `04_programacion_db` | `02_views.sql` | 6 vistas para los reportes RF26 a RF30, más usuarios sin la contraseña |
 | `04_programacion_db` | `03_procedures.sql` | 6 procedimientos: agregar producto a una venta, anular venta, cerrar caja, revisar permisos, etc. |
 | `02_sentencias_ddl` | `01_db_ddl.sql` | Práctica de los 27 comandos DDL en una base aparte (`controlstore_practica`) |

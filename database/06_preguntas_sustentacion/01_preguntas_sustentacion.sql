@@ -3,7 +3,7 @@
 -- |||           06.01 · PREGUNTAS DE SUSTENTACIÓN CON SU RESPUESTA EN SQL · MySQL 8.4              |||
 -- |||=============================================================================================|||
 -- |||                                                                                             |||
--- |||  95 preguntas que puede hacer el instructor, agrupadas según el script que las origina.    |||
+-- |||  96 preguntas que puede hacer el instructor, agrupadas según el script que las origina.    |||
 -- |||  Cada una trae:                                                                            |||
 -- |||    P  = la pregunta                                                                         |||
 -- |||    R  = la respuesta corta, para decirla con tus palabras                                  |||
@@ -18,7 +18,7 @@
 -- |||    Bloque 6. DDL .......................... P47 a P59                                       |||
 -- |||    Bloque 7. DML de una tabla ............. P60 a P72                                       |||
 -- |||    Bloque 8. DML multitabla ............... P73 a P83                                       |||
--- |||    Bloque 9. Seguridad .................... P84 a P95                                       |||
+-- |||    Bloque 9. Seguridad .................... P84 a P96                                       |||
 -- |||                                                                                             |||
 -- |||  NO CAMBIA NADA DE LA BASE:                                                                 |||
 -- |||   · Lo que modifica datos va entre START TRANSACTION y ROLLBACK (se deshace).               |||
@@ -815,6 +815,21 @@ SELECT id_usuario, SHA2(CONCAT(documento, 'Cajero123'), 256) AS misma_clave_con_
 --        mysql -u root -p controlstore_sena_restaurada < C:\respaldos\controlstore_sena.sql
 SELECT COUNT(*) AS rutinas_que_se_perderian_sin_routines
   FROM information_schema.routines WHERE routine_schema = 'controlstore_sena';
+
+-- P96. ¿Cómo se garantiza en la base que el sistema no se quede sin administrador?
+-- R:   Con tres triggers sobre usuarios: BEFORE INSERT no deja crear un segundo administrador,
+--      BEFORE UPDATE no deja inactivarlo, quitarle el rol ni dárselo a otro, y BEFORE DELETE no
+--      deja borrarlo. Es la misma regla del prototipo (usuarios_servicio.js) y del diagrama de
+--      clases (Autoservicio 1 ◆── 1 RolAdministrador). Un cajero sí se puede inactivar.
+-- ERR> UPDATE usuarios SET activo = 0 WHERE id_usuario = 1;   -- ERROR 1644: no se puede inactivar al administrador
+-- ERR> DELETE FROM usuarios WHERE id_usuario = 1;             -- ERROR 1644: no se puede eliminar al administrador
+SELECT trigger_name, action_timing, event_manipulation
+  FROM information_schema.triggers
+ WHERE trigger_schema = 'controlstore_sena' AND trigger_name LIKE 'trg_usuarios_admin%';
+START TRANSACTION;
+  UPDATE usuarios SET activo = 0 WHERE id_usuario = 4;     -- cajero: sí se puede
+  SELECT id_usuario, activo AS cajero_inactivo FROM usuarios WHERE id_usuario = 4;
+ROLLBACK;
 
 
 -- ===================================================================================================
