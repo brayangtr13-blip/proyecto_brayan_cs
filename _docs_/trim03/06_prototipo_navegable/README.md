@@ -96,12 +96,12 @@ Son los usuarios 1 a 7 de `controlstore_sena`, con los mismos id, documentos y c
 ### Reportes y seguridad
 | RF | Funcionalidad | Pantalla | Estado |
 |---|---|---|---|
-| RF26 | Reporte gráfico de ventas | `pages/modules/reportes/reporte_grafico_ventas.html` | 🟡 |
-| RF27 | Reporte impreso de ventas | `pages/modules/reportes/reporte_impreso_ventas.html` | 🟡 |
-| RF28 | Reporte gráfico de inventario | `pages/modules/reportes/reporte_rotacion_inventario.html` | 🟡 |
-| RF29 | Reporte impreso de productos | `pages/modules/reportes/reporte_movimientos_inventario.html` | 🟡 |
-| RF30 | Reporte de domicilios | — | ⬜ |
-| — | Reportes de usuarios (CS-27, CS-28) | `pages/modules/reportes/reporte_grafico_usuarios.html`, `reporte_impreso_usuarios.html` | 🟡 |
+| RF26 | Reporte gráfico de ventas (admin y cajero) | `pages/modules/reportes/reporte_grafico_ventas.html` | ✅ |
+| RF27 | Reporte impreso de ventas · imprimir/PDF y Excel | `pages/modules/reportes/reporte_impreso_ventas.html` | ✅ |
+| RF28 | Reporte gráfico de inventario (admin y cajero) | `pages/modules/reportes/reporte_rotacion_inventario.html` | ✅ |
+| RF29 | Reporte impreso de productos y kárdex · imprimir/PDF y Excel | `pages/modules/reportes/reporte_movimientos_inventario.html` | ✅ |
+| RF30 | Reporte de domicilios · imprimir/PDF y Excel | `pages/modules/reportes/reporte_domicilios.html` | ✅ |
+| — | Reportes de usuarios (CS-27, CS-28) | `pages/modules/reportes/reporte_grafico_usuarios.html`, `reporte_impreso_usuarios.html` | ✅ |
 | RNF04 | Log de auditoría (logins, fallidos, usuarios, inventario, ventas y domicilios) | `pages/modules/seguridad/log_auditoria.html` | ✅ |
 
 ---
@@ -121,7 +121,7 @@ Service  (ServicioVentas)          → reglas del negocio: validar, calcular, de
 Repository (RepositorioVentas)     → único acceso a los datos (hoy localStorage; mañana la API)
 ```
 
-- **Una sola fuente por tabla:** `RepositorioInventario` es dueño de los productos, `RepositorioUsuarios`
+- **Una sola fuente por tabla:** `RepositorioInventario` es dueño de los productos y del kárdex, `RepositorioUsuarios`
   de los usuarios y roles, y `RepositorioCatalogos` de clientes, barrios y métodos de pago.
   Ventas y Domicilios les piden los datos; no guardan copias.
 - **Sesión:** `sesion.js` guarda en `sessionStorage` quién entró (id, nombre y rol). Se borra al cerrar sesión
@@ -145,6 +145,7 @@ Repository (RepositorioVentas)     → único acceso a los datos (hoy localStora
 │   │   ├── sesion.js          Sesión simulada
 │   │   ├── login.js, registro.js, dashboard.js, ...
 │   │   ├── auditoria/         auditoria_datos.js (log_auditoria, solo agregar) · log_auditoria.js (pantalla)
+│   │   ├── reportes/          reportes_servicio.js (cálculos) · reportes_graficos.js (barras) · una por reporte
 │   │   ├── catalogos/         catalogos_datos.js: clientes, barrios y métodos de pago (compartidos)
 │   │   ├── usuarios/          usuarios_datos.js (Repository) · usuarios_servicio.js (Service) · pantallas
 │   │   ├── inventario/        inventario_datos.js · inventario_servicio.js · pantallas
@@ -181,7 +182,8 @@ Repository (RepositorioVentas)     → único acceso a los datos (hoy localStora
 - [x] Una sola fuente de usuarios, login contra los usuarios y reglas de rol
 - [x] Catálogos únicos: clientes, barrios y métodos de pago en `catalogos_datos.js` (los usan Ventas y Domicilios)
 - [x] Log de auditoría con JS (RNF04): un solo log para todos los módulos, de solo agregar
-- [ ] Reportes con datos reales y reporte de domicilios (RF26–RF30)
+- [x] Reportes con datos reales y reporte de domicilios (RF26–RF30): cálculos en `reportes_servicio.js`
+- [x] Un solo kárdex (`movimientos_inventario`) en `RepositorioInventario`, con el stock de la BD
 - [ ] Historial de movimientos en consultar producto (RF10.2) y paginación real
 - [ ] Revisión responsive y visual
 
