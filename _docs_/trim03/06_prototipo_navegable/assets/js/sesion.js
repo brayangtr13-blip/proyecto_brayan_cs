@@ -70,3 +70,10 @@ const Sesion = (function () {
 
     return { iniciar: iniciar, actual: actual, cerrar: cerrar };
 })();
+
+// Lo que en el HTML lleva data-solo-rol="administrador" (u otro rol) solo lo ve ese rol.
+// sesion.js se carga al final del <body>, así que estos elementos ya existen cuando corre.
+// Ojo: solo esconde; la regla de verdad la valida el Service (y con la API, el servidor).
+document.querySelectorAll('[data-solo-rol]').forEach(function (elemento) {
+    if (elemento.dataset.soloRol !== Sesion.actual().rol) elemento.classList.add('d-none');
+});

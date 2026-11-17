@@ -1,4 +1,5 @@
-// Cierre de caja (CS-22 · HU05). Reglas en ServicioVentas; aquí solo la pantalla.
+// Cierre de caja (CS-22 · HU05 · RF18). Reglas en ServicioVentas; aquí solo la pantalla.
+// Solo el administrador cierra: elige el turno abierto de un cajero, cuenta el efectivo y lo cierra.
 
 // IIFE: las variables de esta pantalla no quedan globales ni chocan con otros scripts
 (function () {
@@ -7,10 +8,32 @@
     const precio = ServicioVentas.formatearPrecio;
     let turno = null;
 
-    // ---------- Recaudo y cuadre del turno abierto ----------
+    // RF18: un cajero que llegue aquí (por ejemplo escribiendo la dirección) solo ve el aviso
+    const puedeCerrar = ServicioVentas.puedeCerrarCaja(usuario);
+    el('sinPermiso').classList.toggle('d-none', puedeCerrar);
+
+    // ---------- Turnos abiertos para elegir ----------
+    function llenarTurnos() {
+        const abiertos = ServicioVentas.turnosAbiertos();
+        const elegido = el('turnoACerrar').value;
+        el('turnoACerrar').replaceChildren();
+        abiertos.forEach(function (a) {
+            el('turnoACerrar').appendChild(new Option('Turno #' + a.id + ' · ' + RepositorioVentas.obtenerUsuario(a.idUsuario).nombre +
+                ' · abierto ' + ServicioVentas.formatearFecha(a.fechaApertura), a.id));
+        });
+        if (abiertos.some(function (a) { return String(a.id) === elegido; })) el('turnoACerrar').value = elegido;
+    }
+
+    el('turnoACerrar').addEventListener('change', mostrarTurno);
+
+    // ---------- Recaudo y cuadre del turno elegido ----------
     function mostrarTurno() {
-        turno = RepositorioVentas.obtenerTurnoAbierto(usuario.idUsuario);
-        el('sinTurno').classList.toggle('d-none', Boolean(turno));
+        llenarTurnos();
+        turno = puedeCerrar
+            ? ServicioVentas.turnosAbiertos().find(function (a) { return a.id === Number(el('turnoACerrar').value); })
+            : null;
+        el('sinTurno').classList.toggle('d-none', !puedeCerrar || Boolean(turno));
+        el('seccionTurnos').classList.toggle('d-none', !turno);
         el('seccionCierre').classList.toggle('d-none', !turno);
         if (!turno) return;
 
@@ -53,7 +76,7 @@
         evento.preventDefault();
         el('formCierre').classList.add('was-validated');
         if (!el('formCierre').checkValidity()) return;
-        const resultado = ServicioVentas.cerrarCaja(usuario, Number(el('efectivoContado').value), el('observacionCierre').value);
+        const resultado = ServicioVentas.cerrarCaja(usuario, turno.id, Number(el('efectivoContado').value), el('observacionCierre').value);
         if (!resultado.ok) return;
 
         llenarComprobante(resultado.turno);
@@ -120,5 +143,6 @@
     });
 
     mostrarTurno();
-    mostrarHistorico();
+    if (puedeCerrar) mostrarHistorico();
+    else el('cuerpoCierres').closest('section, .card').classList.add('d-none');
 })();

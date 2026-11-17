@@ -212,10 +212,22 @@ const ServicioVentas = (function () {
         return contado - turno.montoInicial - resumenTurno(turno).totalEfectivo;
     }
 
-    // HU05: cerrar el turno. Con diferencia, la observación es obligatoria. Después no se modifica.
-    function cerrarCaja(usuario, contado, observacion) {
-        const turno = RepositorioVentas.obtenerTurnoAbierto(usuario.idUsuario);
-        if (!turno) return { ok: false, error: 'No tienes un turno abierto.' };
+    // RF18 (decisión del equipo, 11/11/2026): el cierre de caja lo hace SOLO el administrador.
+    // El cajero abre su turno y vende; el administrador cuenta el efectivo y cierra el turno del cajero.
+    function puedeCerrarCaja(usuario) {
+        return usuario.rol === 'administrador';
+    }
+
+    // Turnos abiertos (arqueo sin fecha_cierre) de todos los cajeros: los que el administrador puede cerrar
+    function turnosAbiertos() {
+        return RepositorioVentas.obtenerArqueos().filter(function (a) { return !a.fechaCierre; });
+    }
+
+    // HU05: cerrar un turno. Con diferencia, la observación es obligatoria. Después no se modifica.
+    function cerrarCaja(usuario, idArqueo, contado, observacion) {
+        if (!puedeCerrarCaja(usuario)) return { ok: false, error: 'Solo el administrador puede cerrar la caja.' };
+        const turno = turnosAbiertos().find(function (a) { return a.id === idArqueo; });
+        if (!turno) return { ok: false, error: 'Ese turno no existe o ya está cerrado.' };
         if (!(contado >= 0)) return { ok: false, error: 'Escribe el efectivo contado.' };
         const diferencia = calcularDiferencia(turno, contado);
         const nota = (observacion || '').trim();
@@ -229,7 +241,8 @@ const ServicioVentas = (function () {
         turno.observacion = nota || null;
         RepositorioVentas.registrarAuditoria({
             idUsuario: usuario.idUsuario, accion: 'cerrar_caja', modulo: 'ventas', fecha: turno.fechaCierre,
-            detalle: 'Cerró el turno #' + turno.id + ' con diferencia de ' + formatearPrecio(diferencia)
+            detalle: 'Cerró el turno #' + turno.id + ' de ' + RepositorioVentas.obtenerUsuario(turno.idUsuario).nombre +
+                ' con diferencia de ' + formatearPrecio(diferencia)
         });
         return { ok: true, turno: turno, resumen: resumen, diferencia: diferencia };
     }
@@ -260,6 +273,8 @@ const ServicioVentas = (function () {
         calcularTotal: calcularTotal,
         calcularCambio: calcularCambio,
         abrirCaja: abrirCaja,
+        puedeCerrarCaja: puedeCerrarCaja,
+        turnosAbiertos: turnosAbiertos,
         registrarVenta: registrarVenta
     };
 })();
