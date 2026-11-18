@@ -3,7 +3,12 @@ export const ROUTES = {
   LOGIN: '/login',
   REGISTER: '/register',
   DASHBOARD: '/dashboard',
-  HOME: '/'
+  HOME: '/',
+  // CRUD de usuarios: rutas hijas de /dashboard
+  USERS: '/dashboard/usuarios',
+  USER_NEW: '/dashboard/usuarios/nuevo',
+  USER_DETAIL: (id) => `/dashboard/usuarios/${id}`,
+  USER_EDIT: (id) => `/dashboard/usuarios/${id}/editar`
 }
 
 export const PROTECTED_ROUTES = [ROUTES.DASHBOARD]
