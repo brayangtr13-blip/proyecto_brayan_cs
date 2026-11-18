@@ -10,6 +10,7 @@ const API_CONFIG = {
     LOGIN: '/login',
     REGISTER: '/register', // ruta pública de json-server-auth (/users exige sesión)
     USERS: '/users',
+    ROLES: '/roles', // lectura pública (routes.json: 444)
     USER_BY_ID: '/users/:id'
   }
 }
