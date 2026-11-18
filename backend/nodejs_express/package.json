@@ -1,0 +1,33 @@
+{
+  "name": "api_nodejs_express",
+  "version": "1.0.0",
+  "description": "API REST de Control Store con Node.js, Express y MySQL (JWT en cookie HttpOnly)",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "contrasenas-demo": "node scripts/contrasenasDemo.js"
+  },
+  "keywords": [
+    "api",
+    "nodejs",
+    "express",
+    "mysql",
+    "jwt"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.22.3",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.12.1",
+    "mysql2": "^3.24.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
