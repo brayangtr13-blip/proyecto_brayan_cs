@@ -1,2 +1,9 @@
 // src/hooks/useDashboard.js
-// TODO: HOOK: expone las estadísticas a las vistas (Paso 4)
+import { useState } from 'react'
+
+const useDashboard = () => {
+  const [stats] = useState(null)
+  return { stats }
+}
+
+export default useDashboard

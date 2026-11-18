@@ -1,2 +1,6 @@
 // src/views/layouts/MainLayout.jsx
-// TODO: VISTA: plantilla común de las pantallas (Paso 4)
+const MainLayout = ({ children }) => {
+  return <div className="min-h-screen bg-fondo">{children}</div>
+}
+
+export default MainLayout

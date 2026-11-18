@@ -1,2 +1,5 @@
 // src/services/httpService.js
-// TODO: Wrapper de fetch con el token JWT (Capítulo III)
+// En el Capítulo III implementamos fetch con auth.
+class HttpService {}
+
+export default new HttpService()

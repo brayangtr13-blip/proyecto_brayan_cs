@@ -1,2 +1,9 @@
 // src/hooks/useUsers.js
-// TODO: HOOK: expone la lista de usuarios a las vistas (Paso 4)
+import { useState } from 'react'
+
+const useUsers = () => {
+  const [users] = useState([])
+  return { users }
+}
+
+export default useUsers

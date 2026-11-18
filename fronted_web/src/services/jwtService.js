@@ -1,2 +1,5 @@
 // src/services/jwtService.js
-// TODO: Firmar, verificar y decodificar el JWT (Capítulo III)
+// En el Capítulo III implementamos firma, verificación y decodificación.
+class JWTService {}
+
+export default new JWTService()

@@ -1,15 +1,18 @@
 // src/App.jsx
-import './App.css'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { ROUTES } from './config/routes'
+import LoginView from './views/auth/LoginView'
+import RegisterView from './views/auth/RegisterView'
+import DashboardView from './views/dashboard/DashboardView'
 
 function App() {
   return (
-    <div className="min-h-screen grid place-items-center p-6">
-      <div className="bg-card border border-borde rounded-2xl shadow-lg p-10 text-center">
-        <h1 className="font-titulo text-3xl text-nav">Sistema de Información Web</h1>
-        <p className="mt-3 text-t2">Configuración inicial completada</p>
-        <span className="inline-block mt-5 rounded-lg bg-acc px-4 py-2 font-sub text-white">Control Store</span>
-      </div>
-    </div>
+    <Routes>
+      <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.LOGIN} replace />} />
+      <Route path={ROUTES.LOGIN} element={<LoginView />} />
+      <Route path={ROUTES.REGISTER} element={<RegisterView />} />
+      <Route path={`${ROUTES.DASHBOARD}/*`} element={<DashboardView />} />
+    </Routes>
   )
 }
 
