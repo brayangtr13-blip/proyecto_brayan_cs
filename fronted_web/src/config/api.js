@@ -8,7 +8,7 @@ const API_CONFIG = {
   TIMEOUT: 10000,
   ENDPOINTS: {
     LOGIN: '/login',
-    REGISTER: '/users',
+    REGISTER: '/register', // ruta pública de json-server-auth (/users exige sesión)
     USERS: '/users',
     USER_BY_ID: '/users/:id'
   }
