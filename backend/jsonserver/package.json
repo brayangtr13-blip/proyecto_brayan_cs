@@ -1,0 +1,13 @@
+{
+  "name": "jsonserver",
+  "version": "1.0.0",
+  "description": "API falsa de Control Store con JSON Server + json-server-auth (JWT y bcrypt)",
+  "private": true,
+  "scripts": {
+    "start": "json-server --watch db.json --port 3001 -m ./node_modules/json-server-auth -r routes.json"
+  },
+  "dependencies": {
+    "json-server": "0.17.4",
+    "json-server-auth": "2.1.0"
+  }
+}
