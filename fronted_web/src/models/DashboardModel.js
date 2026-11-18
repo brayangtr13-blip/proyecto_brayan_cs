@@ -1,2 +1,4 @@
 // src/models/DashboardModel.js
-// TODO: MODELO: datos e indicadores del dashboard (Capítulo III)
+class DashboardModel {}
+
+export default DashboardModel

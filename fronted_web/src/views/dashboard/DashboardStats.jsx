@@ -1,2 +1,6 @@
 // src/views/dashboard/DashboardStats.jsx
-// TODO: VISTA: tarjetas de indicadores (Paso 4)
+const DashboardStats = () => {
+  return <div className="rounded-2xl border border-borde bg-card p-6 text-t2">Stats en construcción...</div>
+}
+
+export default DashboardStats

@@ -1,2 +1,6 @@
 // src/views/dashboard/UsersView.jsx
-// TODO: VISTA: tabla de usuarios (Paso 4)
+const UsersView = () => {
+  return <div className="rounded-2xl border border-borde bg-card p-6 text-t2">Usuarios en construcción...</div>
+}
+
+export default UsersView

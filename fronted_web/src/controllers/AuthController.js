@@ -1,2 +1,14 @@
 // src/controllers/AuthController.js
-// TODO: CONTROLADOR: validar credenciales y estado de sesión (Paso 4)
+import AuthModel from '../models/AuthModel'
+
+class AuthController {
+  static getAuthState() {
+    return {
+      isAuthenticated: AuthModel.isAuthenticated(),
+      currentUser: AuthModel.getCurrentUser(),
+      currentToken: AuthModel.getCurrentToken()
+    }
+  }
+}
+
+export default AuthController

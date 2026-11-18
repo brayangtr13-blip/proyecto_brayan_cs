@@ -1,2 +1,24 @@
 // src/models/AuthModel.js
-// TODO: MODELO: login, logout y sesión contra la API (Paso 4)
+class AuthModel {
+  static async login(_credentials) {
+    return { success: false, error: 'No implementado aún' }
+  }
+
+  static async logout() {
+    return { success: true }
+  }
+
+  static isAuthenticated() {
+    return false
+  }
+
+  static getCurrentUser() {
+    return null
+  }
+
+  static getCurrentToken() {
+    return null
+  }
+}
+
+export default AuthModel
