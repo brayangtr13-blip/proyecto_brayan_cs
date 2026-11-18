@@ -1,0 +1,144 @@
+{
+  "roles": [
+    {
+      "id": 1,
+      "nombre": "administrador"
+    },
+    {
+      "id": 2,
+      "nombre": "cajero"
+    },
+    {
+      "id": 3,
+      "nombre": "domiciliario"
+    },
+    {
+      "id": 4,
+      "nombre": "supervisor"
+    },
+    {
+      "id": 5,
+      "nombre": "bodeguero"
+    },
+    {
+      "id": 6,
+      "nombre": "contador"
+    },
+    {
+      "id": 7,
+      "nombre": "auxiliar"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@controlstore.com",
+      "password": "$2a$10$cGMv6mWJ3gqfMQ2CpNwxwuLd3Y1riHUSgbZOU05Io2PYQ/Qu9x56C",
+      "documento": "1000000001",
+      "nombre": "Andres",
+      "apellido": "Gomez",
+      "telefono": null,
+      "role": "administrador",
+      "activo": true
+    },
+    {
+      "id": 2,
+      "email": "juan.perez@controlstore.com",
+      "password": "$2a$10$ab8pe00VP/PNwAWWOLcUZOugb7k2Q5PQ.ll8ZB3az9/Iwdj4R2Lh.",
+      "documento": "1000000002",
+      "nombre": "Juan Carlos",
+      "apellido": "Perez",
+      "telefono": null,
+      "role": "cajero",
+      "activo": true
+    },
+    {
+      "id": 3,
+      "email": "luis.p@controlstore.com",
+      "password": "$2a$10$AjzWOjDlnJAaP6z1r50Y/Oiwr0kaDwVzRjKUy0iWdw8IX9lEgUPwK",
+      "documento": "1000000003",
+      "nombre": "Luis",
+      "apellido": "Perez",
+      "telefono": null,
+      "role": "domiciliario",
+      "activo": true
+    },
+    {
+      "id": 4,
+      "email": "sandra.ortiz@controlstore.com",
+      "password": "$2a$10$OFifqU.pYMdVQPfMix5VOu3PNXCpgXM7GXVHlk8RgnVHB0Lnys66S",
+      "documento": "1000000004",
+      "nombre": "Sandra Milena",
+      "apellido": "Ortiz",
+      "telefono": "3001230004",
+      "role": "cajero",
+      "activo": true
+    },
+    {
+      "id": 5,
+      "email": "diego.rojas@controlstore.com",
+      "password": "$2a$10$DTUsWIocN34Utp4HqI7GqukofeI.uJHY91v3YQjCtOBDF1JErfuYq",
+      "documento": "1000000005",
+      "nombre": "Diego Alejandro",
+      "apellido": "Rojas",
+      "telefono": "3001230005",
+      "role": "cajero",
+      "activo": false
+    },
+    {
+      "id": 6,
+      "email": "kevin.mora@controlstore.com",
+      "password": "$2a$10$QrDrs1xhq89.Dk9IuKPKher6y400wdaDJkW1k3Lnn9mQD2HYngPim",
+      "documento": "1000000006",
+      "nombre": "Kevin Stiven",
+      "apellido": "Mora",
+      "telefono": "3001230006",
+      "role": "domiciliario",
+      "activo": true
+    },
+    {
+      "id": 7,
+      "email": "yeison.castro@controlstore.com",
+      "password": "$2a$10$6IjG0usdI2YIE4CzJ..rjetPXzaCqjGuVA6jz7.J3uemeqd.ZpczG",
+      "documento": "1000000007",
+      "nombre": "Yeison Andres",
+      "apellido": "Castro",
+      "telefono": "3001230007",
+      "role": "domiciliario",
+      "activo": true
+    },
+    {
+      "id": 8,
+      "email": "paola.vargas@controlstore.com",
+      "password": "$2a$10$0OQYUb21YMIdAxw/G7pXZOuobfuAQpEU3hw51vT6o3UfLDNd1aYQS",
+      "documento": "1000000008",
+      "nombre": "Paola Andrea",
+      "apellido": "Vargas",
+      "telefono": "3001230008",
+      "role": "supervisor",
+      "activo": true
+    },
+    {
+      "id": 9,
+      "email": "hernan.lopez@controlstore.com",
+      "password": "$2a$10$/QjXky829282Lw9AfGq48u2o9ws7fpS1SNfZDY7kUCXOjGswDWlWC",
+      "documento": "1000000009",
+      "nombre": "Hernan Dario",
+      "apellido": "Lopez",
+      "telefono": "3001230009",
+      "role": "bodeguero",
+      "activo": true
+    },
+    {
+      "id": 10,
+      "email": "luz.cardenas@controlstore.com",
+      "password": "$2a$10$EMs4XvJYUQNRZskQi8vAQOm3apJPOD69AWkHl3sVS/WCz5kw0ftye",
+      "documento": "1000000010",
+      "nombre": "Luz Marina",
+      "apellido": "Cardenas",
+      "telefono": "3001230010",
+      "role": "contador",
+      "activo": true
+    }
+  ]
+}
