@@ -1,0 +1,35 @@
+/* src/index.css */
+/* Tailwind + identidad de Control Store: colores y fuentes como clases (bg-pri, font-titulo...) */
+@import "tailwindcss";
+
+/* Fuentes locales: funcionan sin internet */
+@font-face { font-family: 'Oswald'; font-weight: 400; font-display: swap; src: url('./assets/fonts/oswald-400.woff2') format('woff2'); }
+@font-face { font-family: 'Oswald'; font-weight: 500; font-display: swap; src: url('./assets/fonts/oswald-500.woff2') format('woff2'); }
+@font-face { font-family: 'Oswald'; font-weight: 600; font-display: swap; src: url('./assets/fonts/oswald-600.woff2') format('woff2'); }
+@font-face { font-family: 'Oswald'; font-weight: 700; font-display: swap; src: url('./assets/fonts/oswald-700.woff2') format('woff2'); }
+@font-face { font-family: 'Russo One'; font-weight: 400; font-display: swap; src: url('./assets/fonts/russo-400.woff2') format('woff2'); }
+@font-face { font-family: 'Bungee'; font-weight: 400; font-display: swap; src: url('./assets/fonts/bungee-400.woff2') format('woff2'); }
+
+/* Tokens del diseño: cada variable --color-x crea clases bg-x, text-x, border-x */
+@theme {
+  --color-nav: #16213d;     /* barra lateral */
+  --color-pri: #1f4e8f;     /* azul principal */
+  --color-acc: #2f6fd0;     /* azul de acción (botones) */
+  --color-fondo: #f3f5f9;   /* fondo de la app */
+  --color-card: #ffffff;    /* tarjetas */
+  --color-borde: #e3e8f0;
+  --color-t1: #16213d;      /* texto principal */
+  --color-t2: #55617a;      /* texto secundario */
+  --color-ok: #1e9e5a;      /* verde: éxito */
+  --color-warn: #c27a0e;    /* ámbar: aviso */
+  --color-err: #d23a4a;     /* rojo: error */
+
+  --font-texto: 'Oswald', 'Arial Narrow', Arial, sans-serif;  /* font-texto */
+  --font-sub: 'Russo One', Arial, sans-serif;                 /* font-sub */
+  --font-titulo: 'Bungee', 'Arial Black', sans-serif;         /* font-titulo */
+}
+
+/* Base: fondo y fuente de toda la app */
+body {
+  @apply bg-fondo text-t1 font-texto antialiased;
+}
