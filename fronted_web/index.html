@@ -1,82 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Control Store · Autoservicio Ayuelal</title>
-        <!-- Icono de la pestana -->
-        <link rel="icon" href="assets/img/favicon.svg">
-        <!-- Estilos -->
-        <link rel="stylesheet" href="assets/css/estilos.css">
-    </head>
-    <body class="pagina-inicio">
-        <div class="contenedor inicio">
-            <!-- ============ FONDO ANIMADO ============
-             Formas que flotan detras del contenido. Son decorativas:
-             aria-hidden las oculta a los lectores de pantalla para
-             que no lean elementos sin significado. -->
-            <div class="fondo" aria-hidden="true"><span class="fondo-mancha fondo-mancha--uno"></span> <span class="fondo-mancha fondo-mancha--dos"></span></div>
-            <!-- ============ NAVEGACION ============ -->
-            <nav class="nav">
-                <a class="nav-marca" href="index.html">
-                    <span class="nav-logo">CS</span>
-                    <span class="nav-nombre">Control<br>Store</span>
-                </a>
-                <div class="nav-acciones">
-                    <a class="boton boton--azul" href="pages/company/login.html">Iniciar sesion</a>
-                </div>
-            </nav>
-            <!-- ============ PRESENTACION ============ -->
-            <header class="portada">
-                <p class="portada-linea">Inventario · Ventas · Domicilios · Reportes</p>
-                <h1 class="portada-titulo">Simplifica la gestion de <span>tu tienda</span></h1>
-                <p class="portada-texto">Todo el movimiento del Autoservicio Ayuelal en un solo lugar: que hay en bodega, que se vendio y donde va cada pedido.</p>
-                <div class="portada-botones">
-                    <a class="boton boton--azul" href="pages/company/login.html">Ingresar al sistema</a>
-                    <a class="boton boton--claro" href="#modulos">Ver los modulos</a>
-                </div>
-            </header>
-            <!-- ============ MODULOS ============ -->
-            <section class="modulos" id="modulos" role="main">
-                <h2 class="modulos-titulo">Que hace el sistema</h2>
-                <div class="modulos-rejilla">
-                    <article class="modulo">
-                        <span class="modulo-numero">01</span>
-                        <h3 class="modulo-nombre">Inventario</h3>
-                        <p class="modulo-texto">Catalogo de productos con existencias al dia y aviso automatico cuando algo esta por agotarse.</p>
-                    </article>
-                    <article class="modulo">
-                        <span class="modulo-numero">02</span>
-                        <h3 class="modulo-nombre">Ventas</h3>
-                        <p class="modulo-texto">Punto de venta que descuenta el inventario, registra el metodo de pago y cierra la caja al final del turno.</p>
-                    </article>
-                    <article class="modulo">
-                        <span class="modulo-numero">03</span>
-                        <h3 class="modulo-nombre">Domicilios</h3>
-                        <p class="modulo-texto">Seguimiento de cada entrega: quien la lleva, a que direccion y en que estado va el recorrido.</p>
-                    </article>
-                    <article class="modulo">
-                        <span class="modulo-numero">04</span>
-                        <h3 class="modulo-nombre">Usuarios</h3>
-                        <p class="modulo-texto">Tres roles con permisos distintos: administrador, cajero y domiciliario. Cada quien ve lo suyo.</p>
-                    </article>
-                    <article class="modulo">
-                        <span class="modulo-numero">05</span>
-                        <h3 class="modulo-nombre">Reportes</h3>
-                        <p class="modulo-texto">Indicadores del negocio y bitacora de auditoria con el registro de quien hizo cada cosa.</p>
-                    </article>
-                </div>
-            </section>
-            <!-- ============ LLAMADO FINAL ============ -->
-            <section class="cierre">
-                <h2 class="cierre-titulo">Toda tu tienda, en una sola pantalla</h2>
-                <a class="boton boton--azul" href="pages/company/login.html">Comenzar ahora</a>
-            </section>
-            <!-- ============ PIE ============ -->
-            <footer class="pie">
-                <p>Control Store · Autoservicio Ayuelal</p>
-                <p>Proyecto formativo SENA · Tecnologia en ADSO</p>
-            </footer>
-        </div>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Control Store - Sistema de Información Web con React + MVC + JWT" />
+    <title>Control Store</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
