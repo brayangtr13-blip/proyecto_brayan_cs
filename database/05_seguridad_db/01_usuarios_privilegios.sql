@@ -17,7 +17,7 @@
 -- |||    06. Ver privilegios ............... SHOW GRANTS FOR ____ ;                                |||
 -- |||    07. Quitar privilegios ............ REVOKE ____ ON ____ FROM ____ ;                       |||
 -- |||    08. Cambiar contraseña y bloquear . ALTER USER ... ; ACCOUNT LOCK / UNLOCK                |||
--- |||    09. Cifrado de datos .............. SHA2 (hash) · AES_ENCRYPT / AES_DECRYPT              |||
+-- |||    09. Cifrado de datos .............. SHA2 · AES · bcrypt de la tabla usuarios y su CHECK   |||
 -- |||    10. Copias de seguridad ........... mysqldump (se ejecuta en CMD, no en mysql>)           |||
 -- |||    11. Eliminar usuarios y roles ..... DROP USER ; DROP ROLE                                 |||
 -- |||                                                                                             |||
@@ -136,8 +136,9 @@ ALTER USER 'cs_reportes'@'localhost' ACCOUNT UNLOCK;
 -- 09. CIFRADO DE DATOS
 --     HASH (SHA2): de una sola vía, no se puede "descifrar". Se usa para comparar contraseñas.
 --     CIFRADO (AES): de dos vías, con una llave se puede volver al texto original.
---     NOTA: la aplicación guarda contrasena_hash con bcrypt (más seguro que SHA2 porque es lento
---     a propósito y le agrega una "sal" distinta a cada contraseña). SHA2 se muestra para entender.
+--     El sistema guarda contrasena_hash con bcrypt (más seguro que SHA2 porque es lento a propósito
+--     y le agrega una "sal" distinta a cada contraseña). 09.01 a 09.04 usan SHA2 y AES para entender
+--     la idea; 09.05 a 09.08 revisan las contraseñas reales de la tabla usuarios.
 -- ---------------------------------------------------------------------------------------------------
 -- 09.01. Hash SHA-256: misma entrada = mismo resultado de 64 caracteres
 SELECT SHA2('Cajero123', 256)            AS hash_1,
@@ -159,6 +160,36 @@ SET @cifrado = AES_ENCRYPT('3001234567', @llave);
 SELECT HEX(@cifrado)                                     AS telefono_cifrado,
        CAST(AES_DECRYPT(@cifrado, @llave) AS CHAR)       AS telefono_descifrado,
        AES_DECRYPT(@cifrado, SHA2('otra llave', 256))    AS con_llave_equivocada;   -- NULL
+
+-- 09.05. bcrypt en la tabla usuarios: así guarda el sistema las contraseñas de verdad
+--        $2b$ = versión de bcrypt · 10$ = costo (2^10 = 1024 vueltas) · 22 caracteres de sal
+--        · 31 caracteres de hash = 60 caracteres en total. El backend lo genera con bcryptjs.
+SELECT id_usuario, email,
+       LEFT(contrasena_hash, 7)          AS version_y_costo,
+       SUBSTRING(contrasena_hash, 8, 22) AS sal,
+       CHAR_LENGTH(contrasena_hash)      AS largo
+  FROM usuarios;
+
+-- 09.06. La sal: los 10 usuarios tienen la misma contraseña de prueba (ayuelal2026),
+--        pero cada uno guarda un hash distinto. Así no se nota quién comparte contraseña.
+SELECT COUNT(*)                        AS usuarios,
+       COUNT(DISTINCT contrasena_hash) AS hashes_distintos
+  FROM usuarios;
+
+-- 09.07. Ningún usuario tiene la contraseña en texto plano (debe salir 0)
+SELECT COUNT(*) AS sin_bcrypt
+  FROM usuarios
+ WHERE contrasena_hash NOT LIKE '$2_$__$%' OR CHAR_LENGTH(contrasena_hash) <> 60;
+
+-- 09.08. La regla que lo garantiza: el CHECK de la tabla usuarios (está en 01_db_estructura.sql)
+SELECT constraint_name, check_clause
+  FROM information_schema.check_constraints
+ WHERE constraint_schema = 'controlstore_sena'
+   AND constraint_name   = 'chk_usuario_hash_bcrypt';
+
+-- Prueba que debe FALLAR (quitar el -- para verla):
+-- UPDATE usuarios SET contrasena_hash = 'ayuelal2026' WHERE id_usuario = 2;
+--    -> ERROR 3819: Check constraint 'chk_usuario_hash_bcrypt' is violated.
 
 
 -- ---------------------------------------------------------------------------------------------------
