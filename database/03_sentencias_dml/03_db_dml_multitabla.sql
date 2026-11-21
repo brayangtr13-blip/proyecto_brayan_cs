@@ -27,6 +27,7 @@
 -- |||=============================================================================================|||
 
 USE controlstore_sena;
+SET NAMES utf8mb4;   -- el archivo está en UTF-8: así las tildes y la ñ llegan bien también desde CMD
 DROP TABLE IF EXISTS tmp_productos_bebidas;
 DROP TABLE IF EXISTS tmp_contactos;
 

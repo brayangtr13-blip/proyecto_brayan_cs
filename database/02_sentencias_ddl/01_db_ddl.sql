@@ -61,6 +61,7 @@ CREATE DATABASE controlstore_practica
 -- 03. USAR BASE DE DATOS ................................................................ USE ____ ;
 -- ---------------------------------------------------------------------------------------------------
 USE controlstore_practica;
+SET NAMES utf8mb4;   -- el archivo está en UTF-8: así las tildes y la ñ llegan bien también desde CMD
 
 -- ---------------------------------------------------------------------------------------------------
 -- 04. COPIAR TABLAS PARA PRACTICAR .............. CREATE TABLE ____ LIKE ____ ; INSERT ... SELECT ;

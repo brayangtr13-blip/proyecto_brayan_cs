@@ -34,6 +34,7 @@
 -- |||=============================================================================================|||
 
 USE controlstore_sena;
+SET NAMES utf8mb4;   -- el archivo está en UTF-8: así las tildes y la ñ llegan bien también desde CMD
 
 -- Base aparte para las preguntas de estructura (DDL). Se borra al final del archivo.
 DROP DATABASE IF EXISTS controlstore_preguntas;
