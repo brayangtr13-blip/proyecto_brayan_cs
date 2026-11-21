@@ -26,6 +26,7 @@
 -- |||=============================================================================================|||
 
 USE controlstore_sena;
+SET NAMES utf8mb4;   -- el archivo está en UTF-8: así las tildes y la ñ llegan bien también desde CMD
 START TRANSACTION;
 
 -- ===================================================================================================
@@ -122,19 +123,21 @@ INSERT INTO rol_permiso (id_rol, id_permiso) VALUES
 -- ---------------------------------------------------------------------------------------------------
 -- 01.05. usuarios
 -- ---------------------------------------------------------------------------------------------------
--- contrasena_hash: valor de demostración; la aplicación guarda el hash bcrypt real.
+-- contrasena_hash: hash bcrypt real (costo 10), generado con bcryptjs, la misma librería del backend.
+-- Contraseña de prueba de todos: ayuelal2026. Cada hash es distinto aunque la contraseña sea la misma,
+-- porque bcrypt le pone una sal aleatoria a cada uno. En la base nunca queda la contraseña escrita.
 -- Diego (5) está inactivo y Luz Marina (10) quedó bloqueada tras 3 intentos fallidos.
 INSERT INTO usuarios (id_usuario, documento, nombre, apellido, email, telefono, id_rol, contrasena_hash, activo, intentos_fallidos, bloqueado_hasta, fecha_registro) VALUES
-  (1, '1000000001', 'Andres', 'Gomez', 'admin@controlstore.com', NULL, 1, 'pbkdf2_sha256$demo', 1, 0, NULL, '2026-08-18 18:28:08'),
-  (2, '1000000002', 'Juan Carlos', 'Perez', 'juan.perez@controlstore.com', NULL, 2, 'pbkdf2_sha256$demo', 1, 0, NULL, '2026-08-18 18:28:08'),
-  (3, '1000000003', 'Luis', 'Perez', 'luis.p@controlstore.com', NULL, 3, 'pbkdf2_sha256$demo', 1, 0, NULL, '2026-08-18 18:28:08'),
-  (4, '1000000004', 'Sandra Milena', 'Ortiz', 'sandra.ortiz@controlstore.com', '3001230004', 2, 'pbkdf2_sha256$demo', 1, 0, NULL, '2026-09-01 08:00:00'),
-  (5, '1000000005', 'Diego Alejandro', 'Rojas', 'diego.rojas@controlstore.com', '3001230005', 2, 'pbkdf2_sha256$demo', 0, 0, NULL, '2026-09-01 08:05:00'),
-  (6, '1000000006', 'Kevin Stiven', 'Mora', 'kevin.mora@controlstore.com', '3001230006', 3, 'pbkdf2_sha256$demo', 1, 0, NULL, '2026-09-02 09:00:00'),
-  (7, '1000000007', 'Yeison Andres', 'Castro', 'yeison.castro@controlstore.com', '3001230007', 3, 'pbkdf2_sha256$demo', 1, 0, NULL, '2026-09-02 09:10:00'),
-  (8, '1000000008', 'Paola Andrea', 'Vargas', 'paola.vargas@controlstore.com', '3001230008', 4, 'pbkdf2_sha256$demo', 1, 0, NULL, '2026-09-03 10:00:00'),
-  (9, '1000000009', 'Hernan Dario', 'Lopez', 'hernan.lopez@controlstore.com', '3001230009', 5, 'pbkdf2_sha256$demo', 1, 0, NULL, '2026-09-03 10:30:00'),
-  (10, '1000000010', 'Luz Marina', 'Cardenas', 'luz.cardenas@controlstore.com', '3001230010', 6, 'pbkdf2_sha256$demo', 1, 3, '2026-09-24 20:15:00', '2026-09-05 14:00:00');
+  (1, '1000000001', 'Andres', 'Gomez', 'admin@controlstore.com', NULL, 1, '$2b$10$AGevru3S4mDtWeDaw97IeeRIquD5aQ9heNcJVi0QBKs8zJObsV.YC', 1, 0, NULL, '2026-08-18 18:28:08'),
+  (2, '1000000002', 'Juan Carlos', 'Perez', 'juan.perez@controlstore.com', NULL, 2, '$2b$10$oqBO70TPMJCx1QwO/QGWreUd93IPN7g3.zmNEhjAnQkPeEwUZRBMG', 1, 0, NULL, '2026-08-18 18:28:08'),
+  (3, '1000000003', 'Luis', 'Perez', 'luis.p@controlstore.com', NULL, 3, '$2b$10$Jf.EMSqdhazpfEJgEWVUduyFmVroc4z5Xdyc8N3sLgZHjDJMtE9Ru', 1, 0, NULL, '2026-08-18 18:28:08'),
+  (4, '1000000004', 'Sandra Milena', 'Ortiz', 'sandra.ortiz@controlstore.com', '3001230004', 2, '$2b$10$bFPSeqUvAM/u2c.xrnj.E.l9qHu9PNiL..G.c0QTcWodcVSpqnm0G', 1, 0, NULL, '2026-09-01 08:00:00'),
+  (5, '1000000005', 'Diego Alejandro', 'Rojas', 'diego.rojas@controlstore.com', '3001230005', 2, '$2b$10$E/3H9UO8f8a/XoOkXHwacex90PgOQqH0e6yrys.QutJKzPik..5.e', 0, 0, NULL, '2026-09-01 08:05:00'),
+  (6, '1000000006', 'Kevin Stiven', 'Mora', 'kevin.mora@controlstore.com', '3001230006', 3, '$2b$10$59xGEek4cSFZnWgBXBjTteNtCE8sAzs.uhcCZ5HyOEirG8kFDpwaS', 1, 0, NULL, '2026-09-02 09:00:00'),
+  (7, '1000000007', 'Yeison Andres', 'Castro', 'yeison.castro@controlstore.com', '3001230007', 3, '$2b$10$LGUvrmv0Y3r1P3uxyqwXBOeEW8NKvih9b5CEXlSrFjS/EZAepYAf6', 1, 0, NULL, '2026-09-02 09:10:00'),
+  (8, '1000000008', 'Paola Andrea', 'Vargas', 'paola.vargas@controlstore.com', '3001230008', 4, '$2b$10$W4cGwEFgUty76F3WyFrVdu96cgATcHY/LXul2KaNMOrSg.3sNY89O', 1, 0, NULL, '2026-09-03 10:00:00'),
+  (9, '1000000009', 'Hernan Dario', 'Lopez', 'hernan.lopez@controlstore.com', '3001230009', 5, '$2b$10$MX8Xjn.E3AJaFnKS3B8neeX.JrTHsz9y9gFN0cCZhbzWBP2rlHylS', 1, 0, NULL, '2026-09-03 10:30:00'),
+  (10, '1000000010', 'Luz Marina', 'Cardenas', 'luz.cardenas@controlstore.com', '3001230010', 6, '$2b$10$tnMQTWy5041cMFqhgxjEZuIaYihMkwgQtoBcDMVuHCNTVXg4tUJL6', 1, 3, '2026-09-24 20:15:00', '2026-09-05 14:00:00');
 
 -- ---------------------------------------------------------------------------------------------------
 -- 01.06. log_auditoria

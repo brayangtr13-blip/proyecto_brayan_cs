@@ -32,6 +32,7 @@
 -- |||=============================================================================================|||
 
 USE controlstore_sena;
+SET NAMES utf8mb4;   -- el archivo está en UTF-8: así las tildes y la ñ llegan bien también desde CMD
 
 
 -- ---------------------------------------------------------------------------------------------------
@@ -52,7 +53,7 @@ SELECT * FROM categorias WHERE id_categoria = 99;
 
 -- b) Valor único repetido (ya existe un usuario con ese documento)
 -- INSERT INTO usuarios (documento, nombre, apellido, email, id_rol, contrasena_hash)
--- SELECT documento, 'X', 'Y', 'x@y.com', 2, 'hash' FROM usuarios WHERE id_usuario = 1;
+-- SELECT documento, 'X', 'Y', 'x@y.com', 2, contrasena_hash FROM usuarios WHERE id_usuario = 1;
 --    -> ERROR 1062: Duplicate entry ... for key 'usuarios.uq_usuario_documento'
 
 -- c) Llave foránea que no existe (no hay categoría 500)

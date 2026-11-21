@@ -52,6 +52,7 @@ CREATE DATABASE controlstore_sena
   DEFAULT CHARACTER SET utf8mb4
   DEFAULT COLLATE utf8mb4_spanish_ci;
 USE controlstore_sena;
+SET NAMES utf8mb4;   -- el archivo está en UTF-8: así las tildes y la ñ llegan bien también desde CMD
 
 
 -- ===================================================================================================
@@ -107,7 +108,7 @@ CREATE TABLE usuarios (
   email              VARCHAR(100)     NOT NULL                COMMENT 'Correo electrónico (usado para iniciar sesión)',
   telefono           VARCHAR(20)          NULL                COMMENT 'Teléfono de contacto',
   id_rol             TINYINT          NOT NULL                COMMENT 'FK: rol asignado al usuario',
-  contrasena_hash    VARCHAR(255)     NOT NULL                COMMENT 'Contraseña cifrada (nunca en texto plano)',
+  contrasena_hash    VARCHAR(255)     NOT NULL                COMMENT 'Hash bcrypt de la contraseña (nunca en texto plano)',
   activo             TINYINT(1)       NOT NULL DEFAULT 1      COMMENT '1 = activo, 0 = inactivo (baja lógica)',
   intentos_fallidos  TINYINT UNSIGNED NOT NULL DEFAULT 0      COMMENT 'Intentos de inicio de sesión fallidos seguidos',
   bloqueado_hasta    DATETIME             NULL                COMMENT 'Fecha hasta la que el acceso está bloqueado',
@@ -115,6 +116,9 @@ CREATE TABLE usuarios (
   PRIMARY KEY (id_usuario),
   UNIQUE KEY uq_usuario_documento (documento),
   UNIQUE KEY uq_usuario_email (email),
+  -- Seguridad: solo acepta un hash bcrypt ($2a$, $2b$ o $2y$ + costo de 2 dígitos + $ y 60 caracteres
+  -- en total). Una contraseña en texto plano no cumple la regla y el INSERT o UPDATE se rechaza.
+  CONSTRAINT chk_usuario_hash_bcrypt CHECK (contrasena_hash LIKE '$2_$__$%' AND CHAR_LENGTH(contrasena_hash) = 60),
   CONSTRAINT fk_usuario_rol FOREIGN KEY (id_rol)
     REFERENCES roles (id_rol) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB COMMENT = 'Usuarios del sistema: administrador, cajero y domiciliario';

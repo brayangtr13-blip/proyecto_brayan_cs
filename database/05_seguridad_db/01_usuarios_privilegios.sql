@@ -28,6 +28,7 @@
 -- |||=============================================================================================|||
 
 USE controlstore_sena;
+SET NAMES utf8mb4;   -- el archivo está en UTF-8: así las tildes y la ñ llegan bien también desde CMD
 
 -- Para poder correr el script varias veces: se borra lo que haya quedado de una vez anterior
 DROP USER IF EXISTS 'cs_admin'@'localhost', 'cs_cajero'@'localhost', 'cs_reportes'@'localhost';
