@@ -25,7 +25,16 @@ export const ROUTES = {
   DELIVERY_NEW: '/dashboard/domicilios/nuevo',
   DELIVERY_DETAIL: (id) => `/dashboard/domicilios/${id}`,
   MY_DELIVERIES: '/dashboard/mis-pedidos',
-  CHATBOT: '/dashboard/domicilios/chatbot'
+  CHATBOT: '/dashboard/domicilios/chatbot',
+  // Módulo de reportes (RF26 a RF30)
+  REPORTS: '/dashboard/reportes',
+  REPORT_SALES: '/dashboard/reportes/ventas',
+  REPORT_SALES_PRINT: '/dashboard/reportes/ventas/impreso',
+  REPORT_INVENTORY: '/dashboard/reportes/inventario',
+  REPORT_ROTATION: '/dashboard/reportes/rotacion',
+  REPORT_DELIVERIES: '/dashboard/reportes/domicilios',
+  REPORT_USERS: '/dashboard/reportes/usuarios',
+  REPORT_USERS_PRINT: '/dashboard/reportes/usuarios/impreso'
 }
 
 export const PROTECTED_ROUTES = [ROUTES.DASHBOARD]

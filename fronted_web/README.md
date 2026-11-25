@@ -216,6 +216,43 @@ responde "El pedido no existe"; `/dashboard/domicilios` lo devuelve al inicio; h
 Chatbot: María ve los avisos "salió con…" y "fue entregado"; preguntar por el #7 responde que no es suyo;
 preguntar por el #11 responde su estado. Cajera: sin menú de Domicilios.
 
+## Módulo de Reportes (del prototipo navegable)
+
+| Pantalla del prototipo | En React | Ruta | Rol |
+|---|---|---|---|
+| (menú de reportes) | `ReportsView` | `/dashboard/reportes` | administrador, cajero |
+| `reporte_grafico_ventas.html` | `SalesChartReport` (RF26) | `/dashboard/reportes/ventas` | administrador, cajero (sus ventas) |
+| `reporte_impreso_ventas.html` | `SalesPrintReport` (RF27) | `/dashboard/reportes/ventas/impreso` | administrador, cajero (sus ventas) |
+| `reporte_movimientos_inventario.html` | `InventoryReport` (RF28) | `/dashboard/reportes/inventario` | administrador, cajero |
+| `reporte_rotacion_inventario.html` | `RotationReport` (RF29) | `/dashboard/reportes/rotacion` | administrador, cajero |
+| `reporte_domicilios.html` | `DeliveriesReport` (RF30) | `/dashboard/reportes/domicilios` | administrador |
+| `reporte_grafico_usuarios.html` | `UsersChartReport` | `/dashboard/reportes/usuarios` | administrador |
+| `reporte_impreso_usuarios.html` | `UsersPrintReport` | `/dashboard/reportes/usuarios/impreso` | administrador |
+
+- **Solo lectura:** `ReportModel` trae las colecciones y las une como los JOIN del backend real;
+  `ReportController` hace todos los cálculos (es `reportes_servicio.js` del prototipo). Nada se guarda.
+- **Permisos (`rol_permiso`):** `reportes.ventas` y `reportes.inventario` para administrador y cajero;
+  `reportes.domicilios` y `reportes.usuarios` solo administrador. El cajero solo ve sus propias ventas.
+- **Ventas:** solo cuentan las pagadas (las anuladas y los domicilios sin entregar no son plata recibida);
+  agrupación por día, semana o mes; el motivo de una anulación sale de `log_auditoria`.
+- **Inventario:** el kárdex se reconstruye hacia atrás desde el stock actual (stock anterior y resultante);
+  rotación = salidas − reversos (entradas por anulación o cancelación).
+- **Gráficos:** barras hechas con CSS (como el prototipo con Bootstrap), sin librería y sin internet.
+- **Exportar:** CSV con ";" y BOM, que Excel abre con las tildes bien (`utils/exportar.js`). Imprimir usa
+  `window.print()`; el menú, los filtros y los botones se ocultan en la hoja (`print:hidden`).
+
+### Pruebas del módulo (29 de 29 correctas)
+
+Administrador: menú con Reportes; la portada muestra 4 grupos y 7 reportes. Ventas: $206.050 en 11 ventas
+pagadas (ticket $18.732, igual a la suma en `db.json`); por mes una sola barra y por semana tres que suman
+lo mismo; desde el 23 de septiembre, 4 ventas; un rango sin ventas muestra el aviso. Impreso: la venta #7
+anulada con "Devolución: producto en mal estado"; filtro Nequi = 2; exporta `reporte_ventas.csv`.
+Inventario: 32 movimientos; el último saldo de la leche es 53 (su stock actual); el filtro de salidas solo
+deja salidas. Rotación: la leche es la de mayor salida. Domicilios: 10 pedidos, 7 entregados, 37 min de
+promedio, filtro de cancelados = 1. Usuarios: vendedor destacado; 10 usuarios, 3 cajeros; ningún hash de
+contraseña llega a la página. Cajera: solo ve 4 reportes y sus 4 ventas ($63.600), sin filtro de vendedor;
+`/reportes/usuarios` y `/reportes/domicilios` la devuelven al inicio. Domiciliario: sin menú ni acceso.
+
 ## Limitaciones de la API falsa (se resuelven en el Capítulo IV con Express)
 
 - json-server-auth solo exige **sesión**, no **rol**: las reglas por rol viven en los controladores

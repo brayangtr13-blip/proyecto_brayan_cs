@@ -27,6 +27,15 @@ import NewDeliveryView from '../domicilios/NewDeliveryView'
 import DeliveryDetails from '../domicilios/DeliveryDetails'
 import MyDeliveriesView from '../domicilios/MyDeliveriesView'
 import ChatbotView from '../domicilios/ChatbotView'
+import ReportsView from '../reportes/ReportsView'
+import SalesChartReport from '../reportes/SalesChartReport'
+import SalesPrintReport from '../reportes/SalesPrintReport'
+import InventoryReport from '../reportes/InventoryReport'
+import RotationReport from '../reportes/RotationReport'
+import DeliveriesReport from '../reportes/DeliveriesReport'
+import UsersChartReport from '../reportes/UsersChartReport'
+import UsersPrintReport from '../reportes/UsersPrintReport'
+import { PERMISOS_REPORTES } from '../../controllers/ReportController'
 
 const INVENTARIO = [USER_ROLES.ADMIN, USER_ROLES.CAJERO] // rol_permiso: inventario.ver
 const VENTAS = [USER_ROLES.ADMIN, USER_ROLES.CAJERO] // rol_permiso: ventas.ver y ventas.registrar
@@ -74,7 +83,7 @@ const ConVentas = ({ children }) => <SoloRoles roles={VENTAS}>{children}</SoloRo
 
 const DashboardView = () => {
   return (
-    <div className="mx-auto max-w-6xl p-6">
+    <div className="mx-auto max-w-6xl p-6 print:max-w-none print:p-0">
       <Routes>
         <Route index element={<Inicio />} />
         <Route path="usuarios" element={<SoloAdmin><UsersView /></SoloAdmin>} />
@@ -99,6 +108,15 @@ const DashboardView = () => {
         <Route path="domicilios/chatbot" element={<SoloAdmin><ChatbotView /></SoloAdmin>} />
         <Route path="domicilios/:id" element={<SoloRoles roles={DOMICILIOS}><DeliveryDetails /></SoloRoles>} />
         <Route path="mis-pedidos" element={<SoloRoles roles={[USER_ROLES.DOMICILIARIO]}><MyDeliveriesView /></SoloRoles>} />
+        {/* Reportes: ventas e inventario (admin y cajero); domicilios y usuarios (solo admin) */}
+        <Route path="reportes" element={<ConVentas><ReportsView /></ConVentas>} />
+        <Route path="reportes/ventas" element={<SoloRoles roles={PERMISOS_REPORTES.ventas}><SalesChartReport /></SoloRoles>} />
+        <Route path="reportes/ventas/impreso" element={<SoloRoles roles={PERMISOS_REPORTES.ventas}><SalesPrintReport /></SoloRoles>} />
+        <Route path="reportes/inventario" element={<SoloRoles roles={PERMISOS_REPORTES.inventario}><InventoryReport /></SoloRoles>} />
+        <Route path="reportes/rotacion" element={<SoloRoles roles={PERMISOS_REPORTES.inventario}><RotationReport /></SoloRoles>} />
+        <Route path="reportes/domicilios" element={<SoloRoles roles={PERMISOS_REPORTES.domicilios}><DeliveriesReport /></SoloRoles>} />
+        <Route path="reportes/usuarios" element={<SoloRoles roles={PERMISOS_REPORTES.usuarios}><UsersChartReport /></SoloRoles>} />
+        <Route path="reportes/usuarios/impreso" element={<SoloRoles roles={PERMISOS_REPORTES.usuarios}><UsersPrintReport /></SoloRoles>} />
         <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
       </Routes>
     </div>

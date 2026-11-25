@@ -21,7 +21,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-nav text-white">
+    <nav className="bg-nav text-white print:hidden">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
         <div className="flex items-center gap-6">
           <h2 className="font-titulo text-lg">Control Store</h2>
@@ -34,6 +34,7 @@ const Navbar = () => {
             {vende && <NavLink to={ROUTES.PRODUCTS} className={enlace}>Inventario</NavLink>}
             {esAdmin && <NavLink to={ROUTES.DELIVERIES} className={enlace}>Domicilios</NavLink>}
             {reparte && <NavLink to={ROUTES.MY_DELIVERIES} className={enlace}>Mis pedidos</NavLink>}
+            {vende && <NavLink to={ROUTES.REPORTS} className={enlace}>Reportes</NavLink>}
             {esAdmin && <NavLink to={ROUTES.USERS} className={enlace}>Usuarios</NavLink>}
           </div>
         </div>
