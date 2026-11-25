@@ -24,6 +24,7 @@ const Navbar = () => {
           <h2 className="font-titulo text-lg">Control Store</h2>
           <div className="flex gap-1">
             <NavLink to={ROUTES.DASHBOARD} end className={enlace}>Inicio</NavLink>
+            {[USER_ROLES.ADMIN, USER_ROLES.CAJERO].includes(currentUser?.role) && <NavLink to={ROUTES.PRODUCTS} className={enlace}>Inventario</NavLink>}
             {currentUser?.role === USER_ROLES.ADMIN && <NavLink to={ROUTES.USERS} className={enlace}>Usuarios</NavLink>}
           </div>
         </div>

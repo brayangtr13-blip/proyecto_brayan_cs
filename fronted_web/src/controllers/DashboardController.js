@@ -1,12 +1,12 @@
 // src/controllers/DashboardController.js
-// CONTROLADOR: convierte los datos crudos en indicadores. Solo el administrador ve cifras de cuentas
-// (el servidor igual respondería 403 a otro rol; aquí se evita pedirlas).
+// CONTROLADOR: convierte los datos crudos en indicadores. Solo el administrador ve cifras de cuentas.
 import DashboardModel from '../models/DashboardModel'
 import AuthController from './AuthController'
+import { USER_ROLES } from '../config/constants'
 
 class DashboardController {
-  static async getStats(user) {
-    if (!AuthController.isAdmin(user)) return { success: true, data: null }
+  static async getStats() {
+    if (!AuthController.hasAnyRole([USER_ROLES.ADMIN])) return { success: true, data: null }
 
     const result = await DashboardModel.getData()
     if (!result.success) return result

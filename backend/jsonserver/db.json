@@ -140,5 +140,479 @@
       "role": "contador",
       "activo": true
     }
+  ],
+  "categorias": [
+    {
+      "id": 1,
+      "nombre": "Lácteos",
+      "descripcion": "Leches, quesos y derivados"
+    },
+    {
+      "id": 2,
+      "nombre": "Abarrotes",
+      "descripcion": "Granos, aceites y despensa"
+    },
+    {
+      "id": 3,
+      "nombre": "Bebidas",
+      "descripcion": "Gaseosas, jugos y café"
+    },
+    {
+      "id": 4,
+      "nombre": "Panadería",
+      "descripcion": "Pan y repostería"
+    },
+    {
+      "id": 5,
+      "nombre": "Aseo",
+      "descripcion": "Aseo personal y del hogar"
+    },
+    {
+      "id": 6,
+      "nombre": "Carnes y embutidos",
+      "descripcion": "Carnes frías, salchichas y embutidos"
+    },
+    {
+      "id": 7,
+      "nombre": "Frutas y verduras",
+      "descripcion": "Productos frescos del día"
+    },
+    {
+      "id": 8,
+      "nombre": "Snacks y dulces",
+      "descripcion": "Paquetes, galletas y confitería"
+    },
+    {
+      "id": 9,
+      "nombre": "Enlatados",
+      "descripcion": "Conservas, atún y granos en lata"
+    },
+    {
+      "id": 10,
+      "nombre": "Mascotas",
+      "descripcion": "Alimento y aseo para mascotas"
+    }
+  ],
+  "productos": [
+    {
+      "id": "7702001001",
+      "codigo_producto": "7702001001",
+      "id_categoria": 1,
+      "nombre": "Leche Entera 1L",
+      "descripcion": null,
+      "precio_compra": 2000,
+      "precio_unitario": 2850,
+      "stock_actual": 53,
+      "stock_minimo": 20,
+      "unidad_medida": "Litro",
+      "activo": true
+    },
+    {
+      "id": "7702001002",
+      "codigo_producto": "7702001002",
+      "id_categoria": 2,
+      "nombre": "Arroz Blanco 5kg",
+      "descripcion": null,
+      "precio_compra": 9000,
+      "precio_unitario": 12500,
+      "stock_actual": 12,
+      "stock_minimo": 10,
+      "unidad_medida": "Paquete",
+      "activo": true
+    },
+    {
+      "id": "7702001003",
+      "codigo_producto": "7702001003",
+      "id_categoria": 3,
+      "nombre": "Café Molido 250g",
+      "descripcion": null,
+      "precio_compra": 7000,
+      "precio_unitario": 9900,
+      "stock_actual": 4,
+      "stock_minimo": 20,
+      "unidad_medida": "Paquete",
+      "activo": true
+    },
+    {
+      "id": "7702001004",
+      "codigo_producto": "7702001004",
+      "id_categoria": 2,
+      "nombre": "Azúcar Blanca 2kg",
+      "descripcion": null,
+      "precio_compra": 4200,
+      "precio_unitario": 5800,
+      "stock_actual": 30,
+      "stock_minimo": 15,
+      "unidad_medida": "Paquete",
+      "activo": true
+    },
+    {
+      "id": "7702001005",
+      "codigo_producto": "7702001005",
+      "id_categoria": 4,
+      "nombre": "Pan Tajado",
+      "descripcion": null,
+      "precio_compra": 2100,
+      "precio_unitario": 3000,
+      "stock_actual": 32,
+      "stock_minimo": 10,
+      "unidad_medida": "Unidad",
+      "activo": true
+    },
+    {
+      "id": "7702001006",
+      "codigo_producto": "7702001006",
+      "id_categoria": 2,
+      "nombre": "Aceite Girasol 1L",
+      "descripcion": null,
+      "precio_compra": 8300,
+      "precio_unitario": 11900,
+      "stock_actual": 21,
+      "stock_minimo": 8,
+      "unidad_medida": "Botella",
+      "activo": true
+    },
+    {
+      "id": "7702001007",
+      "codigo_producto": "7702001007",
+      "id_categoria": 5,
+      "nombre": "Jabón de Barra x3",
+      "descripcion": null,
+      "precio_compra": 4500,
+      "precio_unitario": 6500,
+      "stock_actual": 30,
+      "stock_minimo": 10,
+      "unidad_medida": "Paquete",
+      "activo": true
+    },
+    {
+      "id": "7702001008",
+      "codigo_producto": "7702001008",
+      "id_categoria": 3,
+      "nombre": "Gaseosa Cola 1.5L",
+      "descripcion": null,
+      "precio_compra": 3100,
+      "precio_unitario": 4500,
+      "stock_actual": 31,
+      "stock_minimo": 12,
+      "unidad_medida": "Botella",
+      "activo": true
+    },
+    {
+      "id": "7702001009",
+      "codigo_producto": "7702001009",
+      "id_categoria": 6,
+      "nombre": "Salchichas x10",
+      "descripcion": null,
+      "precio_compra": 6200,
+      "precio_unitario": 8900,
+      "stock_actual": 17,
+      "stock_minimo": 6,
+      "unidad_medida": "Paquete",
+      "activo": true
+    },
+    {
+      "id": "7702001010",
+      "codigo_producto": "7702001010",
+      "id_categoria": 9,
+      "nombre": "Atún en Lata 170g",
+      "descripcion": null,
+      "precio_compra": 3900,
+      "precio_unitario": 5600,
+      "stock_actual": 35,
+      "stock_minimo": 10,
+      "unidad_medida": "Lata",
+      "activo": true
+    }
+  ],
+  "movimientos_inventario": [
+    {
+      "id": 1,
+      "codigo_producto": "7702001001",
+      "id_usuario": 9,
+      "tipo": "entrada",
+      "cantidad": 62,
+      "observacion": "Inventario inicial de apertura",
+      "fecha": "2026-09-01 07:00:00"
+    },
+    {
+      "id": 2,
+      "codigo_producto": "7702001002",
+      "id_usuario": 9,
+      "tipo": "entrada",
+      "cantidad": 15,
+      "observacion": "Inventario inicial de apertura",
+      "fecha": "2026-09-01 07:00:00"
+    },
+    {
+      "id": 3,
+      "codigo_producto": "7702001003",
+      "id_usuario": 9,
+      "tipo": "entrada",
+      "cantidad": 7,
+      "observacion": "Inventario inicial de apertura",
+      "fecha": "2026-09-01 07:00:00"
+    },
+    {
+      "id": 4,
+      "codigo_producto": "7702001005",
+      "id_usuario": 9,
+      "tipo": "entrada",
+      "cantidad": 34,
+      "observacion": "Inventario inicial de apertura",
+      "fecha": "2026-09-01 07:00:00"
+    },
+    {
+      "id": 5,
+      "codigo_producto": "7702001006",
+      "id_usuario": 9,
+      "tipo": "entrada",
+      "cantidad": 24,
+      "observacion": "Inventario inicial de apertura",
+      "fecha": "2026-09-01 07:00:00"
+    },
+    {
+      "id": 6,
+      "codigo_producto": "7702001007",
+      "id_usuario": 9,
+      "tipo": "entrada",
+      "cantidad": 30,
+      "observacion": "Inventario inicial de apertura",
+      "fecha": "2026-09-01 07:00:00"
+    },
+    {
+      "id": 7,
+      "codigo_producto": "7702001008",
+      "id_usuario": 9,
+      "tipo": "entrada",
+      "cantidad": 36,
+      "observacion": "Inventario inicial de apertura",
+      "fecha": "2026-09-01 07:00:00"
+    },
+    {
+      "id": 8,
+      "codigo_producto": "7702001009",
+      "id_usuario": 9,
+      "tipo": "entrada",
+      "cantidad": 20,
+      "observacion": "Inventario inicial de apertura",
+      "fecha": "2026-09-01 07:00:00"
+    },
+    {
+      "id": 9,
+      "codigo_producto": "7702001010",
+      "id_usuario": 9,
+      "tipo": "entrada",
+      "cantidad": 40,
+      "observacion": "Inventario inicial de apertura",
+      "fecha": "2026-09-01 07:00:00"
+    },
+    {
+      "id": 10,
+      "codigo_producto": "7702001006",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 1,
+      "observacion": "Venta #5",
+      "fecha": "2026-09-12 10:15:00"
+    },
+    {
+      "id": 11,
+      "codigo_producto": "7702001008",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 2,
+      "observacion": "Venta #5",
+      "fecha": "2026-09-12 10:15:00"
+    },
+    {
+      "id": 12,
+      "codigo_producto": "7702001010",
+      "id_usuario": 4,
+      "tipo": "salida",
+      "cantidad": 3,
+      "observacion": "Venta #6",
+      "fecha": "2026-09-12 16:30:00"
+    },
+    {
+      "id": 13,
+      "codigo_producto": "7702001007",
+      "id_usuario": 5,
+      "tipo": "salida",
+      "cantidad": 2,
+      "observacion": "Venta #7",
+      "fecha": "2026-09-13 11:00:00"
+    },
+    {
+      "id": 14,
+      "codigo_producto": "7702001007",
+      "id_usuario": 1,
+      "tipo": "entrada",
+      "cantidad": 2,
+      "observacion": "Reverso: anulación de la venta #7",
+      "fecha": "2026-09-13 12:30:00"
+    },
+    {
+      "id": 15,
+      "codigo_producto": "7702001003",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 1,
+      "observacion": "Venta #8",
+      "fecha": "2026-09-15 09:45:00"
+    },
+    {
+      "id": 16,
+      "codigo_producto": "7702001009",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 2,
+      "observacion": "Venta #8",
+      "fecha": "2026-09-15 09:45:00"
+    },
+    {
+      "id": 17,
+      "codigo_producto": "7702001002",
+      "id_usuario": 4,
+      "tipo": "salida",
+      "cantidad": 1,
+      "observacion": "Venta #9",
+      "fecha": "2026-09-16 15:20:00"
+    },
+    {
+      "id": 18,
+      "codigo_producto": "7702001001",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 2,
+      "observacion": "Venta #10",
+      "fecha": "2026-09-18 10:05:00"
+    },
+    {
+      "id": 19,
+      "codigo_producto": "7702001006",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 1,
+      "observacion": "Venta #10",
+      "fecha": "2026-09-18 10:05:00"
+    },
+    {
+      "id": 20,
+      "codigo_producto": "7702001008",
+      "id_usuario": 4,
+      "tipo": "salida",
+      "cantidad": 3,
+      "observacion": "Venta #11",
+      "fecha": "2026-09-19 17:40:00"
+    },
+    {
+      "id": 21,
+      "codigo_producto": "7702001005",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 1,
+      "observacion": "Venta #12",
+      "fecha": "2026-09-21 12:00:00"
+    },
+    {
+      "id": 22,
+      "codigo_producto": "7702001010",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 2,
+      "observacion": "Venta #12",
+      "fecha": "2026-09-21 12:00:00"
+    },
+    {
+      "id": 23,
+      "codigo_producto": "7702001004",
+      "id_usuario": 9,
+      "tipo": "entrada",
+      "cantidad": 30,
+      "observacion": "Compra al proveedor Alquería",
+      "fecha": "2026-09-22 11:40:30"
+    },
+    {
+      "id": 24,
+      "codigo_producto": "7702001001",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 2,
+      "observacion": "Venta #2",
+      "fecha": "2026-09-23 09:40:30"
+    },
+    {
+      "id": 25,
+      "codigo_producto": "7702001005",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 1,
+      "observacion": "Venta #2",
+      "fecha": "2026-09-23 09:40:30"
+    },
+    {
+      "id": 26,
+      "codigo_producto": "7702001002",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 1,
+      "observacion": "Venta #3",
+      "fecha": "2026-09-23 10:10:30"
+    },
+    {
+      "id": 27,
+      "codigo_producto": "7702001003",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 2,
+      "observacion": "Venta #3",
+      "fecha": "2026-09-23 10:10:30"
+    },
+    {
+      "id": 28,
+      "codigo_producto": "7702001001",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 3,
+      "observacion": "Venta #4",
+      "fecha": "2026-09-23 11:10:30"
+    },
+    {
+      "id": 29,
+      "codigo_producto": "7702001002",
+      "id_usuario": 2,
+      "tipo": "salida",
+      "cantidad": 1,
+      "observacion": "Venta #4",
+      "fecha": "2026-09-23 11:10:30"
+    },
+    {
+      "id": 30,
+      "codigo_producto": "7702001001",
+      "id_usuario": 9,
+      "tipo": "ajuste",
+      "cantidad": 2,
+      "observacion": "Merma: leche vencida",
+      "fecha": "2026-09-24 07:00:00"
+    },
+    {
+      "id": 31,
+      "codigo_producto": "7702001006",
+      "id_usuario": 4,
+      "tipo": "salida",
+      "cantidad": 1,
+      "observacion": "Venta #13",
+      "fecha": "2026-09-24 09:30:00"
+    },
+    {
+      "id": 32,
+      "codigo_producto": "7702001009",
+      "id_usuario": 4,
+      "tipo": "salida",
+      "cantidad": 1,
+      "observacion": "Venta #13",
+      "fecha": "2026-09-24 09:30:00"
+    }
   ]
 }
