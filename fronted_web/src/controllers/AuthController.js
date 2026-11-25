@@ -1,7 +1,8 @@
 // src/controllers/AuthController.js
 // CONTROLADOR: valida lo que escribe el usuario y coordina al modelo. No toca la API directamente.
 import AuthModel from '../models/AuthModel'
-import { USER_ROLES } from '../config/constants'
+import AuditModel from '../models/AuditModel'
+import { MODULOS, USER_ROLES } from '../config/constants'
 import { isRequired, isValidDocument, isValidEmail, isValidPassword, isValidPhone } from '../utils/validators'
 
 class AuthController {
@@ -13,7 +14,10 @@ class AuthController {
     if (!isValidEmail(credentials.email)) {
       return { success: false, error: 'El correo no tiene un formato válido.' }
     }
-    return AuthModel.login(credentials)
+    const result = await AuthModel.login(credentials)
+    // RNF04: cada inicio de sesión queda en log_auditoria (ya con el token, porque la tabla exige sesión)
+    if (result.success) await AuditModel.registrar({ idUsuario: result.user.id, idModulo: MODULOS.USUARIOS, accion: 'login', detalle: 'Inicio de sesión exitoso' })
+    return result
   }
 
   // Registro: devuelve los errores por campo para mostrarlos junto a cada input
@@ -33,8 +37,42 @@ class AuthController {
     return AuthModel.register(userData)
   }
 
+  // Primero se registra la salida (todavía hay token) y después se borra la sesión
   static async handleLogout() {
+    const usuario = AuthModel.getCurrentUser()
+    if (usuario && AuthModel.isAuthenticated()) {
+      await AuditModel.registrar({ idUsuario: usuario.id, idModulo: MODULOS.USUARIOS, accion: 'logout', detalle: 'Cierre de sesión' })
+    }
     return AuthModel.logout()
+  }
+
+  // Cambiar contraseña (cambiar_contrasena.html): la actual se comprueba contra el hash del servidor,
+  // la nueva cumple la misma regla del registro y no puede ser igual a la actual.
+  // Al terminar se cierra la sesión para entrar con la contraseña nueva.
+  static async handleChangePassword({ actual, nueva, confirmar }) {
+    const errores = {}
+    if (!isRequired(actual)) errores.actual = 'Escribe tu contraseña actual.'
+    if (!isValidPassword(nueva)) errores.nueva = 'Mínimo 8 caracteres, con letras y números.'
+    else if (nueva === actual) errores.nueva = 'La nueva contraseña no puede ser igual a la actual.'
+    if (confirmar !== nueva) errores.confirmar = 'Las contraseñas no coinciden.'
+    if (Object.keys(errores).length > 0) return { success: false, error: 'Revisa los campos marcados.', fields: errores }
+
+    const usuario = AuthModel.getCurrentUser()
+    if (!(await AuthModel.verifyPassword(usuario.email, actual))) {
+      return { success: false, error: 'La contraseña actual no es correcta.', fields: { actual: 'No coincide con tu contraseña.' } }
+    }
+    const result = await AuthModel.changePassword(usuario.id, nueva)
+    if (!result.success) return result
+    await AuditModel.registrar({ idUsuario: usuario.id, idModulo: MODULOS.USUARIOS, accion: 'actualizar', detalle: 'Cambió su contraseña' })
+    await this.handleLogout()
+    return { success: true, message: 'Contraseña actualizada. Inicia sesión con la nueva.' }
+  }
+
+  // Recuperar contraseña (recuperar_contrasena.html): sin servidor de correo, se simula el envío.
+  // El mensaje es el mismo exista o no el correo, para no revelar qué cuentas hay.
+  static handleRecoverPassword(email) {
+    if (!isValidEmail(email)) return { success: false, error: 'El correo no tiene un formato válido.' }
+    return { success: true, message: 'Si el correo está registrado, te enviaremos un enlace para crear una contraseña nueva.' }
   }
 
   // Estado actual de la sesión (lo usa useAuth al montar)

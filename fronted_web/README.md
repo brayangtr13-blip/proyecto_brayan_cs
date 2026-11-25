@@ -253,6 +253,40 @@ promedio, filtro de cancelados = 1. Usuarios: vendedor destacado; 10 usuarios, 3
 contraseña llega a la página. Cajera: solo ve 4 reportes y sus 4 ventas ($63.600), sin filtro de vendedor;
 `/reportes/usuarios` y `/reportes/domicilios` la devuelven al inicio. Domiciliario: sin menú ni acceso.
 
+## Auditoría y perfil (del prototipo navegable)
+
+| Pantalla del prototipo | En React | Ruta | Rol |
+|---|---|---|---|
+| `seguridad/log_auditoria.html` | `AuditLogView` | `/dashboard/auditoria` | solo administrador (RNF04) |
+| `perfil/cambiar_contrasena.html` | `ProfileView` | `/dashboard/perfil` | cualquiera con sesión |
+| `company/recuperar_contrasena.html` | `RecoverPasswordView` | `/recuperar-contrasena` | pública |
+
+- **Log de auditoría:** solo lectura (no hay editar ni borrar). `AuditModel.getLog` une `log_auditoria`
+  con `users` y `modulos`; `AuditController` filtra por fechas, usuario, módulo y acción, ordena del más
+  reciente al más antiguo, resume (eventos, usuarios distintos, accesos fallidos) y pagina de 10 en 10.
+  En el DML los intentos fallidos y bloqueos quedaron como `login` con ese detalle: se muestran como
+  "Acceso fallido".
+- **Inicio y cierre de sesión** ahora quedan en `log_auditoria` (el cierre se registra antes de borrar el token).
+- **Cambiar contraseña:** la actual se comprueba contra el hash con `POST /login` (bcrypt, sin guardar ese
+  token); la nueva cumple la regla del registro y no puede ser igual a la actual; `PATCH /users/:id` la
+  guarda y json-server-auth la cifra con bcrypt. Queda en la auditoría y se cierra la sesión.
+- **Recuperar contraseña:** simulado, como en el prototipo (no hay servidor de correo). Responde el mismo
+  mensaje exista o no el correo, para no revelar qué cuentas hay.
+- **Menú:** "Auditoría" para el administrador; el nombre del usuario lleva a "Mi perfil".
+
+### Pruebas del módulo (36 de 36 correctas)
+
+Administrador: el login queda como evento #13; el log muestra 13 eventos, el más reciente primero, 10 por
+página y 3 en la segunda; filtrar por módulo vuelve a la página 1 (Ventas y caja = 4); inicios de sesión
+exitosos = 3 y accesos fallidos = 2 (#11 y #9); sin botones de editar o borrar ni hashes en la página;
+"Cerrar sesión" deja un evento `logout`. Cajera: sin menú Auditoría y `/dashboard/auditoria` la devuelve al
+inicio; en "Mi perfil" ve sus datos; campos vacíos, contraseña débil, confirmación distinta, nueva igual a
+la actual y actual incorrecta se rechazan sin cerrar la sesión; con datos correctos se cierra la sesión, el
+login muestra el aviso con su correo, la contraseña vieja ya no sirve y la nueva sí; el hash cambió (bcrypt)
+y la auditoría tiene "Cambió su contraseña". Recuperar: enlace desde el login, correo inválido rechazado y
+el mismo mensaje para un correo que existe y uno que no. El menú del administrador cabe en una línea a
+1280 px. Después de probar, `db.json` volvió a sus datos originales.
+
 ## Limitaciones de la API falsa (se resuelven en el Capítulo IV con Express)
 
 - json-server-auth solo exige **sesión**, no **rol**: las reglas por rol viven en los controladores
@@ -260,6 +294,8 @@ contraseña llega a la página. Cajera: solo ve 4 reportes y sus 4 ventas ($63.6
 - `GET /users` envía el hash de la contraseña; `UserModel` lo quita antes de dárselo a las vistas.
 - El token vive en `localStorage`; en el Capítulo IV pasa a una cookie `HttpOnly`.
 - La cuenta inactiva se revisa en el navegador después del login.
+- Los intentos fallidos de login no quedan en la auditoría: `log_auditoria` exige sesión y quien falla
+  no tiene token. El backend real los registra en el servidor (y bloquea tras 3, con el trigger).
 - Las notificaciones del chatbot se guardan en el navegador (canal simulado); un canal real (WhatsApp o
   Telegram) solo cambiaría el método `enviar` del adaptador.
 - JSON Server no tiene transacciones: una entrada o ajuste guarda el stock y luego el renglón del kárdex
