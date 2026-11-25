@@ -1,87 +1,62 @@
 // src/models/AuthModel.js
-// MODELO: habla con la API (/login, /register) y guarda o lee la sesión. No valida formularios.
+// MODELO: habla con /auth del backend Express. Capítulo IV: no guarda nada en el navegador;
+// la cookie HttpOnly la crea y la borra el servidor. Devuelve siempre { success, data | error }.
 import httpService from '../services/httpService'
-import storageService from '../services/storageService'
-import jwtService from '../services/jwtService'
 import API_CONFIG from '../config/api'
-import { USER_ROLES } from '../config/constants'
 
-// json-server-auth responde 400 con textos en inglés: se traducen para el usuario
-const traducirError = (mensaje) => {
-  if (/incorrect password|cannot find user/i.test(mensaje)) return 'El correo o la contraseña no coinciden.'
-  if (/email already exists/i.test(mensaje)) return 'Ya hay una cuenta con ese correo.'
-  if (/failed to fetch/i.test(mensaje)) return 'No hay conexión con el servidor. ¿Está encendido JSON Server?'
-  return mensaje
-}
+const { LOGIN, REGISTER, ME, LOGOUT } = API_CONFIG.ENDPOINTS
+
+const fallo = (error) => ({ success: false, error: error.message, fields: error.fields, status: error.status })
 
 class AuthModel {
-  // POST /login → { accessToken, user }
+  // POST /auth/login → el servidor responde el usuario y deja la cookie con el JWT
   static async login(credentials) {
     try {
-      const { accessToken, user } = await httpService.post(
-        API_CONFIG.ENDPOINTS.LOGIN,
-        { email: credentials.email.trim().toLowerCase(), password: credentials.password },
-        false // el login no lleva token
-      )
-      // Regla de Control Store: una cuenta inactiva no puede entrar
-      if (user.activo === false) {
-        return { success: false, error: 'Tu cuenta está inactiva. Pide al administrador que la active.' }
-      }
-      storageService.setToken(accessToken)
-      storageService.setUser(user)
-      storageService.setUserRole(user.role)
-      return { success: true, token: accessToken, user }
+      const { data } = await httpService.post(LOGIN, {
+        email: credentials.email.trim().toLowerCase(),
+        password: credentials.password
+      })
+      return { success: true, user: data }
     } catch (error) {
-      return { success: false, error: traducirError(error.message) }
+      return fallo(error) // contraseña mala, cuenta inactiva o bloqueada: el mensaje lo da el servidor
     }
   }
 
-  // POST /register → crea la cuenta (json-server-auth cifra la contraseña con bcrypt)
+  // POST /auth/register → la cuenta queda inactiva hasta que el administrador la active
   static async register(userData) {
     try {
-      const { user } = await httpService.post(
-        API_CONFIG.ENDPOINTS.REGISTER,
-        {
-          email: userData.email.trim().toLowerCase(),
-          password: userData.password,
-          documento: userData.documento,
-          nombre: userData.nombre.trim(),
-          apellido: userData.apellido.trim(),
-          telefono: userData.telefono || null,
-          role: USER_ROLES.CAJERO, // toda cuenta nueva empieza como cajero; el admin cambia el rol
-          activo: true
-        },
-        false
-      )
-      return { success: true, user }
+      const { message, data } = await httpService.post(REGISTER, {
+        documento: userData.documento,
+        nombre: userData.nombre.trim(),
+        apellido: userData.apellido.trim(),
+        email: userData.email.trim().toLowerCase(),
+        telefono: userData.telefono || null,
+        password: userData.password
+      })
+      return { success: true, user: data, message }
     } catch (error) {
-      return { success: false, error: traducirError(error.message) }
+      return fallo(error)
     }
   }
 
-  // El JWT no se puede "apagar" en el servidor: cerrar sesión es borrarlo del navegador
+  // IV.8: GET /auth/me → ¿hay sesión? El navegador no puede leer la cookie, así que pregunta al servidor
+  static async me() {
+    try {
+      const { data } = await httpService.get(ME)
+      return { success: true, user: data }
+    } catch (error) {
+      return fallo(error) // 401 = no hay sesión (o venció)
+    }
+  }
+
+  // IV.9: POST /auth/logout → el servidor borra la cookie
   static async logout() {
-    storageService.clearSession()
-    return { success: true }
-  }
-
-  // Hay sesión si existe el token y no ha vencido; si venció, se limpia
-  static isAuthenticated() {
-    const token = storageService.getToken()
-    if (!token) return false
-    if (!jwtService.verifyToken(token)) {
-      storageService.clearSession()
-      return false
+    try {
+      await httpService.post(LOGOUT)
+      return { success: true }
+    } catch (error) {
+      return fallo(error)
     }
-    return true
-  }
-
-  static getCurrentUser() {
-    return storageService.getUser()
-  }
-
-  static getCurrentToken() {
-    return storageService.getToken()
   }
 }
 
