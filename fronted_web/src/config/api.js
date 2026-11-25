@@ -1,18 +1,20 @@
 // src/config/api.js
-// Configuración central de la API.
-// Capítulo III: JSON Server (http://localhost:3001). Capítulo IV: Node + Express + MySQL.
-// Para cambiar de servidor solo se cambia BASE_URL: las vistas no se enteran.
+// Configuración central de la API: JSON Server + json-server-auth (backend simulado).
+// Cada colección de db.json lleva el nombre de su tabla en controlstore_sena.
 
 const API_CONFIG = {
-  BASE_URL: 'http://localhost:3000/api', // backend/nodejs_express
+  BASE_URL: 'http://localhost:3001', // backend/jsonserver
   TIMEOUT: 10000,
   ENDPOINTS: {
-    LOGIN: '/auth/login', // crea la cookie con el JWT
-    REGISTER: '/auth/register', // cuenta nueva inactiva hasta que el admin la active
-    ME: '/auth/me', // ¿quién soy? (lee la cookie)
-    LOGOUT: '/auth/logout', // borra la cookie
+    LOGIN: '/login',
+    REGISTER: '/register', // ruta pública de json-server-auth (/users exige sesión)
     USERS: '/users',
-    ROLES: '/users/roles'
+    ROLES: '/roles', // lectura pública (routes.json: 444)
+    USER_BY_ID: '/users/:id',
+    // Módulo de inventario (tablas productos, categorias y movimientos_inventario)
+    PRODUCTS: '/productos',
+    CATEGORIES: '/categorias',
+    MOVEMENTS: '/movimientos_inventario'
   }
 }
 

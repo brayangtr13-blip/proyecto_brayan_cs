@@ -1,4 +1,7 @@
 {
   "/users*": "/660/users$1",
-  "/roles*": "/444/roles$1"
+  "/roles*": "/444/roles$1",
+  "/categorias*": "/660/categorias$1",
+  "/productos*": "/660/productos$1",
+  "/movimientos_inventario*": "/660/movimientos_inventario$1"
 }
