@@ -9,7 +9,7 @@ import AlertMessage from '../common/AlertMessage'
 const LoginView = () => {
   const { login, loading } = useAuth()
   const navigate = useNavigate()
-  const { registrado, mensaje } = useLocation().state ?? {} // correo y aviso que llegan desde el registro
+  const registrado = useLocation().state?.registrado // correo que llega desde el registro
   const [credentials, setCredentials] = useState({ email: registrado ?? '', password: '' })
   const [error, setError] = useState('')
 
@@ -32,7 +32,7 @@ const LoginView = () => {
         <p className="mt-1 text-t2">Autoservicio Ayuelal</p>
 
         <form onSubmit={handleSubmit} className="mt-6 grid gap-4" noValidate>
-          {registrado && !error && <AlertMessage type="success" message={mensaje || 'Cuenta creada.'} />}
+          {registrado && !error && <AlertMessage type="success" message="Cuenta creada. Ya puedes iniciar sesión." />}
           <AlertMessage type="error" message={error} />
 
           <label className="grid gap-1 font-medium">

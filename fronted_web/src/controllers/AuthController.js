@@ -1,11 +1,11 @@
 // src/controllers/AuthController.js
-// CONTROLADOR: valida lo que escribe el usuario antes de llamar al modelo (respuesta inmediata).
-// Capítulo IV: el servidor vuelve a validar todo; las reglas de verdad viven allá.
+// CONTROLADOR: valida lo que escribe el usuario y coordina al modelo. No toca la API directamente.
 import AuthModel from '../models/AuthModel'
 import { USER_ROLES } from '../config/constants'
 import { isRequired, isValidDocument, isValidEmail, isValidPassword, isValidPhone } from '../utils/validators'
 
 class AuthController {
+  // Login: primero validar (sin gastar una petición), luego pedir al modelo
   static async handleLogin(credentials) {
     if (!isRequired(credentials.email) || !isRequired(credentials.password)) {
       return { success: false, error: 'Escribe tu correo y tu contraseña.' }
@@ -16,7 +16,7 @@ class AuthController {
     return AuthModel.login(credentials)
   }
 
-  // Registro: errores por campo para mostrarlos junto a cada input
+  // Registro: devuelve los errores por campo para mostrarlos junto a cada input
   static async handleRegister(userData) {
     const errores = {}
     if (!isValidDocument(userData.documento)) errores.documento = 'El documento tiene de 6 a 10 dígitos.'
@@ -37,13 +37,26 @@ class AuthController {
     return AuthModel.logout()
   }
 
-  // IV.8: ¿hay sesión? Lo responde el servidor leyendo la cookie
-  static async checkSession() {
-    return AuthModel.me()
+  // Estado actual de la sesión (lo usa useAuth al montar)
+  static getAuthState() {
+    return {
+      isAuthenticated: AuthModel.isAuthenticated(),
+      currentUser: AuthModel.getCurrentUser(),
+      currentToken: AuthModel.getCurrentToken()
+    }
   }
 
-  static isAdmin(user) {
-    return user?.role === USER_ROLES.ADMIN
+  static getUserRole() {
+    return AuthModel.getCurrentUser()?.role ?? null
+  }
+
+  // ¿El usuario tiene alguno de estos roles? Ej.: hasAnyRole(['administrador', 'cajero'])
+  static hasAnyRole(allowedRoles) {
+    return allowedRoles.includes(this.getUserRole())
+  }
+
+  static isAdmin() {
+    return this.getUserRole() === USER_ROLES.ADMIN
   }
 }
 
