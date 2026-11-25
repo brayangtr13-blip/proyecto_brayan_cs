@@ -14,7 +14,12 @@ export const ROUTES = {
   PRODUCT_NEW: '/dashboard/inventario/nuevo',
   PRODUCT_ALERTS: '/dashboard/inventario/alertas',
   PRODUCT_DETAIL: (codigo) => `/dashboard/inventario/${codigo}`,
-  PRODUCT_EDIT: (codigo) => `/dashboard/inventario/${codigo}/editar`
+  PRODUCT_EDIT: (codigo) => `/dashboard/inventario/${codigo}/editar`,
+  // Módulo de ventas y caja
+  POS: '/dashboard/vender',
+  SALES: '/dashboard/ventas',
+  SALE_DETAIL: (id) => `/dashboard/ventas/${id}`,
+  CASH_CLOSE: '/dashboard/caja'
 }
 
 export const PROTECTED_ROUTES = [ROUTES.DASHBOARD]

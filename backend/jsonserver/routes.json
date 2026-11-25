@@ -3,5 +3,13 @@
   "/roles*": "/444/roles$1",
   "/categorias*": "/660/categorias$1",
   "/productos*": "/660/productos$1",
-  "/movimientos_inventario*": "/660/movimientos_inventario$1"
+  "/movimientos_inventario*": "/660/movimientos_inventario$1",
+  "/metodos_pago*": "/660/metodos_pago$1",
+  "/clientes*": "/660/clientes$1",
+  "/arqueo_caja*": "/660/arqueo_caja$1",
+  "/ventas*": "/660/ventas$1",
+  "/detalle_venta*": "/660/detalle_venta$1",
+  "/domicilios*": "/660/domicilios$1",
+  "/log_auditoria*": "/660/log_auditoria$1",
+  "/modulos*": "/660/modulos$1"
 }

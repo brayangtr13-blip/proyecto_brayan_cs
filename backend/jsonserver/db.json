@@ -614,5 +614,784 @@
       "observacion": "Venta #13",
       "fecha": "2026-09-24 09:30:00"
     }
+  ],
+  "metodos_pago": [
+    {
+      "id": 1,
+      "nombre": "Efectivo",
+      "activo": true
+    },
+    {
+      "id": 2,
+      "nombre": "Nequi",
+      "activo": true
+    },
+    {
+      "id": 3,
+      "nombre": "Transferencia",
+      "activo": true
+    },
+    {
+      "id": 4,
+      "nombre": "Tarjeta",
+      "activo": true
+    },
+    {
+      "id": 5,
+      "nombre": "Daviplata",
+      "activo": true
+    },
+    {
+      "id": 6,
+      "nombre": "QR Bancolombia",
+      "activo": true
+    },
+    {
+      "id": 7,
+      "nombre": "PSE",
+      "activo": true
+    },
+    {
+      "id": 8,
+      "nombre": "Crédito tienda",
+      "activo": true
+    },
+    {
+      "id": 9,
+      "nombre": "Bono regalo",
+      "activo": true
+    },
+    {
+      "id": 10,
+      "nombre": "Movii",
+      "activo": false
+    }
+  ],
+  "clientes": [
+    {
+      "id": 1,
+      "nombre": "Maria",
+      "apellido": "Restrepo",
+      "telefono": "3011234567",
+      "direccion": "Calle 12 # 4-30",
+      "id_barrio": 1
+    },
+    {
+      "id": 2,
+      "nombre": "Carlos",
+      "apellido": "Ruiz",
+      "telefono": "3109876543",
+      "direccion": "Carrera 7 # 15-02",
+      "id_barrio": 2
+    },
+    {
+      "id": 3,
+      "nombre": "Ana Lucía",
+      "apellido": "Torres",
+      "telefono": "3125550101",
+      "direccion": "Calle 20 # 8-15",
+      "id_barrio": 4
+    },
+    {
+      "id": 4,
+      "nombre": "Jorge Enrique",
+      "apellido": "Díaz",
+      "telefono": "3135550202",
+      "direccion": "Carrera 3 # 10-44",
+      "id_barrio": 5
+    },
+    {
+      "id": 5,
+      "nombre": "Luisa Fernanda",
+      "apellido": "Gil",
+      "telefono": "3145550303",
+      "direccion": "Calle 5 # 2-18",
+      "id_barrio": 1
+    },
+    {
+      "id": 6,
+      "nombre": "Pedro Pablo",
+      "apellido": "Suárez",
+      "telefono": "3155550404",
+      "direccion": "Diagonal 9 # 14-70",
+      "id_barrio": 6
+    },
+    {
+      "id": 7,
+      "nombre": "Camila Andrea",
+      "apellido": "Ruiz",
+      "telefono": "3165550505",
+      "direccion": "Calle 30 # 6-12",
+      "id_barrio": 7
+    },
+    {
+      "id": 8,
+      "nombre": "Óscar Iván",
+      "apellido": "Molina",
+      "telefono": "3175550606",
+      "direccion": "Carrera 11 # 25-03",
+      "id_barrio": 3
+    },
+    {
+      "id": 9,
+      "nombre": "Diana Marcela",
+      "apellido": "Peña",
+      "telefono": "3185550707",
+      "direccion": "Transversal 4 # 18-60",
+      "id_barrio": 8
+    },
+    {
+      "id": 10,
+      "nombre": "Andrés Felipe",
+      "apellido": "Ríos",
+      "telefono": "3195550808",
+      "direccion": "Calle 8 # 12-09",
+      "id_barrio": 2
+    }
+  ],
+  "arqueo_caja": [
+    {
+      "id": 2,
+      "id_usuario": 2,
+      "fecha_apertura": "2026-09-23 08:40:30",
+      "fecha_cierre": "2026-09-23 11:40:30",
+      "monto_inicial": 20000,
+      "monto_final": 49750,
+      "total_ventas": 62050,
+      "total_efectivo": 29750,
+      "observacion": "Turno de la tarde, sin novedades"
+    },
+    {
+      "id": 3,
+      "id_usuario": 2,
+      "fecha_apertura": "2026-09-12 08:00:00",
+      "fecha_cierre": "2026-09-12 14:00:00",
+      "monto_inicial": 20000,
+      "monto_final": 40900,
+      "total_ventas": 20900,
+      "total_efectivo": 20900,
+      "observacion": "Caja cuadrada"
+    },
+    {
+      "id": 4,
+      "id_usuario": 4,
+      "fecha_apertura": "2026-09-12 14:00:00",
+      "fecha_cierre": "2026-09-12 20:00:00",
+      "monto_inicial": 20000,
+      "monto_final": 20500,
+      "total_ventas": 16800,
+      "total_efectivo": 0,
+      "observacion": "Sobrante: un cliente no esperó el cambio"
+    },
+    {
+      "id": 5,
+      "id_usuario": 5,
+      "fecha_apertura": "2026-09-13 08:00:00",
+      "fecha_cierre": "2026-09-13 14:00:00",
+      "monto_inicial": 15000,
+      "monto_final": 15000,
+      "total_ventas": 0,
+      "total_efectivo": 0,
+      "observacion": "Única venta anulada por devolución"
+    },
+    {
+      "id": 6,
+      "id_usuario": 2,
+      "fecha_apertura": "2026-09-15 08:00:00",
+      "fecha_cierre": "2026-09-15 14:00:00",
+      "monto_inicial": 20000,
+      "monto_final": 20000,
+      "total_ventas": 27700,
+      "total_efectivo": 0,
+      "observacion": "Caja cuadrada"
+    },
+    {
+      "id": 7,
+      "id_usuario": 4,
+      "fecha_apertura": "2026-09-16 14:00:00",
+      "fecha_cierre": "2026-09-16 20:00:00",
+      "monto_inicial": 20000,
+      "monto_final": 20000,
+      "total_ventas": 12500,
+      "total_efectivo": 0,
+      "observacion": "Caja cuadrada"
+    },
+    {
+      "id": 8,
+      "id_usuario": 2,
+      "fecha_apertura": "2026-09-18 08:00:00",
+      "fecha_cierre": "2026-09-18 14:00:00",
+      "monto_inicial": 20000,
+      "monto_final": 36900,
+      "total_ventas": 17600,
+      "total_efectivo": 17600,
+      "observacion": "Faltante: se dio mal un cambio"
+    },
+    {
+      "id": 9,
+      "id_usuario": 4,
+      "fecha_apertura": "2026-09-19 14:00:00",
+      "fecha_cierre": "2026-09-19 20:00:00",
+      "monto_inicial": 20000,
+      "monto_final": 20000,
+      "total_ventas": 13500,
+      "total_efectivo": 0,
+      "observacion": "Caja cuadrada"
+    },
+    {
+      "id": 10,
+      "id_usuario": 2,
+      "fecha_apertura": "2026-09-21 08:00:00",
+      "fecha_cierre": "2026-09-21 14:00:00",
+      "monto_inicial": 20000,
+      "monto_final": 20000,
+      "total_ventas": 14200,
+      "total_efectivo": 0,
+      "observacion": "Caja cuadrada"
+    },
+    {
+      "id": 11,
+      "id_usuario": 4,
+      "fecha_apertura": "2026-09-24 08:00:00",
+      "fecha_cierre": null,
+      "monto_inicial": 20000,
+      "monto_final": null,
+      "total_ventas": null,
+      "total_efectivo": null,
+      "observacion": null
+    }
+  ],
+  "ventas": [
+    {
+      "id": 2,
+      "id_usuario": 2,
+      "id_arqueo": 2,
+      "id_cliente": null,
+      "id_metodo_pago": 1,
+      "fecha": "2026-09-23 09:40:30",
+      "total": 8700,
+      "estado": "pagada"
+    },
+    {
+      "id": 3,
+      "id_usuario": 2,
+      "id_arqueo": 2,
+      "id_cliente": 1,
+      "id_metodo_pago": 2,
+      "fecha": "2026-09-23 10:10:30",
+      "total": 32300,
+      "estado": "pagada"
+    },
+    {
+      "id": 4,
+      "id_usuario": 2,
+      "id_arqueo": 2,
+      "id_cliente": 2,
+      "id_metodo_pago": 1,
+      "fecha": "2026-09-23 11:10:30",
+      "total": 21050,
+      "estado": "pagada"
+    },
+    {
+      "id": 5,
+      "id_usuario": 2,
+      "id_arqueo": 3,
+      "id_cliente": 3,
+      "id_metodo_pago": 1,
+      "fecha": "2026-09-12 10:15:00",
+      "total": 20900,
+      "estado": "pagada"
+    },
+    {
+      "id": 6,
+      "id_usuario": 4,
+      "id_arqueo": 4,
+      "id_cliente": 4,
+      "id_metodo_pago": 5,
+      "fecha": "2026-09-12 16:30:00",
+      "total": 16800,
+      "estado": "pagada"
+    },
+    {
+      "id": 7,
+      "id_usuario": 5,
+      "id_arqueo": 5,
+      "id_cliente": 5,
+      "id_metodo_pago": 1,
+      "fecha": "2026-09-13 11:00:00",
+      "total": 13000,
+      "estado": "anulada"
+    },
+    {
+      "id": 8,
+      "id_usuario": 2,
+      "id_arqueo": 6,
+      "id_cliente": 6,
+      "id_metodo_pago": 2,
+      "fecha": "2026-09-15 09:45:00",
+      "total": 27700,
+      "estado": "pagada"
+    },
+    {
+      "id": 9,
+      "id_usuario": 4,
+      "id_arqueo": 7,
+      "id_cliente": null,
+      "id_metodo_pago": 6,
+      "fecha": "2026-09-16 15:20:00",
+      "total": 12500,
+      "estado": "pagada"
+    },
+    {
+      "id": 10,
+      "id_usuario": 2,
+      "id_arqueo": 8,
+      "id_cliente": 8,
+      "id_metodo_pago": 1,
+      "fecha": "2026-09-18 10:05:00",
+      "total": 17600,
+      "estado": "pagada"
+    },
+    {
+      "id": 11,
+      "id_usuario": 4,
+      "id_arqueo": 9,
+      "id_cliente": 9,
+      "id_metodo_pago": 8,
+      "fecha": "2026-09-19 17:40:00",
+      "total": 13500,
+      "estado": "pagada"
+    },
+    {
+      "id": 12,
+      "id_usuario": 2,
+      "id_arqueo": 10,
+      "id_cliente": 10,
+      "id_metodo_pago": 3,
+      "fecha": "2026-09-21 12:00:00",
+      "total": 14200,
+      "estado": "pagada"
+    },
+    {
+      "id": 13,
+      "id_usuario": 4,
+      "id_arqueo": 11,
+      "id_cliente": 1,
+      "id_metodo_pago": 1,
+      "fecha": "2026-09-24 09:30:00",
+      "total": 20800,
+      "estado": "pagada"
+    }
+  ],
+  "detalle_venta": [
+    {
+      "id": 3,
+      "id_venta": 2,
+      "codigo_producto": "7702001001",
+      "cantidad": 2,
+      "precio_venta": 2850
+    },
+    {
+      "id": 4,
+      "id_venta": 2,
+      "codigo_producto": "7702001005",
+      "cantidad": 1,
+      "precio_venta": 3000
+    },
+    {
+      "id": 5,
+      "id_venta": 3,
+      "codigo_producto": "7702001002",
+      "cantidad": 1,
+      "precio_venta": 12500
+    },
+    {
+      "id": 6,
+      "id_venta": 3,
+      "codigo_producto": "7702001003",
+      "cantidad": 2,
+      "precio_venta": 9900
+    },
+    {
+      "id": 7,
+      "id_venta": 4,
+      "codigo_producto": "7702001001",
+      "cantidad": 3,
+      "precio_venta": 2850
+    },
+    {
+      "id": 8,
+      "id_venta": 4,
+      "codigo_producto": "7702001002",
+      "cantidad": 1,
+      "precio_venta": 12500
+    },
+    {
+      "id": 9,
+      "id_venta": 5,
+      "codigo_producto": "7702001006",
+      "cantidad": 1,
+      "precio_venta": 11900
+    },
+    {
+      "id": 10,
+      "id_venta": 5,
+      "codigo_producto": "7702001008",
+      "cantidad": 2,
+      "precio_venta": 4500
+    },
+    {
+      "id": 11,
+      "id_venta": 6,
+      "codigo_producto": "7702001010",
+      "cantidad": 3,
+      "precio_venta": 5600
+    },
+    {
+      "id": 12,
+      "id_venta": 7,
+      "codigo_producto": "7702001007",
+      "cantidad": 2,
+      "precio_venta": 6500
+    },
+    {
+      "id": 13,
+      "id_venta": 8,
+      "codigo_producto": "7702001009",
+      "cantidad": 2,
+      "precio_venta": 8900
+    },
+    {
+      "id": 14,
+      "id_venta": 8,
+      "codigo_producto": "7702001003",
+      "cantidad": 1,
+      "precio_venta": 9900
+    },
+    {
+      "id": 15,
+      "id_venta": 9,
+      "codigo_producto": "7702001002",
+      "cantidad": 1,
+      "precio_venta": 12500
+    },
+    {
+      "id": 16,
+      "id_venta": 10,
+      "codigo_producto": "7702001006",
+      "cantidad": 1,
+      "precio_venta": 11900
+    },
+    {
+      "id": 17,
+      "id_venta": 10,
+      "codigo_producto": "7702001001",
+      "cantidad": 2,
+      "precio_venta": 2850
+    },
+    {
+      "id": 18,
+      "id_venta": 11,
+      "codigo_producto": "7702001008",
+      "cantidad": 3,
+      "precio_venta": 4500
+    },
+    {
+      "id": 19,
+      "id_venta": 12,
+      "codigo_producto": "7702001010",
+      "cantidad": 2,
+      "precio_venta": 5600
+    },
+    {
+      "id": 20,
+      "id_venta": 12,
+      "codigo_producto": "7702001005",
+      "cantidad": 1,
+      "precio_venta": 3000
+    },
+    {
+      "id": 21,
+      "id_venta": 13,
+      "codigo_producto": "7702001009",
+      "cantidad": 1,
+      "precio_venta": 8900
+    },
+    {
+      "id": 22,
+      "id_venta": 13,
+      "codigo_producto": "7702001006",
+      "cantidad": 1,
+      "precio_venta": 11900
+    }
+  ],
+  "domicilios": [
+    {
+      "id": 1,
+      "id_venta": 3,
+      "id_domiciliario": 3,
+      "id_barrio": 1,
+      "direccion_entrega": "Calle 12 # 4-30",
+      "telefono_contacto": "3011234567",
+      "costo_envio": 2000,
+      "estado": "entregado",
+      "fecha_asignacion": "2026-09-23 10:20:30",
+      "fecha_entrega": "2026-09-23 11:00:30",
+      "observacion": "Entregado en portería"
+    },
+    {
+      "id": 2,
+      "id_venta": 4,
+      "id_domiciliario": 6,
+      "id_barrio": 2,
+      "direccion_entrega": "Carrera 7 # 15-02",
+      "telefono_contacto": "3109876543",
+      "costo_envio": 3000,
+      "estado": "entregado",
+      "fecha_asignacion": "2026-09-23 11:20:00",
+      "fecha_entrega": "2026-09-23 11:55:00",
+      "observacion": null
+    },
+    {
+      "id": 3,
+      "id_venta": 5,
+      "id_domiciliario": 3,
+      "id_barrio": 4,
+      "direccion_entrega": "Calle 20 # 8-15",
+      "telefono_contacto": "3125550101",
+      "costo_envio": 2500,
+      "estado": "entregado",
+      "fecha_asignacion": "2026-09-12 10:25:00",
+      "fecha_entrega": "2026-09-12 11:05:00",
+      "observacion": "Dejar con el vigilante"
+    },
+    {
+      "id": 4,
+      "id_venta": 6,
+      "id_domiciliario": 6,
+      "id_barrio": 5,
+      "direccion_entrega": "Carrera 3 # 10-44",
+      "telefono_contacto": "3135550202",
+      "costo_envio": 3000,
+      "estado": "entregado",
+      "fecha_asignacion": "2026-09-12 16:40:00",
+      "fecha_entrega": "2026-09-12 17:10:00",
+      "observacion": null
+    },
+    {
+      "id": 5,
+      "id_venta": 7,
+      "id_domiciliario": 7,
+      "id_barrio": 1,
+      "direccion_entrega": "Calle 5 # 2-18",
+      "telefono_contacto": "3145550303",
+      "costo_envio": 2000,
+      "estado": "cancelado",
+      "fecha_asignacion": "2026-09-13 11:10:00",
+      "fecha_entrega": null,
+      "observacion": "El cliente devolvió el pedido"
+    },
+    {
+      "id": 6,
+      "id_venta": 8,
+      "id_domiciliario": 3,
+      "id_barrio": 6,
+      "direccion_entrega": "Diagonal 9 # 14-70",
+      "telefono_contacto": "3155550404",
+      "costo_envio": 4000,
+      "estado": "entregado",
+      "fecha_asignacion": "2026-09-15 10:00:00",
+      "fecha_entrega": "2026-09-15 10:40:00",
+      "observacion": null
+    },
+    {
+      "id": 7,
+      "id_venta": 10,
+      "id_domiciliario": 7,
+      "id_barrio": 3,
+      "direccion_entrega": "Carrera 11 # 25-03",
+      "telefono_contacto": "3175550606",
+      "costo_envio": 3500,
+      "estado": "en_camino",
+      "fecha_asignacion": "2026-09-18 10:15:00",
+      "fecha_entrega": null,
+      "observacion": "Timbre dañado, llamar al llegar"
+    },
+    {
+      "id": 8,
+      "id_venta": 11,
+      "id_domiciliario": 6,
+      "id_barrio": 8,
+      "direccion_entrega": "Transversal 4 # 18-60",
+      "telefono_contacto": "3185550707",
+      "costo_envio": 4000,
+      "estado": "entregado",
+      "fecha_asignacion": "2026-09-19 17:50:00",
+      "fecha_entrega": "2026-09-19 18:30:00",
+      "observacion": null
+    },
+    {
+      "id": 9,
+      "id_venta": 12,
+      "id_domiciliario": 3,
+      "id_barrio": 2,
+      "direccion_entrega": "Oficina 204, Calle 8 # 12-09",
+      "telefono_contacto": "3195550808",
+      "costo_envio": 3000,
+      "estado": "entregado",
+      "fecha_asignacion": "2026-09-21 12:10:00",
+      "fecha_entrega": "2026-09-21 12:45:00",
+      "observacion": "Entregar en la oficina"
+    },
+    {
+      "id": 10,
+      "id_venta": 13,
+      "id_domiciliario": 6,
+      "id_barrio": 1,
+      "direccion_entrega": "Calle 12 # 4-30",
+      "telefono_contacto": "3011234567",
+      "costo_envio": 2000,
+      "estado": "asignado",
+      "fecha_asignacion": "2026-09-24 09:40:00",
+      "fecha_entrega": null,
+      "observacion": null
+    }
+  ],
+  "log_auditoria": [
+    {
+      "id": 1,
+      "id_usuario": 2,
+      "id_modulo": 1,
+      "accion": "login",
+      "detalle": "Inicio de sesión exitoso",
+      "ip": "192.168.1.15",
+      "fecha": "2026-09-23 08:40:30"
+    },
+    {
+      "id": 2,
+      "id_usuario": 2,
+      "id_modulo": 3,
+      "accion": "registrar",
+      "detalle": "Registró la venta #2 por $8.700",
+      "ip": "192.168.1.15",
+      "fecha": "2026-09-23 09:40:30"
+    },
+    {
+      "id": 3,
+      "id_usuario": 2,
+      "id_modulo": 3,
+      "accion": "registrar",
+      "detalle": "Registró la venta #3 por $32.300",
+      "ip": "192.168.1.15",
+      "fecha": "2026-09-23 10:10:30"
+    },
+    {
+      "id": 4,
+      "id_usuario": 9,
+      "id_modulo": 2,
+      "accion": "actualizar",
+      "detalle": "Ingreso de stock: Azúcar Blanca 2kg, +30 unidades",
+      "ip": "192.168.1.10",
+      "fecha": "2026-09-22 11:40:30"
+    },
+    {
+      "id": 5,
+      "id_usuario": 3,
+      "id_modulo": 4,
+      "accion": "actualizar",
+      "detalle": "Marcó el domicilio de la venta #3 como entregado",
+      "ip": "192.168.1.22",
+      "fecha": "2026-09-23 11:00:30"
+    },
+    {
+      "id": 6,
+      "id_usuario": 1,
+      "id_modulo": 1,
+      "accion": "registrar",
+      "detalle": "Registró la cuenta de Luz Marina Cardenas (contador)",
+      "ip": "192.168.1.10",
+      "fecha": "2026-09-05 14:00:00"
+    },
+    {
+      "id": 7,
+      "id_usuario": 1,
+      "id_modulo": 1,
+      "accion": "login",
+      "detalle": "Inicio de sesión exitoso",
+      "ip": "192.168.1.10",
+      "fecha": "2026-09-12 07:55:00"
+    },
+    {
+      "id": 8,
+      "id_usuario": 1,
+      "id_modulo": 3,
+      "accion": "anular",
+      "detalle": "Anuló la venta #7. Devolución: producto en mal estado",
+      "ip": "192.168.1.10",
+      "fecha": "2026-09-13 12:30:00"
+    },
+    {
+      "id": 9,
+      "id_usuario": null,
+      "id_modulo": 1,
+      "accion": "login",
+      "detalle": "Intento fallido con el correo desconocido@correo.com",
+      "ip": "192.168.1.40",
+      "fecha": "2026-09-13 22:10:00"
+    },
+    {
+      "id": 10,
+      "id_usuario": 4,
+      "id_modulo": 3,
+      "accion": "cerrar",
+      "detalle": "Cierre de caja del turno #9 sin diferencia",
+      "ip": "192.168.1.16",
+      "fecha": "2026-09-19 20:00:00"
+    },
+    {
+      "id": 11,
+      "id_usuario": 10,
+      "id_modulo": 1,
+      "accion": "login",
+      "detalle": "Cuenta bloqueada 15 minutos tras 3 intentos fallidos",
+      "ip": "192.168.1.33",
+      "fecha": "2026-09-24 20:00:00"
+    },
+    {
+      "id": 12,
+      "id_usuario": 1,
+      "id_modulo": 5,
+      "accion": "consultar",
+      "detalle": "Generó el reporte gráfico de ventas de septiembre",
+      "ip": "192.168.1.10",
+      "fecha": "2026-09-24 21:00:00"
+    }
+  ],
+  "modulos": [
+    {
+      "id": 1,
+      "nombre": "Usuarios",
+      "descripcion": "Acceso, cuentas, roles y permisos"
+    },
+    {
+      "id": 2,
+      "nombre": "Inventario",
+      "descripcion": "Productos, categorías y kárdex"
+    },
+    {
+      "id": 3,
+      "nombre": "Ventas y caja",
+      "descripcion": "Punto de venta, anulaciones y cierre de caja"
+    },
+    {
+      "id": 4,
+      "nombre": "Domicilios",
+      "descripcion": "Pedidos a domicilio, asignación y entrega"
+    },
+    {
+      "id": 5,
+      "nombre": "Reportes",
+      "descripcion": "Reportes gráficos e impresos"
+    }
   ]
 }

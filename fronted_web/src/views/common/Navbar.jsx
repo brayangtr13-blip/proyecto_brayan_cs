@@ -11,6 +11,8 @@ const enlace = ({ isActive }) =>
 const Navbar = () => {
   const { currentUser, logout } = useAuth()
   const navigate = useNavigate()
+  const esAdmin = currentUser?.role === USER_ROLES.ADMIN
+  const vende = [USER_ROLES.ADMIN, USER_ROLES.CAJERO].includes(currentUser?.role) // ventas e inventario
 
   const handleLogout = async () => {
     await logout()
@@ -24,8 +26,12 @@ const Navbar = () => {
           <h2 className="font-titulo text-lg">Control Store</h2>
           <div className="flex gap-1">
             <NavLink to={ROUTES.DASHBOARD} end className={enlace}>Inicio</NavLink>
-            {[USER_ROLES.ADMIN, USER_ROLES.CAJERO].includes(currentUser?.role) && <NavLink to={ROUTES.PRODUCTS} className={enlace}>Inventario</NavLink>}
-            {currentUser?.role === USER_ROLES.ADMIN && <NavLink to={ROUTES.USERS} className={enlace}>Usuarios</NavLink>}
+            {/* Cada enlace solo aparece para los roles que tienen el permiso en rol_permiso */}
+            {vende && <NavLink to={ROUTES.POS} className={enlace}>Vender</NavLink>}
+            {vende && <NavLink to={ROUTES.SALES} className={enlace}>Ventas</NavLink>}
+            {esAdmin && <NavLink to={ROUTES.CASH_CLOSE} className={enlace}>Caja</NavLink>}
+            {vende && <NavLink to={ROUTES.PRODUCTS} className={enlace}>Inventario</NavLink>}
+            {esAdmin && <NavLink to={ROUTES.USERS} className={enlace}>Usuarios</NavLink>}
           </div>
         </div>
         {currentUser && (

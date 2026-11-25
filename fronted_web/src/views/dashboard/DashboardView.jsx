@@ -18,8 +18,13 @@ import ProductsView from '../inventario/ProductsView'
 import EditarProducto, { NuevoProducto } from '../inventario/ProductForm'
 import ProductDetails from '../inventario/ProductDetails'
 import StockAlertsView from '../inventario/StockAlertsView'
+import PosView from '../ventas/PosView'
+import SalesView from '../ventas/SalesView'
+import SaleDetails from '../ventas/SaleDetails'
+import CashCloseView from '../ventas/CashCloseView'
 
 const INVENTARIO = [USER_ROLES.ADMIN, USER_ROLES.CAJERO] // rol_permiso: inventario.ver
+const VENTAS = [USER_ROLES.ADMIN, USER_ROLES.CAJERO] // rol_permiso: ventas.ver y ventas.registrar
 
 // Aviso de inventario en el inicio: cuántos productos hay que pedir
 const AvisoInventario = () => {
@@ -59,6 +64,7 @@ const SoloRoles = ({ roles, children }) => {
 
 const SoloAdmin = ({ children }) => <SoloRoles roles={[USER_ROLES.ADMIN]}>{children}</SoloRoles>
 const ConInventario = ({ children }) => <SoloRoles roles={INVENTARIO}>{children}</SoloRoles>
+const ConVentas = ({ children }) => <SoloRoles roles={VENTAS}>{children}</SoloRoles>
 
 const DashboardView = () => {
   return (
@@ -75,6 +81,11 @@ const DashboardView = () => {
         <Route path="inventario/nuevo" element={<ConInventario><NuevoProducto /></ConInventario>} />
         <Route path="inventario/:codigo" element={<ConInventario><ProductDetails /></ConInventario>} />
         <Route path="inventario/:codigo/editar" element={<SoloAdmin><EditarProducto /></SoloAdmin>} />
+        {/* Ventas y caja: vender y consultar (admin y cajero); cerrar caja solo admin (RF18) */}
+        <Route path="vender" element={<ConVentas><PosView /></ConVentas>} />
+        <Route path="ventas" element={<ConVentas><SalesView /></ConVentas>} />
+        <Route path="ventas/:id" element={<ConVentas><SaleDetails /></ConVentas>} />
+        <Route path="caja" element={<SoloAdmin><CashCloseView /></SoloAdmin>} />
         <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
       </Routes>
     </div>
