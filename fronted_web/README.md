@@ -178,6 +178,44 @@ rechazada; devolución de la #14 (estado anulada, leche vuelve a 53, motivo en l
 #11: esperado $40.800, contado $40.000 → faltante −$800 que exige observación; después la cajera debe abrir
 un turno nuevo para vender.
 
+## Módulo de Domicilios (del prototipo navegable)
+
+| Pantalla del prototipo | En React | Ruta | Rol |
+|---|---|---|---|
+| `listar_domicilios.html` | `DeliveriesView` (pestañas por estado y asignación) | `/dashboard/domicilios` | administrador |
+| `registrar_pedido.html` | `NewDeliveryView` | `/dashboard/domicilios/nuevo` | administrador |
+| `consultar_pedido.html` | `DeliveryDetails` (productos, recorrido, histórico) | `/dashboard/domicilios/:id` | administrador, domiciliario (solo los suyos) |
+| `mis_pedidos.html` | `MyDeliveriesView` | `/dashboard/mis-pedidos` | domiciliario |
+| `simulador_chatbot.html` | `ChatbotView` | `/dashboard/domicilios/chatbot` | administrador |
+
+- **Datos:** `domicilios`, `barrios` (tarifa y cobertura), `clientes`, `ventas` y `detalle_venta` en `db.json`.
+- **Registrar (HU04):** se busca al cliente por teléfono (`clientes.telefono` es UNIQUE); se valida
+  teléfono, dirección, barrio con cobertura, stock y método de pago **antes** de guardar. La venta queda
+  "pendiente" (contra entrega) y el envío sale de la tarifa del barrio. El stock no baja todavía.
+- **Estados (patrón State, `DeliveryStates.js`):** pendiente → asignado → en camino → entregado, sin saltos;
+  desde cualquiera no final se puede cancelar (con motivo). Entregado y cancelado ya no se modifican.
+  El domiciliario solo pone "en camino" y "entregado", y solo en sus pedidos.
+- **Entregar:** descuenta el stock ("salida" con "Domicilio #n") y la venta pasa a "pagada".
+  **Cancelar:** la venta pasa a "anulada" (si ya estaba pagada, el stock vuelve con una "entrada").
+- **Notificaciones (HU07, patrón Observer + Adapter):** el controlador publica `estadoCambiado`;
+  `DeliveryNotifications` escucha, arma el mensaje con la plantilla y lo manda por un canal simulado
+  (localStorage). El chatbot muestra esos mensajes y solo informa pedidos del teléfono del cliente.
+- **Auditoría:** registrar, asignar y cada cambio de estado escriben en `log_auditoria` (módulo 4);
+  de ahí sale el histórico del pedido.
+
+### Pruebas del módulo (30 de 30 correctas)
+
+Administrador: menú con Domicilios; 10 pedidos, filtro "En camino" muestra solo el #7; solo los activos
+tienen el selector de asignar; registrar vacío marca los campos; el teléfono 3011234567 trae a María
+Restrepo; leche ×999 rechazada por stock; leche ×2 crea el pedido #11 (venta pendiente, cliente 1,
+envío $2.000, stock sigue en 53) con "Registrado" en el histórico; asignado a Kevin; cancelar el #10 sin
+motivo se rechaza, con motivo queda cancelado y su venta anulada.
+Domiciliario (Kevin): menú solo Inicio y Mis pedidos; ve solo el #11 por entregar; "Salir a entregar" →
+en camino; "Confirmar entrega" → entregado con fecha, leche 53 → 51 y venta pagada; el #7 (de Yeison)
+responde "El pedido no existe"; `/dashboard/domicilios` lo devuelve al inicio; histórico con 4 pasos.
+Chatbot: María ve los avisos "salió con…" y "fue entregado"; preguntar por el #7 responde que no es suyo;
+preguntar por el #11 responde su estado. Cajera: sin menú de Domicilios.
+
 ## Limitaciones de la API falsa (se resuelven en el Capítulo IV con Express)
 
 - json-server-auth solo exige **sesión**, no **rol**: las reglas por rol viven en los controladores
@@ -185,5 +223,7 @@ un turno nuevo para vender.
 - `GET /users` envía el hash de la contraseña; `UserModel` lo quita antes de dárselo a las vistas.
 - El token vive en `localStorage`; en el Capítulo IV pasa a una cookie `HttpOnly`.
 - La cuenta inactiva se revisa en el navegador después del login.
+- Las notificaciones del chatbot se guardan en el navegador (canal simulado); un canal real (WhatsApp o
+  Telegram) solo cambiaría el método `enviar` del adaptador.
 - JSON Server no tiene transacciones: una entrada o ajuste guarda el stock y luego el renglón del kárdex
   en dos peticiones. El backend real lo hace en una sola transacción.

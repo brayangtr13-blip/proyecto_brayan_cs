@@ -22,9 +22,15 @@ import PosView from '../ventas/PosView'
 import SalesView from '../ventas/SalesView'
 import SaleDetails from '../ventas/SaleDetails'
 import CashCloseView from '../ventas/CashCloseView'
+import DeliveriesView from '../domicilios/DeliveriesView'
+import NewDeliveryView from '../domicilios/NewDeliveryView'
+import DeliveryDetails from '../domicilios/DeliveryDetails'
+import MyDeliveriesView from '../domicilios/MyDeliveriesView'
+import ChatbotView from '../domicilios/ChatbotView'
 
 const INVENTARIO = [USER_ROLES.ADMIN, USER_ROLES.CAJERO] // rol_permiso: inventario.ver
 const VENTAS = [USER_ROLES.ADMIN, USER_ROLES.CAJERO] // rol_permiso: ventas.ver y ventas.registrar
+const DOMICILIOS = [USER_ROLES.ADMIN, USER_ROLES.DOMICILIARIO] // rol_permiso: domicilios.ver
 
 // Aviso de inventario en el inicio: cuántos productos hay que pedir
 const AvisoInventario = () => {
@@ -86,6 +92,13 @@ const DashboardView = () => {
         <Route path="ventas" element={<ConVentas><SalesView /></ConVentas>} />
         <Route path="ventas/:id" element={<ConVentas><SaleDetails /></ConVentas>} />
         <Route path="caja" element={<SoloAdmin><CashCloseView /></SoloAdmin>} />
+        {/* Domicilios: panel, registrar y chatbot (admin); detalle (admin y su domiciliario); mis pedidos (domiciliario).
+            "nuevo" y "chatbot" van antes de ":id" */}
+        <Route path="domicilios" element={<SoloAdmin><DeliveriesView /></SoloAdmin>} />
+        <Route path="domicilios/nuevo" element={<SoloAdmin><NewDeliveryView /></SoloAdmin>} />
+        <Route path="domicilios/chatbot" element={<SoloAdmin><ChatbotView /></SoloAdmin>} />
+        <Route path="domicilios/:id" element={<SoloRoles roles={DOMICILIOS}><DeliveryDetails /></SoloRoles>} />
+        <Route path="mis-pedidos" element={<SoloRoles roles={[USER_ROLES.DOMICILIARIO]}><MyDeliveriesView /></SoloRoles>} />
         <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
       </Routes>
     </div>

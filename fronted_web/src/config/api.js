@@ -22,6 +22,7 @@ const API_CONFIG = {
     CASH: '/arqueo_caja',
     CUSTOMERS: '/clientes',
     DELIVERIES: '/domicilios',
+    NEIGHBORHOODS: '/barrios',
     AUDIT_LOG: '/log_auditoria'
   }
 }
