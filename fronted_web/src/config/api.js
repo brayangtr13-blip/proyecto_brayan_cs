@@ -14,7 +14,15 @@ const API_CONFIG = {
     // Módulo de inventario (tablas productos, categorias y movimientos_inventario)
     PRODUCTS: '/productos',
     CATEGORIES: '/categorias',
-    MOVEMENTS: '/movimientos_inventario'
+    MOVEMENTS: '/movimientos_inventario',
+    // Módulo de ventas y caja
+    SALES: '/ventas',
+    SALE_DETAILS: '/detalle_venta',
+    PAYMENT_METHODS: '/metodos_pago',
+    CASH: '/arqueo_caja',
+    CUSTOMERS: '/clientes',
+    DELIVERIES: '/domicilios',
+    AUDIT_LOG: '/log_auditoria'
   }
 }
 

@@ -78,6 +78,9 @@ CONFIG (config/)        URL de la API, rutas, roles y llaves de storage
 | Usuarios | `UserModel` | `UserController` | `useUsers` | `UsersView`, `UserForm`, `UserDetails` |
 | Inicio | `DashboardModel` | `DashboardController` | `useDashboard` | `DashboardView`, `DashboardHeader`, `DashboardStats` |
 | Inventario | `ProductModel` | `ProductController` | `useProducts`, `useProduct`, `useStockAlerts` | `ProductsView`, `ProductForm`, `ProductDetails`, `StockAlertsView` |
+| Ventas | `SaleModel` | `SaleController` | `useSales`, `useSale`, `usePos` | `PosView`, `SalesView`, `SaleDetails`, `Comprobante` |
+| Caja | `CashModel` | `CashController` | `useCash`, `useShiftSummary` | `CashCloseView` |
+| Auditoría (escritura) | `AuditModel` | — | — | — |
 
 **Patrones usados:** MVC, Singleton (cada servicio exporta una sola instancia: `new HttpService()`),
 Guard (`ProtectedRoute`, `PublicRoute`, `SoloAdmin`), Container/Presentational (`UserForm` espera los
@@ -142,6 +145,38 @@ cada movimiento; registro con precio menor (rechazado), código repetido (rechaz
 inventario inicial); entrada +10; ajuste −50 rechazado por stock negativo; ajuste −21 (saldos 0 → 15 →
 25 → 4); edición con código y stock bloqueados; dar de baja y filtro "Dados de baja"; la cajera ve y
 registra pero no edita; el domiciliario no entra; cerrar sesión borra el token.
+
+## Módulo de Ventas y caja (del prototipo navegable)
+
+| Pantalla del prototipo | En React | Ruta | Rol |
+|---|---|---|---|
+| `registrar_venta.html` | `PosView` (abrir caja + punto de venta) | `/dashboard/vender` | administrador, cajero |
+| `listar_ventas.html` | `SalesView` (filtros y anulación) | `/dashboard/ventas` | administrador, cajero (solo sus ventas) |
+| `consultar_venta.html` | `SaleDetails` + `Comprobante` | `/dashboard/ventas/:id` | administrador, cajero (solo sus ventas) |
+| `cierre_caja.html` | `CashCloseView` | `/dashboard/caja` | solo administrador (RF18) |
+
+- **Datos:** `ventas`, `detalle_venta`, `arqueo_caja`, `metodos_pago`, `clientes`, `domicilios` y
+  `log_auditoria` en `db.json`, con las columnas y datos de `controlstore_sena`.
+- **Reglas** (de `ventas_servicio.js`): para vender hay que tener el turno abierto; no se vende un producto
+  inactivo, sin stock o por encima del stock; en efectivo lo recibido debe alcanzar y se calcula el cambio;
+  vender descuenta el stock y deja una "salida" en el kárdex con "Venta #n"; el cajero solo ve sus ventas.
+- **Anular / devolución (HU04):** solo el administrador (rol_permiso no le da `ventas.anular` al cajero),
+  con motivo de mínimo 10 caracteres; la venta queda como "anulada" y el stock vuelve con una "entrada".
+  Las ventas con domicilio se cancelan desde Domicilios.
+- **Cierre de caja (HU05):** suma solo las ventas pagadas del turno, por método de pago;
+  diferencia = contado − base − ventas en efectivo (la misma fórmula de la columna calculada
+  `arqueo_caja.diferencia`); con diferencia, la observación es obligatoria.
+- **Auditoría (RNF04):** registrar, anular, abrir caja y cerrar caja escriben en `log_auditoria`.
+
+### Pruebas del módulo (26 de 26 correctas)
+
+Cajera: menú sin Caja ni Usuarios; vende en su turno #11 (leche ×2 + arroz = $18.200); café ×10 rechazado
+por stock; $5.000 no alcanza; con $20.000 el cambio es $1.800; comprobante #14; solo ve sus 5 ventas y no
+puede anular; la leche baja a 51 con "Venta #14" en el kárdex; `/dashboard/caja` la devuelve al inicio.
+Administrador: ve las 13 ventas, filtra por Nequi (2) y por factura #7 (anulada); anulación con motivo corto
+rechazada; devolución de la #14 (estado anulada, leche vuelve a 53, motivo en la factura); cierre del turno
+#11: esperado $40.800, contado $40.000 → faltante −$800 que exige observación; después la cajera debe abrir
+un turno nuevo para vender.
 
 ## Limitaciones de la API falsa (se resuelven en el Capítulo IV con Express)
 
