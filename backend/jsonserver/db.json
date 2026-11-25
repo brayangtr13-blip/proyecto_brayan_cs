@@ -667,6 +667,68 @@
       "activo": false
     }
   ],
+  "barrios": [
+    {
+      "id": 1,
+      "nombre": "Centro",
+      "costo_domicilio": 2000,
+      "activo": true
+    },
+    {
+      "id": 2,
+      "nombre": "La Playa",
+      "costo_domicilio": 3000,
+      "activo": true
+    },
+    {
+      "id": 3,
+      "nombre": "Los Alamos",
+      "costo_domicilio": 3500,
+      "activo": true
+    },
+    {
+      "id": 4,
+      "nombre": "San José",
+      "costo_domicilio": 2500,
+      "activo": true
+    },
+    {
+      "id": 5,
+      "nombre": "El Carmen",
+      "costo_domicilio": 3000,
+      "activo": true
+    },
+    {
+      "id": 6,
+      "nombre": "Villa Nueva",
+      "costo_domicilio": 4000,
+      "activo": true
+    },
+    {
+      "id": 7,
+      "nombre": "La Esperanza",
+      "costo_domicilio": 3500,
+      "activo": true
+    },
+    {
+      "id": 8,
+      "nombre": "Santa Bárbara",
+      "costo_domicilio": 4000,
+      "activo": true
+    },
+    {
+      "id": 9,
+      "nombre": "El Prado",
+      "costo_domicilio": 3000,
+      "activo": true
+    },
+    {
+      "id": 10,
+      "nombre": "Las Palmas",
+      "costo_domicilio": 5000,
+      "activo": false
+    }
+  ],
   "clientes": [
     {
       "id": 1,

@@ -88,12 +88,13 @@ class SaleModel {
     }
   }
 
-  // Encabezado de la venta; JSON Server le asigna el id (el número de factura)
-  static async createSale({ idUsuario, idArqueo, idMetodoPago, total }) {
+  // Encabezado de la venta; JSON Server le asigna el id (el número de factura).
+  // Mostrador: pagada y sin cliente. Domicilio: pendiente (contra entrega), con cliente y sin turno de caja.
+  static async createSale({ idUsuario, idArqueo = null, idMetodoPago, total, idCliente = null, estado = 'pagada' }) {
     try {
       const fila = await httpService.post(SALES, {
-        id_usuario: idUsuario, id_arqueo: idArqueo, id_cliente: null, id_metodo_pago: idMetodoPago,
-        fecha: fechaActual(), total, estado: 'pagada'
+        id_usuario: idUsuario, id_arqueo: idArqueo, id_cliente: idCliente, id_metodo_pago: idMetodoPago,
+        fecha: fechaActual(), total, estado
       })
       return { success: true, data: aVenta(fila) }
     } catch (error) {

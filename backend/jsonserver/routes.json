@@ -5,6 +5,7 @@
   "/productos*": "/660/productos$1",
   "/movimientos_inventario*": "/660/movimientos_inventario$1",
   "/metodos_pago*": "/660/metodos_pago$1",
+  "/barrios*": "/660/barrios$1",
   "/clientes*": "/660/clientes$1",
   "/arqueo_caja*": "/660/arqueo_caja$1",
   "/ventas*": "/660/ventas$1",
