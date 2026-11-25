@@ -29,13 +29,24 @@ const useAuth = () => {
     setAuthState(AuthController.getAuthState())
   }
 
+  // Si el cambio sale bien, el controlador ya cerró la sesión: se actualiza el estado
+  const changePassword = async (datos) => {
+    setLoading(true)
+    const result = await AuthController.handleChangePassword(datos)
+    if (result.success) setAuthState(AuthController.getAuthState())
+    setLoading(false)
+    return result
+  }
+
   return {
     isAuthenticated: authState.isAuthenticated,
     currentUser: authState.currentUser,
     loading,
     login,
     register,
-    logout
+    logout,
+    changePassword,
+    recoverPassword: (email) => AuthController.handleRecoverPassword(email)
   }
 }
 

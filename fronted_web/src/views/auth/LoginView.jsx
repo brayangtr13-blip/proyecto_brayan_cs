@@ -9,8 +9,9 @@ import AlertMessage from '../common/AlertMessage'
 const LoginView = () => {
   const { login, loading } = useAuth()
   const navigate = useNavigate()
-  const registrado = useLocation().state?.registrado // correo que llega desde el registro
-  const [credentials, setCredentials] = useState({ email: registrado ?? '', password: '' })
+  // Desde el registro llega el correo nuevo; desde "cambiar contraseña", un aviso y el correo
+  const { registrado, aviso, correo } = useLocation().state ?? {}
+  const [credentials, setCredentials] = useState({ email: registrado ?? correo ?? '', password: '' })
   const [error, setError] = useState('')
 
   // Formulario controlado: cada input actualiza su campo en el estado
@@ -33,6 +34,7 @@ const LoginView = () => {
 
         <form onSubmit={handleSubmit} className="mt-6 grid gap-4" noValidate>
           {registrado && !error && <AlertMessage type="success" message="Cuenta creada. Ya puedes iniciar sesión." />}
+          {aviso && !error && <AlertMessage type="success" message={aviso} />}
           <AlertMessage type="error" message={error} />
 
           <label className="grid gap-1 font-medium">
@@ -52,6 +54,8 @@ const LoginView = () => {
               className="rounded-xl border border-borde px-4 py-3 outline-none focus:border-acc focus:ring-2 focus:ring-acc/30"
             />
           </label>
+
+          <Link to={ROUTES.RECOVER_PASSWORD} className="-mt-2 justify-self-end text-sm text-acc hover:underline">¿Olvidaste tu contraseña?</Link>
 
           <button
             type="submit" disabled={loading}

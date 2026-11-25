@@ -36,6 +36,8 @@ import DeliveriesReport from '../reportes/DeliveriesReport'
 import UsersChartReport from '../reportes/UsersChartReport'
 import UsersPrintReport from '../reportes/UsersPrintReport'
 import { PERMISOS_REPORTES } from '../../controllers/ReportController'
+import AuditLogView from '../auditoria/AuditLogView'
+import ProfileView from '../perfil/ProfileView'
 
 const INVENTARIO = [USER_ROLES.ADMIN, USER_ROLES.CAJERO] // rol_permiso: inventario.ver
 const VENTAS = [USER_ROLES.ADMIN, USER_ROLES.CAJERO] // rol_permiso: ventas.ver y ventas.registrar
@@ -117,6 +119,9 @@ const DashboardView = () => {
         <Route path="reportes/domicilios" element={<SoloRoles roles={PERMISOS_REPORTES.domicilios}><DeliveriesReport /></SoloRoles>} />
         <Route path="reportes/usuarios" element={<SoloRoles roles={PERMISOS_REPORTES.usuarios}><UsersChartReport /></SoloRoles>} />
         <Route path="reportes/usuarios/impreso" element={<SoloRoles roles={PERMISOS_REPORTES.usuarios}><UsersPrintReport /></SoloRoles>} />
+        {/* Seguridad: el log solo lo ve el administrador (RNF04); el perfil, cualquiera con sesión */}
+        <Route path="auditoria" element={<SoloAdmin><AuditLogView /></SoloAdmin>} />
+        <Route path="perfil" element={<ProfileView />} />
         <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
       </Routes>
     </div>

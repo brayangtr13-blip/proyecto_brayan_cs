@@ -59,6 +59,27 @@ class AuthModel {
     }
   }
 
+  // ¿Esta es la contraseña de este correo? Se pregunta a POST /login, que la compara con bcrypt.
+  // No se guarda el token que responde: la sesión actual sigue igual.
+  static async verifyPassword(email, password) {
+    try {
+      await httpService.post(API_CONFIG.ENDPOINTS.LOGIN, { email, password }, false)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  // PATCH /users/:id con la contraseña nueva: json-server-auth la cifra con bcrypt antes de guardarla
+  static async changePassword(idUsuario, password) {
+    try {
+      await httpService.patch(API_CONFIG.ENDPOINTS.USER_BY_ID.replace(':id', idUsuario), { password })
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: traducirError(error.message) }
+    }
+  }
+
   // El JWT no se puede "apagar" en el servidor: cerrar sesión es borrarlo del navegador
   static async logout() {
     storageService.clearSession()

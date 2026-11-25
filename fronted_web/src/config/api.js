@@ -23,7 +23,8 @@ const API_CONFIG = {
     CUSTOMERS: '/clientes',
     DELIVERIES: '/domicilios',
     NEIGHBORHOODS: '/barrios',
-    AUDIT_LOG: '/log_auditoria'
+    AUDIT_LOG: '/log_auditoria',
+    MODULES: '/modulos' // tabla modulos (FK de log_auditoria.id_modulo)
   }
 }
 

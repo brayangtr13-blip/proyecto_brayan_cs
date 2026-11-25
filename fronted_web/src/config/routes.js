@@ -34,8 +34,12 @@ export const ROUTES = {
   REPORT_ROTATION: '/dashboard/reportes/rotacion',
   REPORT_DELIVERIES: '/dashboard/reportes/domicilios',
   REPORT_USERS: '/dashboard/reportes/usuarios',
-  REPORT_USERS_PRINT: '/dashboard/reportes/usuarios/impreso'
+  REPORT_USERS_PRINT: '/dashboard/reportes/usuarios/impreso',
+  // Seguridad y perfil
+  AUDIT: '/dashboard/auditoria',
+  PROFILE: '/dashboard/perfil',
+  RECOVER_PASSWORD: '/recuperar-contrasena'
 }
 
 export const PROTECTED_ROUTES = [ROUTES.DASHBOARD]
-export const PUBLIC_ROUTES = [ROUTES.LOGIN, ROUTES.REGISTER, ROUTES.HOME]
+export const PUBLIC_ROUTES = [ROUTES.LOGIN, ROUTES.REGISTER, ROUTES.RECOVER_PASSWORD, ROUTES.HOME]
