@@ -33,7 +33,7 @@ const RegisterView = () => {
     const result = await register(userData)
     if (result.success) {
       // Al login con un aviso; la cuenta queda lista para entrar
-      navigate(ROUTES.LOGIN, { replace: true, state: { registrado: userData.email } })
+      navigate(ROUTES.LOGIN, { replace: true, state: { registrado: userData.email, mensaje: result.message } })
       return
     }
     setFields(result.fields ?? {})

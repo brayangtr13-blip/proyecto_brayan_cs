@@ -6,17 +6,20 @@ import LoginView from './views/auth/LoginView'
 import RegisterView from './views/auth/RegisterView'
 import DashboardView from './views/dashboard/DashboardView'
 import MainLayout from './views/layouts/MainLayout'
+import LoadingSpinner from './views/common/LoadingSpinner'
 
-// Ruta protegida: sin sesión válida manda al login (patrón Guard)
+// Ruta protegida (patrón Guard): espera a /auth/me; sin sesión manda al login
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, checking } = useAuth()
+  if (checking) return <LoadingSpinner />
   if (!isAuthenticated) return <Navigate to={ROUTES.LOGIN} replace />
   return children
 }
 
 // Ruta pública: si ya hay sesión, no tiene sentido ver el login otra vez
 const PublicRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, checking } = useAuth()
+  if (checking) return <LoadingSpinner />
   if (isAuthenticated) return <Navigate to={ROUTES.DASHBOARD} replace />
   return children
 }

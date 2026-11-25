@@ -1,9 +1,5 @@
 // src/config/constants.js
-export const STORAGE_KEYS = {
-  TOKEN: 'auth_token',
-  USER: 'user_data',
-  ROLE: 'user_role'
-}
+// Capítulo IV: ya no hay STORAGE_KEYS porque la sesión no se guarda en localStorage (va en una cookie).
 
 // Roles de Control Store (tabla roles de controlstore_sena)
 export const USER_ROLES = {

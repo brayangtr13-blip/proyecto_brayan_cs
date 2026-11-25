@@ -8,20 +8,21 @@ del instructor ([estructura_base](https://github.com/ProfeAlbeiro/estructura_bas
 | React | 19.2.4 | Componentes de la interfaz |
 | Vite | 8.0.4 | Servidor de desarrollo y compilación |
 | React Router DOM | 7.14.0 | Rutas: `/login`, `/register`, `/dashboard/...` |
-| jwt-decode | 4.0.0 | Leer el contenido y el vencimiento del JWT |
 | Tailwind CSS | 4.3.5 | Estilos con los colores y fuentes de Control Store |
 | ESLint | 9.39.4 | Revisión del código |
-| JSON Server + json-server-auth | 0.17.4 + 2.1.0 | API falsa con login JWT (carpeta `backend/jsonserver`) |
+| Backend: Node.js + Express 4 + MySQL 8.4 | — | API real con JWT en cookie HttpOnly (carpeta `backend/nodejs_express`) |
+| JSON Server + json-server-auth | 0.17.4 + 2.1.0 | API falsa del Capítulo III (carpeta `backend/jsonserver`) |
 
-## Cómo arrancarlo
+## Cómo arrancarlo (Capítulo IV: API real)
 
-Se necesitan **dos terminales**: primero la API falsa y después el frontend.
+Se necesitan **dos terminales**: primero el backend y después el frontend.
 
 ```bash
-# Terminal 1 — API falsa en http://localhost:3001
-cd backend/jsonserver
+# Terminal 1 — Backend en http://localhost:3000/api
+cd backend/nodejs_express
 npm install
-npm start
+# La primera vez: copiar .env.example como .env y escribir la contraseña de MySQL en DB_PASSWORD
+npm run dev
 ```
 
 ```bash
@@ -31,9 +32,13 @@ npm install
 npm run dev
 ```
 
+> Para volver a la API falsa del Capítulo III: encender `backend/jsonserver` (`npm start`) y poner
+> `BASE_URL: 'http://localhost:3001'` en `src/config/api.js`. Así se demuestra que cambiar de servidor
+> solo toca la configuración y los modelos, no las vistas.
+
 ## Cuentas de prueba
 
-Todas usan la contraseña **`ayuelal2026`** (en `db.json` está guardada con bcrypt).
+Todas usan la contraseña **`ayuelal2026`** (en MySQL está guardada con bcrypt, columna `contrasena_hash`).
 
 | Correo | Rol | Qué puede hacer |
 |---|---|---|
@@ -47,65 +52,71 @@ Todas usan la contraseña **`ayuelal2026`** (en `db.json` está guardada con bcr
 Regla de la guía **C‑S‑M‑C‑H‑V**: cada capa solo habla con la de abajo.
 
 ```
-VISTA (views/)          dibuja y recibe clics — no sabe de fetch ni de localStorage
+VISTA (views/)          dibuja y recibe clics — no sabe de fetch ni de cookies
    ↓ usa
-HOOK (hooks/)           estado de React (useState, useEffect) — llama al controlador
+HOOK (hooks/)           estado de React — useAuth lee la sesión que comparte AuthProvider
    ↓ llama
-CONTROLADOR (controllers/)  reglas de negocio y validaciones
+CONTROLADOR (controllers/)  validaciones del formulario y cálculos (indicadores)
    ↓ usa
-MODELO (models/)        habla con la API y guarda la sesión
+MODELO (models/)        habla con la API (/auth, /users)
    ↓ usa
-SERVICIOS (services/)   fetch (httpService), localStorage (storageService), JWT (jwtService)
+SERVICIOS (services/)   httpService: fetch con credentials: 'include'
    ↓
-CONFIG (config/)        URL de la API, rutas, roles y llaves de storage
+CONFIG (config/)        URL de la API, rutas y roles
 ```
 
 | Funcionalidad | Modelo | Controlador | Hook | Vistas |
 |---|---|---|---|---|
-| Sesión | `AuthModel` | `AuthController` | `useAuth` | `LoginView`, `RegisterView`, `Navbar` |
+| Sesión | `AuthModel` | `AuthController` | `AuthProvider` + `useAuth` | `LoginView`, `RegisterView`, `Navbar` |
 | Usuarios | `UserModel` | `UserController` | `useUsers` | `UsersView`, `UserForm`, `UserDetails` |
 | Inicio | `DashboardModel` | `DashboardController` | `useDashboard` | `DashboardView`, `DashboardHeader`, `DashboardStats` |
 
-**Patrones usados:** MVC, Singleton (cada servicio exporta una sola instancia: `new HttpService()`),
-Guard (`ProtectedRoute`, `PublicRoute`, `SoloAdmin`), Container/Presentational (`UserForm` espera los
-datos y monta `FormularioUsuario`; `DashboardStats` solo dibuja lo que recibe).
+**Patrones usados:** MVC, Provider (`AuthProvider` comparte la sesión con Context), Singleton (cada
+servicio exporta una sola instancia), Guard (`ProtectedRoute`, `PublicRoute`, `SoloAdmin`) y
+Container/Presentational (`UserForm` → `FormularioUsuario`, `DashboardStats`).
 
-## Flujo de autenticación
+## Flujo de autenticación (Capítulo IV: JWT en cookie HttpOnly)
 
-1. `LoginView` envía el formulario → `useAuth.login()` → `AuthController.handleLogin()` valida el correo.
-2. `AuthModel.login()` hace `POST /login`; json-server-auth compara la contraseña con **bcrypt** y
-   responde un **JWT firmado** (1 hora) y el usuario.
-3. El token, el usuario y el rol se guardan en `localStorage` (`storageService`).
-4. Cada petición siguiente lleva `Authorization: Bearer <token>` (`httpService`).
-5. `ProtectedRoute` deja entrar a `/dashboard` solo si hay token y no ha vencido (`jwtService`).
-6. Cerrar sesión borra el token del navegador.
+1. `LoginView` → `useAuth().login()` → `AuthController` valida → `AuthModel` hace `POST /auth/login`.
+2. Express compara la contraseña con **bcrypt**, firma el **JWT** y lo envía en una **cookie HttpOnly**
+   (`cs_token`, `SameSite=Lax`, 8 horas). El JavaScript del navegador **no puede leerla**.
+3. Cada petición lleva la cookie sola gracias a `credentials: 'include'` en `httpService`.
+4. Al abrir o recargar la app, `AuthProvider` pregunta **`GET /auth/me`**: si la cookie es válida,
+   el servidor responde quién es. Mientras tanto las rutas protegidas muestran "Cargando…".
+5. Cerrar sesión llama a **`POST /auth/logout`**, que borra la cookie en el servidor.
 
-## Pruebas del flujo (Capítulo III.10)
+### Qué cambió del Capítulo III al IV
 
-Pruebas hechas en el navegador contra JSON Server. Resultado: **todas correctas**.
+| | Capítulo III (JSON Server) | Capítulo IV (Express + MySQL) |
+|---|---|---|
+| Dónde vive el token | `localStorage` (JavaScript lo puede leer) | Cookie HttpOnly (JavaScript no la ve) |
+| ¿Quién soy? | Se decodificaba el JWT en el navegador | `GET /auth/me` al servidor |
+| Reglas por rol | En los controladores del navegador | `authorizeRoles` en Express (403) |
+| Documento único y administrador único | Se revisaban en el navegador | UNIQUE y triggers de MySQL (409) |
+| Bloqueo tras 3 intentos | No existía | Trigger `trg_usuarios_bloqueo_bu` (15 minutos) |
+| Registro público | Cuenta activa | Cuenta **inactiva** hasta que el administrador la active |
+
+## Pruebas del flujo (Capítulo IV.10)
+
+Hechas en el navegador contra Express y MySQL. Resultado: **21 de 21 correctas**.
 
 | # | Prueba | Resultado esperado |
 |---|---|---|
 | 1 | Abrir `/dashboard` sin sesión | Redirige a `/login` |
-| 2 | Login con contraseña equivocada | "El correo o la contraseña no coinciden." |
+| 2 | Contraseña equivocada | "No coinciden. Te quedan 2 intento(s)." |
 | 3 | Login con `diego.rojas` (inactivo) | "Tu cuenta está inactiva…" |
-| 4 | Login como administrador | Entra a `/dashboard`: saludo, fecha e indicadores |
-| 5 | Recargar la página (F5) | La sesión se mantiene |
-| 6 | Ir a `/login` con sesión | Vuelve a `/dashboard` |
-| 7 | Registro con el formulario vacío | Un error junto a cada campo obligatorio |
-| 8 | Registro correcto | Vuelve al login con "Cuenta creada" y el correo escrito |
-| 9 | Crear usuario con documento repetido o como 2.º administrador | Error en el campo y no se guarda |
-| 10 | Crear, ver, editar e inactivar un usuario | La tabla y la ficha muestran el cambio |
-| 11 | Inactivar o eliminar al administrador | Lo impide con un mensaje |
-| 12 | Eliminar un usuario | Pide confirmación y desaparece de la tabla |
-| 13 | Login como cajera | El menú solo muestra "Inicio" |
-| 14 | Cajera escribe `/dashboard/usuarios` | Vuelve a `/dashboard` |
-| 15 | Cerrar sesión | Vuelve a `/login` y el token se borra |
-
-## Limitaciones de la API falsa (se resuelven en el Capítulo IV con Express)
-
-- json-server-auth solo exige **sesión**, no **rol**: las reglas por rol viven en los controladores
-  del navegador. En Express pasarán al servidor.
-- `GET /users` envía el hash de la contraseña; `UserModel` lo quita antes de dárselo a las vistas.
-- El token vive en `localStorage`; en el Capítulo IV pasa a una cookie `HttpOnly`.
-- La cuenta inactiva se revisa en el navegador después del login.
+| 4 | Login como administrador | Entra a `/dashboard` con indicadores |
+| 5 | Recargar la página (F5) | La sesión se mantiene (`/auth/me`) |
+| 6 | Revisar la cookie | `HttpOnly`, `SameSite=Lax`; `document.cookie` y `localStorage` vacíos |
+| 7 | Ir a `/login` con sesión | Vuelve a `/dashboard` |
+| 8 | Crear usuario con documento repetido | "Ya hay una cuenta con ese documento" (UNIQUE) |
+| 9 | Crear un segundo administrador | "Ya existe un administrador…" (trigger) |
+| 10–11 | Crear y editar un usuario | La tabla muestra el cambio |
+| 12 | Inactivar la propia cuenta | "No puedes inactivar tu propia cuenta" |
+| 13 | Eliminar un usuario con ventas | "…inactívalo en lugar de eliminarlo" (llave foránea) |
+| 14 | Eliminar un usuario sin ventas | Desaparece de la tabla |
+| 15–16 | Cerrar sesión | El servidor borra la cookie; `/dashboard` vuelve al login |
+| 17 | Registro público | "Cuenta creada. Un administrador debe activarla." |
+| 18 | Entrar con la cuenta recién creada | "Tu cuenta está inactiva…" |
+| 19–20 | Login como cajera | El menú solo muestra "Inicio"; `/dashboard/usuarios` vuelve al inicio |
+| 21 | 3 contraseñas equivocadas seguidas | "Cuenta bloqueada por 15 minutos…" (trigger) |
